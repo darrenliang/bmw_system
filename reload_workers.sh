@@ -1,0 +1,1 @@
+circusctl reload workers --sequential
