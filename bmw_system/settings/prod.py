@@ -3,6 +3,7 @@ from .base import *
 print("setting: PROD")
 
 DEBUG = False
+ALLOWED_HOSTS = ["*"]
 
 # LOGGING["loggers"]['']["level"] = "DEBUG"
 
