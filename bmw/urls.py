@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 from . import views
 from .admin import admin
 from rest_framework.authtoken import views as authviews
@@ -24,4 +26,4 @@ urlpatterns = [
     url(r'^charts/$', views.charts, name='charts'),
     url(r'^details/$', views.details, name='details'),
     url(r'^settings/$', views.setting, name='settings'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
