@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-
-    'channels',
     "solo",
     'bmw.apps.BmwConfig',
     'rest_framework.authtoken',

@@ -39,11 +39,9 @@
                             <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">孙悟空</strong>
                             </span> <span class="text-muted text-xs block">管理员 <b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
-                                <li><a href="profile.html">个人简介</a></li>
-                                <li><a href="contacts.html">通讯录</a></li>
-                                <li><a href="mailbox.html">邮箱</a></li>
+                                <li><a href="">个人简介</a></li>
                                 <li class="divider"></li>
-                                <li><a href="login.html">退出登录</a></li>
+                                <li><a href="/login/">退出登录</a></li>
                             </ul>
                         </div>
                         <div class="logo-element">
@@ -51,23 +49,24 @@
                         </div>
                     </li>
                     <li>
-                        <a href="overview.html"><i class="fa fa-th-large"></i> <span class="nav-label">控制面板</span> <span class="fa arrow"></span></a>
+                        <a href="/overview/"><i class="fa fa-th-large"></i> <span class="nav-label">系统总览</span></a>
+                    </li>
+                    <li>
+                        <a href="/devices/"><i class="fa fa-calendar"></i> <span class="nav-label">查看日志</span><span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level">
-                            <li><a href="index.html">控制面板 v.1</a></li>
-                            <li><a href="dashboard_2.html">控制面板 v.2</a></li>
-                            <li><a href="dashboard_3.html">控制面板 v.3</a></li>
-                            <li><a href="dashboard_4_1.html">控制面板 v.4</a></li>
-                            <li><a href="dashboard_5.html">控制面板 v.5 <span class="label label-primary pull-right">最新</span></a></li>
+                            <li><a href="/devices/">点位1</a></li>
+                            <li><a href="/details/">点位2</a></li>
+                            <li><a href="/devices/">点位3</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="index.html"><i class="fa fa-calendar"></i> <span class="nav-label">查看日志</span></a>
+                        <a href="/audit_logs/"><i class="fa fa-calendar"></i> <span class="nav-label">查看日志</span></a>
                     </li>
                     <li>
-                        <a href="index.html"><i class="fa fa-line-chart"></i> <span class="nav-label">统计图表</span></a>
+                        <a href="/charts/"><i class="fa fa-line-chart"></i> <span class="nav-label">统计图表</span></a>
                     </li>
                     <li>
-                        <a href="index.html"><i class="fa fa-th-large"></i> <span class="nav-label">一级标题</span></a>
+                        <a href="/settings/"><i class="fa fa-th-large"></i> <span class="nav-label">一级标题</span></a>
                     </li>
                 </ul>
             </div>
@@ -91,7 +90,7 @@
                                     <span class="m-r-sm text-muted welcome-message">欢迎使用 BMW 后台管理系统.</span>
                                 </li>
                                 <li>
-                                    <a class="dropdown-toggle count-info" href="#">
+                                    <a class="dropdown-toggle count-info" href="/settings/">
                                         <i class="fa fa-cog"></i>
                                     </a>
                                 </li>
@@ -102,12 +101,12 @@
                                     <ul class="dropdown-menu dropdown-messages">
                                         <li>
                                             <div class="dropdown-messages-box">
-                                                <a href="profile.html" class="pull-left">
-                                                    <img alt="image" class="img-circle" src="img/a7.jpg">
+                                                <a href="" class="pull-left">
+                                                    <img alt="image" class="img-circle" src="{% static 'img/a4.jpg' %}">
                                                 </a>
                                                 <div class="media-body">
                                                     <small class="pull-right">46小时前</small>
-                                                    <strong>苏东辉</strong> 服务客户 <strong>李总</strong>. <br>
+                                                    <strong>Schedule A完成<br>
                                                     <small class="text-muted">三天前 上午 7:58 - 10.06.2014</small>
                                                 </div>
                                             </div>
@@ -115,12 +114,12 @@
                                         <li class="divider"></li>
                                         <li>
                                             <div class="dropdown-messages-box">
-                                                <a href="profile.html" class="pull-left">
-                                                    <img alt="image" class="img-circle" src="img/a4.jpg">
+                                                <a href="" class="pull-left">
+                                                    <img alt="image" class="img-circle" src="{% static 'img/a4.jpg' %}">
                                                 </a>
                                                 <div class="media-body ">
                                                     <small class="pull-right text-navy">5小时前</small>
-                                                    <strong>刘明城</strong> 服务客户 <strong>吴总</strong>. <br>
+                                                    <strong>系统需要维护<br>
                                                     <small class="text-muted">昨天 凌晨 1:21 - 11.06.2014</small>
                                                 </div>
                                             </div>
@@ -128,12 +127,12 @@
                                         <li class="divider"></li>
                                         <li>
                                             <div class="dropdown-messages-box">
-                                                <a href="profile.html" class="pull-left">
-                                                    <img alt="image" class="img-circle" src="img/profile.jpg">
+                                                <a href="" class="pull-left">
+                                                    <img alt="image" class="img-circle" src="{% static 'img/a4.jpg' %}">
                                                 </a>
                                                 <div class="media-body ">
                                                     <small class="pull-right">23小时前</small>
-                                                    <strong>袁建</strong> 服务客户 <strong>陶总</strong>. <br>
+                                                    <strong>服务重启<br>
                                                     <small class="text-muted">两天前 下午 2:30 - 11.06.2014</small>
                                                 </div>
                                             </div>
@@ -141,7 +140,7 @@
                                         <li class="divider"></li>
                                         <li>
                                             <div class="text-center link-block">
-                                                <a href="mailbox.html">
+                                                <a href="/audit_logs/">
                                                     <i class="fa fa-envelope"></i> <strong>所有信息</strong>
                                                 </a>
                                             </div>
@@ -154,7 +153,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="login.html">
+                                    <a href="/login/">
                                         <i class="fa fa-sign-out"></i> 退出登录
                                     </a>
                                 </li>

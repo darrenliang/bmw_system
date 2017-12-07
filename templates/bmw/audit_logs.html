@@ -1,0 +1,239 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>电桩列表</h2>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+            <div class="wrapper wrapper-content">
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-content">
+                            <div class="file-manager">
+                                <h5>点位1</h5>
+                                <ul class="folder-list" style="padding: 0">
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001100</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001101</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001102</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001103</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001104</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001105</a></li>
+                                </ul>
+                                <div class="hr-line-dashed"></div>
+                                <h5>点位2</h5>
+                                <ul class="folder-list" style="padding: 0">
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088100</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088102</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088103</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088104</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088105</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088106</a></li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-9 animated fadeInRight">
+                    <div class="row">
+
+
+
+                        <div class="col-lg-12">
+                            <div class="ibox float-e-margins">
+                                <div class="ibox-content">
+                                    <form action="">
+                                        <div class="row p-r-10">
+                                            <div class="col-sm-4 m-b-xs r-p-r">
+                                                <label for="model" class="sr-only">模型</label>
+                                                <input type="text" id="model" placeholder=" 模型:ABC1234ABC" class="form-control">
+                                            </div>
+                                            <div class="col-sm-4 m-b-xs r-p-r">
+                                                <label for="serialNo" class="sr-only">SerialNo</label>
+                                                <input type="text" id="serialNo" placeholder="SerialNo" class="form-control">
+                                            </div>
+                                            <div class="col-sm-4 m-b-xs r-p-r">
+                                                <label for="FWVer" class="sr-only">拥有者</label>
+                                                <input type="text" id="FWVer" placeholder="拥有者" class="form-control">
+                                            </div>
+                                            
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-2 m-b-xs r-p-r">
+                                                <select class="form-control inline">
+                                                    <option value="0">状态</option>
+                                                    <option value="1">充电器</option>
+                                                    <option value="2">逆變器</option>
+                                                    <option value="3">DC/DC</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-4 m-b-xs r-p-r">
+                                                <label for="OwnerUserName" class="sr-only">供应商</label>
+                                                <input type="text" id="Owner Username" placeholder="供应商" class="form-control">
+                                            </div>
+                                            <div class="col-sm-2 m-b-xs r-p-r">
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="激活时间">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 m-b-xs r-p-r">
+                                                <div class="input-group date">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="过期时间">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 m-b-xs r-p-r">
+                                                <button class="btn btn-primary" type="submit"><strong>搜索</strong></button>
+                                                <button class="btn btn-primary" type="submit"><strong>重置</strong></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>模型</th>
+                                                    <th>SerialNo</th>
+                                                    <th>拥有者</th>
+                                                    <th>供应商</th>
+
+                                                    <th>状态</th>
+                                                    <th>激活时间</th>
+                                                    <th>过期时间</th>
+
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td><input type="checkbox" name="input[]"></td>
+                                                    <td>Model 1</td>
+                                                    <td>ABC1234ABC</td>
+                                                    <td>Owner Username</td>
+                                                    <td>Parent Owner</td>
+                                                    <td><span class="label label-primary">Activated</span></td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox"  name="input[]"></td>
+                                                    <td>Model 2</td>
+                                                    <td>ABC1234ABC</td>
+                                                    <td>Owner Username</td>
+                                                    <td>Parent Owner</td>
+                                                    <td><span class="label label-warning">Expired</span></td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" name="input[]"></td>
+                                                    <td>Model 3</td>
+                                                    <td>ABC1234ABC</td>
+                                                    <td>Owner Username</td>
+                                                    <td>Parent Owner</td>
+                                                    <td><span class="label label-info">Suspended</span></td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" name="input[]"></td>
+                                                    <td>Model 4</td>
+                                                    <td>ABC1234ABC</td>
+                                                    <td>Owner Username</td>
+                                                    <td>Parent Owner</td>
+                                                    <td><span class="label label-danger">Not activated</span></td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="clearfix">
+                                        <!-- page -->
+
+                                        <div class="pull-left">
+                                            <nav aria-label="Page navigation" class="pagin">
+                                                <ul class="pagination">
+                                                    <li class="active"><a href="#">1</a></li>
+                                                    <li class="disabled"><a href="#">2</a></li>
+                                                    <li><a href="#">3</a></li>
+                                                    <li><a href="#">4</a></li>
+                                                    <li><a href="#">5</a></li>
+                                                    <li><a href="#">6</a></li>
+                                                    <li><a href="#">7</a></li>
+                                                    <li><a href="#">Next</a></li>
+                                                    <li><a href="#">End</a></li>
+                                                </ul>
+<!--                                                 <select class="form-control inline">
+                                                    <option value="10">10</option>
+                                                    <option value="9">9</option>
+                                                    <option value="8">8</option>
+                                                    <option value="7">7</option>
+                                                </select>
+                                                <span class="group">
+                                                    <input type="text" class="form-control" size="5">
+                                                    <button type="button" class="btn btn-primary">Go!</button>
+                                                </span>
+                                                <p>1 ~ 10 items，3399 in total</p> -->
+                                            </nav>
+                                        </div>
+                                        <div class="form-actions pull-right">
+                                            <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i>&nbsp;&nbsp;删除选中</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                    </div>
+                </div>
+{% endblock content %}
+
+
+{% block script %}
+
+
+<!-- Mainly scripts -->
+<script src="{% static 'js/jquery-2.1.1.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/plugins/metisMenu/jquery.metisMenu.js' %}"></script>
+<script src="{% static 'js/plugins/slimscroll/jquery.slimscroll.min.js' %}"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="{% static 'js/inspinia.js' %}"></script>
+<script src="{% static 'js/plugins/pace/pace.min.js' %}"></script>
+
+<script>
+    $(document).ready(function(){
+        $('.file-box').each(function() {
+            animationHover(this, 'pulse');
+        });
+    });
+</script>
+
+{% endblock script %}

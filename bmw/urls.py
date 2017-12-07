@@ -26,4 +26,5 @@ urlpatterns = [
     url(r'^charts/$', views.charts, name='charts'),
     url(r'^details/$', views.details, name='details'),
     url(r'^settings/$', views.setting, name='settings'),
+    url(r'^audit_logs/$', views.audit_logs, name='audit_logs'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

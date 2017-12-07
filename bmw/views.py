@@ -51,6 +51,10 @@ def setting(request):
     return render(request, 'bmw/settings.html')
 
 
+def audit_logs(request):
+    return render(request, 'bmw/audit_logs.html')
+
+
 @login_required(login_url='/login/')
 def logout(request):
     logout(request)
