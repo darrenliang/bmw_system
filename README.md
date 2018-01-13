@@ -30,8 +30,8 @@ pip install -r requirements.txt
 #### 1.1.3 数据库创建
 
 ```
-python manage.py makemigrations bmw --settings=bmw_system.settings.dev
-python manage.py migrate --settings=bmw_system.settings.dev
+python manage.py makemigrations bmw
+python manage.py migrate
 
 python manage.py createsuperuser
 ```
@@ -39,7 +39,7 @@ python manage.py createsuperuser
 #### 1.1.3 本地服务启动
 
 ```
-python manage.py runserver 8000  --settings=bmw_system.settings.dev
+python manage.py runserver 8000
 ```
 
 #### 
