@@ -59,6 +59,10 @@ def remote(request):
     return render(request, 'bmw/remote.html')
 
 
+def test(request):
+    return render(request, 'bmw/test.html')
+
+
 def web_socket(request):
     return render(request, 'bmw/web_socket.html')
 

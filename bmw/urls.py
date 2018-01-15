@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^audit_logs/$', views.audit_logs, name='audit_logs'),
     url(r'^web_socket/$', views.web_socket, name='web_socket'),
     url(r'^remote/$', views.remote, name='remote'),
+    url(r'^test/$', views.test, name='test'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
