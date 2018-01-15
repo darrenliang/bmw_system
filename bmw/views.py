@@ -55,6 +55,10 @@ def audit_logs(request):
     return render(request, 'bmw/audit_logs.html')
 
 
+def remote(request):
+    return render(request, 'bmw/remote.html')
+
+
 def web_socket(request):
     return render(request, 'bmw/web_socket.html')
 
