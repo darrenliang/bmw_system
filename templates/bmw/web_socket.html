@@ -82,7 +82,7 @@
                         <div class="row">
 
                             <div class="col-sm-12">
-                                <div class="form-group">
+                                <div class="form-group" id="connection1">
                                     <template v-if="connState == false">
                                         <button type="button" class="btn btn-success btn-single" id="connect_btn" @click="connect">Connect</button>
                                         <button type="button" class="btn btn-gray btn-single disabled" id="disconnect_btn">Disconnect</button>
@@ -92,7 +92,7 @@
                                         <button type="button" class="btn btn-success btn-single" id="disconnect_btn" @click="disconnect">Disconnect</button>
                                     </template>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" id="connection2">
                                     <label class="cbr-inline">Current State:
                                         <template v-if="connState == false">
                                             <strong id="connect_state" class="text-danger">DISCONNECTED</strong>
@@ -118,7 +118,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Receive Message</h3>
                 </div>
-                <div class="panel-body" style="overflow: auto;max-height: 300px;">
+                <div id="receiveMsgs" class="panel-body" style="overflow: auto;max-height: 300px;">
                     <div v-for="message in receiveMsgs">
                         <cite>{{ message.arrived_at}}</cite> --(Q{{message.qos}},
                         <template v-if="message.retained">R1</template>
@@ -284,3 +284,28 @@
 <!-- slick carousel-->
 <script src="{% static 'js/plugins/slick/slick.min.js' %}"></script>
 {% endblock script %}
+
+<script>
+
+var connection1 = new Vue({
+  el: '#connection1',
+  data: {
+    connState : false
+  }
+});
+
+var connection2 = new Vue({
+  el: '#connection2',
+  data: {
+    connState : false
+  }
+});
+
+var receiveMsgs = new Vue({
+  el: '#receiveMsgs',
+  data: {
+    receiveMsgs : {}
+  }
+});
+
+</script>
