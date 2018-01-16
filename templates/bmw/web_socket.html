@@ -188,7 +188,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Subscriptions List</h3>
                 </div>
-                <div class="panel-body" style="overflow: auto;max-height: 200px;">
+                <div id="subscriptions" class="panel-body" style="overflow: auto;max-height: 200px;">
                     <div v-for="sub in subscriptions"><cite>{{ sub.time }}</cite>( QoS: {{ sub.qos }} ) -- {{ sub.topic }}</div>
                 </div>
             </div>
@@ -269,7 +269,7 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Send Message List</h3>
                 </div>
-                <div class="panel-body" style="overflow: auto;max-height: 230px;">
+                <div id="sendMessage" class="panel-body" style="overflow: auto;max-height: 230px;">
                     <div v-for="message in sendMsgs"><cite>{{ message.time }}</cite>( QoS: {{ message.qos }}, Retained: {{ message.retained }} ) -- {{ message.text }}</div>
                 </div>
             </div>
@@ -283,7 +283,6 @@
 
 <!-- slick carousel-->
 <script src="{% static 'js/plugins/slick/slick.min.js' %}"></script>
-{% endblock script %}
 
 <script>
 
@@ -304,8 +303,38 @@ var connection2 = new Vue({
 var receiveMsgs = new Vue({
   el: '#receiveMsgs',
   data: {
-    receiveMsgs : {}
+    receiveMsgs : [
+        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},
+        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},{ 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},
+        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'}
+        
+    ]
+  }
+});
+
+var sendMessage = new Vue({
+  el: '#sendMessage',
+  data: {
+    sendMsgs : [
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'retained': true, 'text':'1111'},
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'retained': true, 'text':'1111'},
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'retained': true, 'text':'1111'}
+    ]
+  }
+});
+
+var subscriptions = new Vue({
+  el: '#subscriptions',
+  data: {
+    subscriptions : [
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'topic': '1111'},
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'topic': '1111'},
+        { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'topic': '1111'}
+    ]
   }
 });
 
 </script>
+
+
+{% endblock script %}
