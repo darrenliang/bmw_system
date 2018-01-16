@@ -85,14 +85,14 @@
                                 <div class="form-group" id="connection1">
                                     <template v-if="connState == false">
                                         <button type="button" class="btn btn-success btn-single" id="connect_btn" @click="connect">Connect</button>
-                                        <button type="button" class="btn btn-gray btn-single disabled" id="disconnect_btn">Disconnect</button>
+                                        <button type="button" class="btn btn-danger btn-single disabled" id="disconnect_btn">Disconnect</button>
                                     </template>
                                     <template v-else>
-                                        <button type="button" class="btn btn-gray btn-single disabled" id="connect_btn">Connect</button>
+                                        <button type="button" class="btn btn-danger btn-single disabled" id="connect_btn">Connect</button>
                                         <button type="button" class="btn btn-success btn-single" id="disconnect_btn" @click="disconnect">Disconnect</button>
                                     </template>
                                 </div>
-                                <div class="form-group" id="connection2">
+                                <div class="form-group" id="connectionState">
                                     <label class="cbr-inline">Current State:
                                         <template v-if="connState == false">
                                             <strong id="connect_state" class="text-danger">DISCONNECTED</strong>
@@ -119,13 +119,13 @@
                     <h3 class="panel-title">Receive Message</h3>
                 </div>
                 <div id="receiveMsgs" class="panel-body" style="overflow: auto;max-height: 300px;">
-                    <div v-for="message in receiveMsgs">
-                        <cite>{{ message.arrived_at}}</cite> --(Q{{message.qos}},
+                    <template v-for="message in receiveMsgs">
+                        <cite>${ message.arrived_at }</cite> --(Q${message.qos},
                         <template v-if="message.retained">R1</template>
                         <template v-else>R0</template>,
                         <template v-if="message.duplicate">D1</template>
-                        <template v-else>D0</template>, Topic={{message.destinationName}}, Payload={{message.msgString}})
-                    </div>
+                        <template v-else>D0</template>, Topic=${message.destinationName}, Payload=${message.msgString})
+                    </template>
                 </div>
             </div>
 
@@ -189,7 +189,7 @@
                     <h3 class="panel-title">Subscriptions List</h3>
                 </div>
                 <div id="subscriptions" class="panel-body" style="overflow: auto;max-height: 200px;">
-                    <div v-for="sub in subscriptions"><cite>{{ sub.time }}</cite>( QoS: {{ sub.qos }} ) -- {{ sub.topic }}</div>
+                    <div v-for="sub in subscriptions"><cite>${ sub.time }</cite>( QoS: ${ sub.qos } ) -- ${ sub.topic }</div>
                 </div>
             </div>
 
@@ -270,7 +270,7 @@
                     <h3 class="panel-title">Send Message List</h3>
                 </div>
                 <div id="sendMessage" class="panel-body" style="overflow: auto;max-height: 230px;">
-                    <div v-for="message in sendMsgs"><cite>{{ message.time }}</cite>( QoS: {{ message.qos }}, Retained: {{ message.retained }} ) -- {{ message.text }}</div>
+                    <div v-for="message in sendMsgs"><cite>${ message.time }</cite>( QoS: ${ message.qos }, Retained: ${ message.retained } ) -- ${ message.text }</div>
                 </div>
             </div>
         </div>
@@ -286,6 +286,8 @@
 
 <script>
 
+$(function(){
+
 var connection1 = new Vue({
   el: '#connection1',
   data: {
@@ -294,42 +296,36 @@ var connection1 = new Vue({
   methods:{
     connect: function(event){
         connection1.connState = true;
+        connectionState.connState = true;
     },
     disconnect: function(event){
         connection1.connState = false;
+        connectionState.connState = false;
     }
   }
 });
 
-var connection2 = new Vue({
-  el: '#connection2',
+var connectionState = new Vue({
+  el: '#connectionState',
   data: {
     connState : false
-  },
-  methods:{
-    connect: function(event){
-        connection1.connState = true;
-    },
-    disconnect: function(event){
-        connection1.connState = false;
-    }
   }
 });
 
+//{ arrived_at: '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'}
 var receiveMsgs = new Vue({
   el: '#receiveMsgs',
+  delimiters:['${', '}'],
   data: {
     receiveMsgs : [
-        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},
-        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},{ 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'},
-        { 'arrived_at': '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'}
-        
+        { arrived_at: '2018-01-06 16:24:47', 'retained': true, 'duplicate': false, 'destinationName': 'world', 'msgString':'1111'}
     ]
   }
 });
 
 var sendMessage = new Vue({
   el: '#sendMessage',
+  delimiters:['${', '}'],
   data: {
     sendMsgs : [
         { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'retained': true, 'text':'1111'},
@@ -341,6 +337,7 @@ var sendMessage = new Vue({
 
 var subscriptions = new Vue({
   el: '#subscriptions',
+  delimiters:['${', '}'],
   data: {
     subscriptions : [
         { 'time': '2018-01-06 16:24:47', 'qos': 'qosqos', 'topic': '1111'},
@@ -350,6 +347,9 @@ var subscriptions = new Vue({
   }
 });
 
+
+
+});
 </script>
 
 
