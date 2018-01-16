@@ -290,6 +290,14 @@ var connection1 = new Vue({
   el: '#connection1',
   data: {
     connState : false
+  },
+  methods:{
+    connect: function(event){
+        connection1.connState = true;
+    },
+    disconnect: function(event){
+        connection1.connState = false;
+    }
   }
 });
 
@@ -297,6 +305,14 @@ var connection2 = new Vue({
   el: '#connection2',
   data: {
     connState : false
+  },
+  methods:{
+    connect: function(event){
+        connection1.connState = true;
+    },
+    disconnect: function(event){
+        connection1.connState = false;
+    }
   }
 });
 
