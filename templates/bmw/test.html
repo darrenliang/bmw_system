@@ -11,8 +11,8 @@
 
 <body>
     <button onclick="client.connect(options);">1. Connect</button>
-    <button onclick="client.subscribe('world', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
-    <button onclick="publish('Hello chaoyun !','world',2);">3. Publish</button>
+    <button onclick="client.subscribe('wo2rld', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
+    <button onclick="publish('Hello 2chaoyun !','world',2);">3. Publish</button>
     <button onclick="client.disconnect();">(4. Disconnect)</button>
     <div id="messages" style=" height:100px;overflow:hidden;"></div>
 
@@ -36,10 +36,10 @@
         // $('#messages').append('<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>');
          //var obj = eval(message);
         var str = message.payloadString;
-	console.log(str);
+	    console.log("str="+str);
       	var obj = JSON.parse(str);
-        console.log(typeof(obj));
-        console.log(obj.V);
+        console.log("typeof obj="+typeof(obj));
+        console.log("obj.v="+obj.V);
         $('#messages').append(obj.V);
     };
 

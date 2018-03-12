@@ -3,11 +3,11 @@
 {% block content %}
 
 <button onclick="client.connect(options);">1. Connect</button>
-<button onclick="client.subscribe('world', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
+<button onclick="client.subscribe('10245006', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
 <button onclick="publish('Hello chaoyun !','world',2);">3. Publish</button>
 <button onclick="client.disconnect();">(4. Disconnect)</button>
 <div id="messages" style=" height:100px;overflow:hidden;"></div>
-
+<span id="start_transaction"></span>
 {% endblock content %}
 
 
@@ -16,10 +16,8 @@
     <!-- Mainly scripts -->
     <script src="{% static 'js/mqttws31.js' %}"></script>
     <script type="text/javascript">
-    //<![CDATA[
-
     //Using the HiveMQ public Broker, with a random client Id
-    var client = new Messaging.Client("114.119.10.130", 8083, "test", 10);
+    var client = new Messaging.Client("114.119.9.130", 8083, "test", 10);
 
     //Gets  called if the websocket/mqtt connection gets disconnected for any reason
     client.onConnectionLost = function(responseObject) {
@@ -35,11 +33,17 @@
         // $('#messages').append('<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>');
          //var obj = eval(message);
         var str = message.payloadString;
-	console.log(str);
-      	var obj = JSON.parse(str);
-        console.log(typeof(obj));
-        console.log(obj.V);
-        $('#messages').append(obj.V);
+
+        var startTransactionStr = '[2,"e13033ee-1b6a-4413-8f9d-6ffc8a6b93a7","StartTransaction",{"connectorId":1,"timestamp":"2016-10-28T19:18:05Z","idTag":{"IdToken":"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"},"meterstart":12500,"chargingcycle":10,"reason":"Local","reasonDetail":"Button","chargingDuration":120,"chargingDelay":10}]'
+	    console.log("[onMessageArrived] "+str);
+      	var obj = JSON.parse(startTransactionStr);
+      	if(obj[2] == "StartTransaction"){
+      	    //console.log("yes");
+      	    $("#start_transaction").html("Connector Id=" + obj[3]["connectorId"]+ ", Timestamp="+obj[3]["timestamp"]+", Id Token="+obj[3]["idTag"]["IdToken"] + ", Meterstart="+obj[3]["meterstart"] + ", Charging Cycle="+obj[3]["chargingcycle"]+", Reason="+obj[3]["reason"])
+      	}
+        // console.log("[onMessageArrived] type="+typeof(obj));
+        // console.log("[onMessageArrived] v="+obj.V);
+        // $('#messages').append(obj.V);
     };
 
     //Connect Options
@@ -65,8 +69,6 @@
     }
 
 
-
-    //]]>
     </script>
 
 {% endblock script %}
