@@ -5,6 +5,9 @@ import sys
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bmw_system.settings")
     try:
+        # load MySQLdb interface emulation
+        import pymysql
+        pymysql.install_as_MySQLdb()
         from django.core.management import execute_from_command_line
     except ImportError:
         # The above import may fail for some other reason. Ensure that the
