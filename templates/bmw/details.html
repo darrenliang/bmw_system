@@ -373,7 +373,7 @@
             var c_date = e.format();
 
             $.ajax({
-                url: 'http://localhost:8000/api/charging/record/details',
+                url: '/api/charging/record/details',
                 method: 'get',
                 timeout: 3000,
                 data: { date: c_date },
@@ -532,7 +532,7 @@
 
 
         $.ajax({
-            url: 'http://localhost:8000/api/charger/details/',
+            url: '/api/charger/details/',
             method: 'get',
             timeout: 5000,
             data: { },
