@@ -104,7 +104,7 @@
                                     </li>
                                 </ul>
                             </div>
-                           
+
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="ibox">
@@ -112,8 +112,8 @@
                                             <h5>Charger Information </h5>
                                         </div>
                                         <div class="ibox-content no-padding">
-                                            <table class="table table-hover margin bottom">
-                                                <tbody>
+                                            <table id="chargerInfoData" class="table table-hover margin bottom">
+                                                <!-- <tbody>
                                                     <tr>
                                                         <td colspan="2" class="font-bold">Charger Detail</td>
                                                     </tr>
@@ -198,7 +198,7 @@
                                                         <td id="intMaxPhase">N/A</td>
                                                     </tr>
 
-                                                </tbody>
+                                                </tbody> -->
                                             </table>
                                         </div>
                                     </div>
@@ -227,23 +227,52 @@
                                                     <div class="col-lg-7">
                                                         <div class="input-group date">
                                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                            <input type="text" class="form-control">
+                                                            <input type="text" class="form-control" value="2015-11-24">
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">Record ID</label>
                                                     <div class="col-lg-7">
-                                                        <input type="text" class="form-control">
+                                                        <select name="recordIdList" class="form-control" id="recordIdList">
+                                                            <option value="0">请选择</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label class="col-lg-4 control-label">Charging Code</label>
                                                     <div class="col-lg-7">
-                                                        <input type="text" class="form-control">
+                                                        <input type="text" class="form-control" id="chargingCode">
                                                     </div>
                                                 </div>
-                                                <button class="btn btn-primary btn-sm btn-block">Start</button>
+
+                                                <button id="start_btn" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#data_2_modal">Start</button>
+
+                                                 <div class="modal inmodal" id="data_2_modal" tabindex="-1" role="dialog" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content animated bounceInRight">
+                                                            <div class="modal-header">
+                                                                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                                                <h4 class="modal-title">Info</h4>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="ibox">
+                                                                    <div class="ibox-content no-padding">
+                                                                        <table class="table table-hover margin bottom">
+                                                                            <tbody id="modal_info">
+
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -253,7 +282,7 @@
                     </div>
                 </div>
             </div>
-          
+
         </div>
 
 {% endblock content %}
@@ -296,10 +325,10 @@
         try {
             var obj = JSON.parse(str);
             if(obj.length > 3 && obj[2] == "MeterValues"){
-                console.log("str="+str);
+                //console.log("str="+str);
                 supplyCurrent = obj[3]["MeterValue"]["SupplyCurrent"];
                 consumedEnergy = obj[3]["MeterValue"]["ConsumedEnergy"];
-                console.log("supplyCurrent="+supplyCurrent+", consumedEnergy="+consumedEnergy);
+               //console.log("supplyCurrent="+supplyCurrent+", consumedEnergy="+consumedEnergy);
             }
         } catch(e) {
 
@@ -332,14 +361,62 @@
 
 
     $(document).ready(function(){
+
         //时间插件
-        $('#data_2 .input-group.date').datepicker({
+        $('#data_2 .date').datepicker({
             todayBtn: "linked",
             keyboardNavigation: false,
             forceParse: false,
             autoclose: true,
-            format: "yyyy-mm",
+            format: "yyyy-mm-dd",
+        }).on('changeDate', function(e) {
+            var c_date = e.format();
+
+            $.ajax({
+                url: 'http://localhost:8000/api/charging/record/details',
+                method: 'get',
+                timeout: 3000,
+                data: { date: c_date },
+                success: function(data){
+                    var recordDateResults = data.result;
+                    if(recordDateResults.length > 0){
+                        $.each(recordDateResults, function(index, item){
+                            var $html = $('<option value="'+item.intrecordid+'">'+item.intrecordid+'</option>');
+                            $html.data('record',  {
+                                "intrecordid": item.intrecordid,
+                                "intchargingcode": item.intchargingcode,
+                                "vchchargerid": item.vchchargerid,
+                                "dttstartqueue": item.dttstartqueue,
+                                "dttstarttime": item.dttstarttime,
+                                "dttfinishtime": item.dttfinishtime,
+                                "dttrealfinish": item.dttrealfinish
+                            });
+                            $('#recordIdList').append($html);
+                        });
+                    }
+                },
+                error: function(){
+                    console.log('connect charger details failed');
+                }
+            });
+        });;
+
+        //charger record - charging code
+        $('#recordIdList').on('change', function(){
+            $('#chargingCode').val($(this).children('option:selected').data('record').intchargingcode);
         });
+
+        $('#start_btn').click(function(){
+            var html = '<tr>';
+            var result = $('#recordIdList').children('option:selected').data('record');
+
+            for(var r in result){
+                html += '<td>'+r+'</td><td>'+result[r]+'</td></tr><tr>';
+            }
+            html += '</tr>';
+            $('#modal_info').html(html);
+        });
+
 
         //chart
         ///////////////////////////////////////////////////////////////
@@ -439,8 +516,126 @@
             plot.setData(series);
             plot.draw();
         }, 40);
+
+
+        /*
+        ** read from interfaces
+        **
+        */
+        function show(value){
+            if(value && value!=='null' && value!=="undefined"){
+                return value;
+            }else{
+                return '暂无数据';
+            }
+        }
+
+
+        $.ajax({
+            url: 'http://localhost:8000/api/charger/details/',
+            method: 'get',
+            timeout: 5000,
+            data: { },
+            success: function(data){
+                var result = data.result;
+                var html = '<tbody>\
+                                <tr>\
+                                    <td colspan="2" class="font-bold">Charger Detail</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Charger Model</td>\
+                                    <td id="vchModelId">'+result.vchModelID+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Charger Vender</td>\
+                                    <td id="vchvenderid">'+result.vchvenderid+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Serial Number</td>\
+                                    <td id="vchSerialNo">'+result.vchSerialNo+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Firmware Version</td>\
+                                    <td id="vchFirmwareVer">'+result.vchFirmwareVer+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Total Consumed Power</td>\
+                                    <td id="dblAccumlatedPower">'+result.dblAccumlatedPower+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Total charging time</td>\
+                                    <td id="dblAccumlatedMinute">'+result.dblAccumlatedMinute+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Charger IP</td>\
+                                    <td id="vchIP">'+show(result.vchIP)+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Mac</td>\
+                                    <td id="vchMac">'+result.vchMac+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Cable Plugged</td>\
+                                    <td id="vchSoket">'+result.vchSoket+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>charger Status</td>\
+                                    <td id="vchstate">'+result.vchstate+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Feedback current</td>\
+                                    <td id="intcurrentfeedback">'+result.intcurrentfeedback+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Int current</td>\
+                                    <td id="intcurrent">'+result.intcurrent+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Supply current</td>\
+                                    <td id="intchargingcurrent">'+result.intchargingcurrent+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Consuming energy</td>\
+                                    <td id="intconsumedenergy">'+result.intconsumedenergy+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Elapsedtime</td>\
+                                    <td id="intElapsedTime">'+result.intElapsedTime+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Phase charging</td>\
+                                    <td id="intchargingphase">'+result.intchargingphase+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Command</td>\
+                                    <td id="vchcommand">'+result.vchcommand+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>MaxCurrent support</td>\
+                                    <td id="dblmaxcurrent">'+result.dblmaxcurrent+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>minCurrent support</td>\
+                                    <td id="dblmincurrent">'+result.dblmincurrent+'</td>\
+                                </tr>\
+                                <tr>\
+                                    <td>Max line support</td>\
+                                    <td id="intMaxPhase">'+result.intMaxPhase+'</td>\
+                                </tr>\
+                            </tbody>';
+                $('#chargerInfoData').html(html);
+            },
+            error: function(){
+                console.log('connect charger details failed');
+            }
+        });
+
+
+
     });
 
 </script>
 
 {% endblock script %}
+
+
