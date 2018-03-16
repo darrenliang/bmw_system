@@ -225,3 +225,101 @@ Vary: Accept
 
 这个主要用websocket来接收来的信息，你可以打开console看到每3分钟有一条信息，接口解析再聊
 
+### 2.4 Basic Settings数值显示接口
+
+这个api需要在http://localhost:8000/settings/ 页面解析，进入此页面把所有元素显示在输入框初始化。
+
+Request:
+
+```
+GET http://localhost:8000/api/basic/settings/
+```
+
+Response:
+
+
+```
+HTTP 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "vchcardreadercom": "Com10",
+    "yeainstallyear": "2013",
+    "intinstallmonth": 100,
+    "blncurrentdistribution": 1,
+    "vchpowermetercom": "Com4",
+    "vchpowersequence": "ABC",
+    "intcurrency": 86,
+    "dblchargingdeductionpower": 3.0,
+    "intchargingdeductionminute": 120,
+    "intdeductionprioritypower": 2,
+    "intdeductionpriorityminute": 1,
+    "dblpowercoefficient": 0.001,
+    "blninternaltesting": 1,
+    "intmaxcurrenta": 32,
+    "intmaxcurrentb": 32,
+    "intmaxcurrentc": 32
+}
+```
+
+### 2.5 Basic Settings数值更新接口
+
+这个api需要在http://localhost:8000/settings/ 页面更新，注意为post并附带参数，需要在前端做javascript的检测。
+
+Request:
+
+```
+POST http://localhost:8000/api/basic/settings/
+```
+
+|         Parameter          |  Type  | Description |
+| :------------------------: | :----: | :---------: |
+|      vchcardreadercom      | string |             |
+|       yeainstallyear       | string |             |
+|      intinstallmonth       |  int   |             |
+|   blncurrentdistribution   |  int   |             |
+|      vchpowermetercom      | string |             |
+|      vchpowersequence      | string |             |
+|        intcurrency         |  int   |             |
+| dblchargingdeductionpower  | float  |             |
+| intchargingdeductionminute |  int   |             |
+| intdeductionprioritypower  |  int   |             |
+| intdeductionpriorityminute |  int   |             |
+|    dblpowercoefficient     | float  |             |
+|     blninternaltesting     |  int   |             |
+|       intmaxcurrenta       |  int   |             |
+|       intmaxcurrentb       |  int   |             |
+|       intmaxcurrentc       |  int   |             |
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, POST, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "vchcardreadercom": "Com10",
+    "yeainstallyear": "2013",
+    "intinstallmonth": 100,
+    "blncurrentdistribution": 1,
+    "vchpowermetercom": "Com4",
+    "vchpowersequence": "ABC",
+    "intcurrency": 86,
+    "dblchargingdeductionpower": 3.0,
+    "intchargingdeductionminute": 120,
+    "intdeductionprioritypower": 2,
+    "intdeductionpriorityminute": 1,
+    "dblpowercoefficient": 0.001,
+    "blninternaltesting": 1,
+    "intmaxcurrenta": 32,
+    "intmaxcurrentb": 32,
+    "intmaxcurrentc": 32
+}
+```
+
+### 
+
