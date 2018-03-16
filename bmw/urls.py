@@ -16,7 +16,7 @@ admin.site.site_title = 'BMW from adminsitration'
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api-token-auth/', authviews.obtain_auth_token),
-
+    url(r'^api/basic/settings/$', views.BasicSettingsView.as_view()),  # json api
     url(r'^api/charger/details/$', views.ChargerDetails.as_view()),  # json api
     url(r'^api/charging/record/details/$', views.ChargingRecordDetails.as_view()),  # json api
     url(r'^$', views.login, name='index'),

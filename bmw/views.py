@@ -14,7 +14,98 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord
+from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, BasicSetting
+
+
+class BasicSettingsView(APIView):
+    """
+    This view automatically provide `list` function
+    """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    queryset = BasicSetting.objects.all()
+
+    def get(self, request):
+        basic_setting = self.queryset.first()
+        vchcardreadercom = yeainstallyear = intinstallmonth = blncurrentdistribution = vchpowermetercom = \
+            vchpowersequence = intcurrency = dblchargingdeductionpower = intchargingdeductionminute = \
+            intdeductionprioritypower = intdeductionpriorityminute = dblpowercoefficient = blninternaltesting = \
+            intmaxcurrenta = intmaxcurrentb = intmaxcurrentc = ""
+        if basic_setting:
+            vchcardreadercom = basic_setting.vchcardreadercom
+            yeainstallyear = basic_setting.yeainstallyear
+            intinstallmonth = basic_setting.intinstallmonth
+            blncurrentdistribution = basic_setting.blncurrentdistribution
+            vchpowermetercom = basic_setting.vchpowermetercom
+            vchpowersequence = basic_setting.vchpowersequence
+            intcurrency = basic_setting.intcurrency
+            dblchargingdeductionpower = basic_setting.dblchargingdeductionpower
+            intdeductionpriorityminute = basic_setting.intdeductionpriorityminute
+            intchargingdeductionminute = basic_setting.intchargingdeductionminute
+            intdeductionprioritypower = basic_setting.intdeductionprioritypower
+            dblpowercoefficient = basic_setting.dblpowercoefficient
+            blninternaltesting = basic_setting.blninternaltesting
+            intmaxcurrenta = basic_setting.intmaxcurrenta
+            intmaxcurrentb = basic_setting.intmaxcurrentb
+            intmaxcurrentc = basic_setting.intmaxcurrentc
+        return Response({"vchcardreadercom": vchcardreadercom, "yeainstallyear": yeainstallyear,
+                         "intinstallmonth": intinstallmonth, "blncurrentdistribution": blncurrentdistribution,
+                         "vchpowermetercom": vchpowermetercom, "vchpowersequence": vchpowersequence,
+                         "intcurrency": intcurrency, "dblchargingdeductionpower": dblchargingdeductionpower,
+                         "intchargingdeductionminute": intchargingdeductionminute,
+                         "intdeductionprioritypower": intdeductionprioritypower,
+                         "intdeductionpriorityminute": intdeductionpriorityminute,
+                         "dblpowercoefficient": dblpowercoefficient, "blninternaltesting": blninternaltesting,
+                         "intmaxcurrenta": intmaxcurrenta, "intmaxcurrentb": intmaxcurrentb,
+                         "intmaxcurrentc": intmaxcurrentc}, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        try:
+            vchcardreadercom = request.POST.get("vchcardreadercom")
+            yeainstallyear = request.POST.get("yeainstallyear")
+            intinstallmonth = int(request.POST.get("intinstallmonth"))
+            blncurrentdistribution = int(request.POST.get("blncurrentdistribution"))
+            vchpowermetercom = request.POST.get("vchpowermetercom")
+            vchpowersequence = request.POST.get("vchpowersequence")
+            intcurrency = int(request.POST.get("intcurrency"))
+            dblchargingdeductionpower = float(request.POST.get("dblchargingdeductionpower"))
+            intdeductionpriorityminute = int(request.POST.get("intdeductionpriorityminute"))
+            intchargingdeductionminute = int(request.POST.get("intchargingdeductionminute"))
+            intdeductionprioritypower = int(request.POST.get("intdeductionprioritypower"))
+            dblpowercoefficient = float(request.POST.get("dblpowercoefficient"))
+            blninternaltesting = int(request.POST.get("blninternaltesting"))
+            intmaxcurrenta = int(request.POST.get("intmaxcurrenta"))
+            intmaxcurrentb = int(request.POST.get("intmaxcurrentb"))
+            intmaxcurrentc = int(request.POST.get("intmaxcurrentc"))
+            basic_setting = self.queryset.first()
+            basic_setting.vchcardreadercom = vchcardreadercom
+            basic_setting.yeainstallyear = yeainstallyear
+            basic_setting.intinstallmonth = intinstallmonth
+            basic_setting.blncurrentdistribution = blncurrentdistribution
+            basic_setting.vchpowermetercom = vchpowermetercom
+            basic_setting.vchpowersequence = vchpowersequence
+            basic_setting.intcurrency = intcurrency
+            basic_setting.dblchargingdeductionpower = dblchargingdeductionpower
+            basic_setting.intdeductionpriorityminute = intdeductionpriorityminute
+            basic_setting.intchargingdeductionminute = intchargingdeductionminute
+            basic_setting.intdeductionprioritypower = intdeductionprioritypower
+            basic_setting.dblpowercoefficient = dblpowercoefficient
+            basic_setting.blninternaltesting = blninternaltesting
+            basic_setting.intmaxcurrenta = intmaxcurrenta
+            basic_setting.intmaxcurrentb = intmaxcurrentb
+            basic_setting.intmaxcurrentc = intmaxcurrentc
+            return Response({"vchcardreadercom": vchcardreadercom, "yeainstallyear": yeainstallyear,
+                             "intinstallmonth": intinstallmonth, "blncurrentdistribution": blncurrentdistribution,
+                             "vchpowermetercom": vchpowermetercom, "vchpowersequence": vchpowersequence,
+                             "intcurrency": intcurrency, "dblchargingdeductionpower": dblchargingdeductionpower,
+                             "intchargingdeductionminute": intchargingdeductionminute,
+                             "intdeductionprioritypower": intdeductionprioritypower,
+                             "intdeductionpriorityminute": intdeductionpriorityminute,
+                             "dblpowercoefficient": dblpowercoefficient, "blninternaltesting": blninternaltesting,
+                             "intmaxcurrenta": intmaxcurrenta, "intmaxcurrentb": intmaxcurrentb,
+                             "intmaxcurrentc": intmaxcurrentc}, status=status.HTTP_200_OK)
+        except Exception:
+            raise ValueError("The parameters type error!")
 
 
 class ChargingRecordDetails(APIView):
