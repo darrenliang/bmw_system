@@ -321,5 +321,253 @@ Vary: Accept
 }
 ```
 
+### 2.6 Charger Info数量统计接口
+
+这个api需要在http://localhost:8000/overview/ 页面解析，进入此页面可以看到电桩总数、总充电电量、总充电次数、正在使用，通过下面api进行解析填充。
+
+Request:
+
+```
+GET http://localhost:8000/api/charger/info/statistic/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "total_charger": 13,  //电桩总数
+    "accumulate_power": 12214.54,  //总充电电量
+    "accumulate_minutes": 4230.0,  //总充电次数
+    "total_charging": 0  //正在使用
+}
+```
+
+### 2.7 充电记录总览接口
+
+这个api需要在http://localhost:8000/overview/ 页面解析，可以看到充电记录总览的表格，对内容进行填充。
+
+Request:
+
+```
+GET http://localhost:8000/api/recent/charging/record/list/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "result": [
+        {
+            "intrecordid": 1406,
+            "dttfinishtime": "2016-11-25 14:11:55",
+            "dblenergy": 2.458
+        },
+        {
+            "intrecordid": 1405,
+            "dttfinishtime": "2016-11-25 13:06:59",
+            "dblenergy": 2.38
+        },
+        {
+            "intrecordid": 1404,
+            "dttfinishtime": "2016-11-24 18:29:26",
+            "dblenergy": 1.024
+        },
+        {
+            "intrecordid": 1403,
+            "dttfinishtime": "2016-11-18 11:26:32",
+            "dblenergy": 5.496
+        },
+        {
+            "intrecordid": 1402,
+            "dttfinishtime": "2016-11-18 09:39:54",
+            "dblenergy": 6.75
+        },
+        {
+            "intrecordid": 1401,
+            "dttfinishtime": "2016-11-18 09:09:27",
+            "dblenergy": 6.006
+        },
+        {
+            "intrecordid": 1400,
+            "dttfinishtime": "2016-11-18 08:55:00",
+            "dblenergy": 0.545
+        },
+        {
+            "intrecordid": 1399,
+            "dttfinishtime": "2016-11-17 18:45:45",
+            "dblenergy": 0.336
+        },
+        {
+            "intrecordid": 1398,
+            "dttfinishtime": "2016-11-17 14:07:46",
+            "dblenergy": 1.58
+        },
+        {
+            "intrecordid": 1397,
+            "dttfinishtime": "2016-11-17 09:09:58",
+            "dblenergy": 4.138
+        }
+    ]
+}
+```
+
+### 2.8 电桩总览接口
+
+这个api需要在http://localhost:8000/overview/ 页面解析，可以看到电桩总览的表格，对内容进行填充。
+
+Request:
+
+```
+GET http://localhost:8000/api/recent/charger/state/list/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "result": [
+        {
+            "vchchargerid": "60303001",
+            "vchstate": "BootUp",
+            "vchcommand": "BootNotification"
+        },
+        {
+            "vchchargerid": "21509003",
+            "vchstate": "bootup",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "21509002",
+            "vchstate": "bootup",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "21509001",
+            "vchstate": "bootup",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245008",
+            "vchstate": "2",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245007",
+            "vchstate": "2",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245006",
+            "vchstate": "2",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245005",
+            "vchstate": "15",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245004",
+            "vchstate": "2",
+            "vchcommand": "1"
+        },
+        {
+            "vchchargerid": "10245003",
+            "vchstate": "2",
+            "vchcommand": "1"
+        }
+    ]
+}
+```
+
+### 2.9 联网状态总览接口
+
+这个api需要在http://localhost:8000/overview/ 页面解析，可以看到联网状态总览，对内容进行填充。
+
+Request:
+
+```
+GET http://localhost:8000/api/charger/state/statistic/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, HEAD, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "result": [
+        {
+            "BootUp": 38.46  //数值类型为百分比，所有状态加起来等于100
+        },
+        {
+            "Available": 0.0
+        },
+        {
+            "PreParing": 0.0
+        },
+        {
+            "Charging": 0.0
+        },
+        {
+            "StatusChanged": 0.0
+        },
+        {
+            "StopCharging": 0.0
+        },
+        {
+            "RemoteCharging": 0.0
+        },
+        {
+            "RemoteStopCharging": 0.0
+        },
+        {
+            "SendMessage": 0.0
+        },
+        {
+            "Updating": 0.0
+        },
+        {
+            "Unavailable": 0.0
+        },
+        {
+            "Reboot": 0.0
+        },
+        {
+            "Faulted": 0.0
+        },
+        {
+            "SupsendedEV": 0.0
+        },
+        {
+            "Finishing": 0.0
+        },
+        {
+            "Other": 61.54
+        }
+    ]
+}
+```
+
 ### 
+
+
 
