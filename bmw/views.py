@@ -14,7 +14,100 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, BasicSetting
+from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting
+
+
+class ChargerStateStatisticView(APIView):
+    """
+        This view automatically provide `list` function
+        """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    queryset = ChargerState.objects.all()
+
+    def get(self, request):
+        result = []
+        state_list = ["BootUp", "Available", "PreParing", "Charging", "StatusChanged", "StopCharging",
+                      "RemoteCharging", "RemoteStopCharging", "SendMessage", "Updating", "Unavailable", "Reboot",
+                      "Faulted", "SupsendedEV", "Finishing", "Other"]
+        accumulate_rate = 0
+        size = self.queryset.count()
+        for state in state_list:
+            if state != "Other":
+                rate = round(self.queryset.filter(vchstate=state).count() / size * 100, 2)
+                result.append({state: rate})
+                accumulate_rate += rate
+            else:
+                result.append({state: 100-accumulate_rate})
+        return Response({"result": result}, status=status.HTTP_200_OK)
+
+
+class RecentChargingRecordListView(APIView):
+    """
+        This view automatically provide `list` function
+        """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    queryset = ChargingRecord.objects.all().order_by("-dttfinishtime")[:10]  # vchchargerid
+
+    def get(self, request):
+        record_list = []
+        for record in self.queryset.all():
+            record_list.append({"intrecordid": record.intrecordid,
+                                "dttfinishtime": str(record.dttfinishtime).replace("T", " "),
+                                "dblenergy": record.dblenergy})
+        return Response({"result": record_list}, status=status.HTTP_200_OK)
+
+
+class RecentChargerStateListView(APIView):
+    """
+        This view automatically provide `list` function
+        """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    queryset = ChargerState.objects.all().order_by("-vchchargerid")[:10]  # vchchargerid
+
+    def get(self, request):
+        state_list = []
+        for state in self.queryset.all():
+            state_list.append({"vchchargerid": state.vchchargerid,
+                                "vchstate": state.vchstate,
+                                "vchcommand": state.vchcommand})
+        return Response({"result": state_list}, status=status.HTTP_200_OK)
+
+
+class ChargerInfoStatisticView(APIView):
+    """
+        This view automatically provide `list` function
+        """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    info_queryset = ChargerInfo.objects.all()  # vchchargerid
+    state_queryset = ChargerState.objects.all()  # vchchargerid
+
+    def get(self, request):
+        total_charger = 0
+        for info in self.info_queryset.all():
+            for state in self.state_queryset.all():
+                if info.vchchargerid == state.vchchargerid:
+                    total_charger += 1
+                    break
+
+        accumulate_power = 0
+        accumulate_minutes = 0
+        for info in self.info_queryset.all():
+            accumulate_power += info.dblaccumlatedpower
+            accumulate_minutes += info.dblaccumlatedminute
+
+        total_charging = 0
+        charging_states = ["Charging", "SuspendedEV", "Finishing", "PreCharging"]
+        for state in self.state_queryset.all():
+            if state.vchstate in charging_states:
+                total_charging += 1
+
+        return Response({"total_charger": total_charger, "accumulate_power": round(accumulate_power, 2),
+                         "accumulate_minutes": round(accumulate_minutes, 2), "total_charging": total_charging},
+                        status=status.HTTP_200_OK)
 
 
 class BasicSettingsView(APIView):
