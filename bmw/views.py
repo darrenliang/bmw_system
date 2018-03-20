@@ -48,7 +48,7 @@ class RecentChargingRecordListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargingRecord.objects.all().order_by("-dttfinishtime")[:10]  # vchchargerid
+    queryset = ChargingRecord.objects.all().order_by("-dttfinishtime")[:7]  # vchchargerid
 
     def get(self, request):
         record_list = []
@@ -65,7 +65,7 @@ class RecentChargerStateListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargerState.objects.all().order_by("-vchchargerid")[:10]  # vchchargerid
+    queryset = ChargerState.objects.all().order_by("-vchchargerid")[:7]  # vchchargerid
 
     def get(self, request):
         state_list = []
@@ -187,6 +187,7 @@ class BasicSettingsView(APIView):
             basic_setting.intmaxcurrenta = intmaxcurrenta
             basic_setting.intmaxcurrentb = intmaxcurrentb
             basic_setting.intmaxcurrentc = intmaxcurrentc
+            basic_setting.save()
             return Response({"vchcardreadercom": vchcardreadercom, "yeainstallyear": yeainstallyear,
                              "intinstallmonth": intinstallmonth, "blncurrentdistribution": blncurrentdistribution,
                              "vchpowermetercom": vchpowermetercom, "vchpowersequence": vchpowersequence,

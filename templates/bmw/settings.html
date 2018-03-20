@@ -14,59 +14,23 @@
                 <div class="col-lg-12">
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>最大电流</h5>
+                            <h5>参数设置</h5>
                         </div>
                         <div class="ibox-content">
-                            <form method="get" class="form-horizontal" id="form">
-                                <div class="form-group"><label class="col-sm-2 control-label">相位1</label>
+                            <form method="get" class="form-horizontal" id="settingsContent">
+                                <!--<div class="form-group"><label class="col-sm-2 control-label">相位1</label>
                                     <div class="col-sm-10"><input type="text" class="form-control" name="min"> <label class="error">请输入相位！</label>
                                     </div>
                                 </div>
-                                <div class="hr-line-dashed"></div>
-                                <div class="form-group"><label class="col-sm-2 control-label">相位2</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="min">
-                                    </div>
-                                </div>
-                                <div class="hr-line-dashed"></div>
-                                <div class="form-group"><label class="col-sm-2 control-label">相位3</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="min">
-                                    </div>
-                                </div>
-                                <div class="hr-line-dashed"></div>
-                                <div class="form-group">
-                                    <div class="col-sm-4 col-sm-offset-2">
-                                        <button class="btn btn-primary" type="submit">确定</button>
-                                        <button class="btn btn-white" type="submit">取消</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                                <div class="hr-line-dashed"></div>-->
 
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="ibox float-e-margins">
-                        <div class="ibox-title">
-                            <h5>FerroAMP</h5>
-                        </div>
-                        <div class="ibox-content">
-                            <form method="get" class="form-horizontal" id="form">
-                                <div class="form-group"><label class="col-sm-2 control-label">设置1</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="min"> <label class="error">请输入设置！</label>
-                                    </div>
-                                </div>
-                                <div class="hr-line-dashed"></div>
-                                <div class="form-group"><label class="col-sm-2 control-label">设置2</label>
-                                    <div class="col-sm-10"><input type="text" class="form-control" name="min">
-                                    </div>
-                                </div>
-                                <div class="hr-line-dashed"></div>
                                 <div class="form-group">
+                                    <div class="alert alert-success hidden">
+                                        Submit Successfully
+                                    </div>
                                     <div class="col-sm-4 col-sm-offset-2">
-                                        <button class="btn btn-primary" type="submit">确定</button>
-                                        <button class="btn btn-white" type="submit">取消</button>
+                                        <button id="sure" class="btn btn-primary" type="submit">确定</button>
+                                        <button class="btn btn-white" type="button">取消</button>
                                     </div>
                                 </div>
                             </form>
@@ -80,38 +44,120 @@
 
 
 {% block script %}
-    <!-- Jquery Validate -->
-    <script src="js/plugins/validate/jquery.validate.min.js"></script>
+<!-- Jquery Validate -->
+<script src="{% static 'js/plugins/validate/jquery.validate.min.js' %}"></script>
         <script>
             $(document).ready(function () {
-                $('.i-checks').iCheck({
-                    checkboxClass: 'icheckbox_square-green',
-                    radioClass: 'iradio_square-green',
+                $.ajax({
+                    url: '/api/basic/settings/',
+                    method: 'get',
+                    timeout: 5000,
+                    data: { },
+                    success: function(data){
+                        var html = '';
+                        for(var d in data){
+                            html += itemHtml(d, data[d]);
+                        }
+
+                        $('#settingsContent').prepend(html);
+
+                        $('#settingsContent').find('input').focus(function(){
+                            $('.alert-success').addClass('hidden');
+                        });
+
+                        //add form validation
+                        validate();
+                    },
+                    error: function(){
+                        console.log('connect api/basic/settings get failed');
+                    }
                 });
-                 $("#form").validate({
-                     rules: {
-                         password: {
-                             required: true,
-                             minlength: 3
-                         },
-                         url: {
-                             required: true,
-                             url: true
-                         },
-                         number: {
-                             required: true,
-                             number: true
-                         },
-                         min: {
-                             required: true,
-                             minlength: 6
-                         },
-                         max: {
-                             required: true,
-                             maxlength: 4
-                         }
-                     }
-                 });
+
+                function itemHtml(name, value){
+                    var html = '<div class="form-group">\
+                                <label class="col-sm-3 control-label">'+name+'</label>\
+                                    <div class="col-sm-3">\
+                                        <input type="text" class="form-control" value="'+value+'" name="'+name+'" required>\
+                                    </div>\
+                                </div>\
+                                <div class="hr-line-dashed">\
+                            </div>';
+
+                    return html;
+                }
+
+                function validate(){
+
+                    $.validator.addMethod("int",function(value,element,params){
+                        return /^\d+$/.test(value);
+                    },"This field must be an interger");
+
+                    $.validator.addMethod("float",function(value,element,params){
+                        return /[-+]?(?:\d*\.?\d+|\d+\.?\d*)(?:[eE][-+]?\d+)?/.test(value);
+                    },"This field must be a float number");
+
+                    var form1 = $('#settingsContent');
+                    var alert_success = $('.alert-success');
+
+                    form1.validate({
+                        rules: {
+                            intinstallmonth: {
+                                 int: true
+                            },
+                            blncurrentdistribution: {
+                                 int: true
+                            },
+                            intcurrency: {
+                                 int: true
+                            },
+                            intchargingdeductionminute: {
+                                 int: true
+                            },
+                            intdeductionprioritypower: {
+                                 int: true
+                            },
+                            intdeductionpriorityminute: {
+                                 int: true
+                            },
+                            dblpowercoefficient: {
+                                 float: true,
+                                 int: false
+                            },
+                            blninternaltesting: {
+                                 int: true
+                            },
+                            intmaxcurrenta: {
+                                 int: true
+                            },
+                            intmaxcurrentb: {
+                                 int: true
+                            },
+                            intmaxcurrentc: {
+                                 int: true
+                            }
+                        },
+                        submitHandler: function (form) {
+                            $.ajax({
+                                url: '/api/basic/settings/',
+                                method: 'post',
+                                timeout: 5000,
+                                data: $('#settingsContent').serialize(),
+                                success: function(data){
+                                    if(typeof data === 'object'){
+                                        alert_success.removeClass('hidden');
+                                    }
+                                },
+                                error: function(){
+                                    console.log('connect api/basic/settings post failed');
+                                }
+                            });
+                            return false;
+                        },
+                        invalidHandler: function (event, validator) { //display error alert on form submit
+                            alert_success.addClass('hidden');
+                        },
+                    });
+                }
             });
         </script>
 {% endblock script %}

@@ -2,244 +2,184 @@
 {% load staticfiles %}
 {% block content %}
 
-                    <div class="wrapper wrapper-content animated fadeInRight">
-                        <div class="row">
-                           <div class="col-lg-3">
-                                <div class="widget style1 navy-bg">
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                            <i class="icon iconfont icon-chongdianzhuang fa-4x"></i>
-                                        </div>
-                                        <div class="col-xs-8 text-right">
-                                            <span> 电桩总数 </span>
-                                            <h2 class="font-bold">54</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="widget style1 navy-bg">
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                            <i class="icon iconfont icon-chargingpile fa-4x"></i>
-                                        </div>
-                                        <div class="col-xs-8 text-right">
-                                            <span> 总充电电量 </span>
-                                            <h2 class="font-bold">156604</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="widget style1 lazur-bg">
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                            <i class="icon iconfont icon-attacktime fa-4x"></i>
-                                        </div>
-                                        <div class="col-xs-8 text-right">
-                                            <span> 总充电次数 </span>
-                                            <h2 class="font-bold">54</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <div class="widget style1 yellow-bg">
-                                    <div class="row">
-                                        <div class="col-xs-4">
-                                            <i class="icon iconfont icon-zhengzaishiyong fa-4x"></i>
-                                        </div>
-                                        <div class="col-xs-8 text-right">
-                                            <span> 正在使用 </span>
-                                            <h2 class="font-bold">12</h2>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- chart 1 -->
-                        <div class="row">
-                            <div class="col-md-6">
-                                <!-- 充电电量变化 -->
-                                <div class="ibox float-e-margins">
-                                    <div class="ibox-title">
-                                        <h5>充电电量变化</h5>
-                                        <div class="ibox-tools">
-                                            <select id="select_chart1">
-                                                <option value="chart1">按点位排列</option>
-                                                <option value="chart11">按电桩排列</option>
-                                            </select>
-                                        </div>
-                                        <div class="ibox-content">
-                                            <div id="chart1" class="chart" style="width: 500px;height:300px;"></div>
-                                            <div id="chart11" class="chart hidden" style="width: 500px;height:300px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                                <!-- 异常电桩总览 -->
-                            <div class="col-md-6">
-                                <div class="ibox float-e-margins">
-                                    <div class="ibox-title">
-                                        <h5>充电记录总览</h5>
-                                        <div class="ibox-tools">
-                                            <a class="collapse-link">
-                                                <i class="fa fa-chevron-up"></i>
-                                            </a>
-                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-wrench"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-user">
-                                                <li><a href="#">Config option 1</a>
-                                                </li>
-                                                <li><a href="#">Config option 2</a>
-                                                </li>
-                                            </ul>
-                                            <a class="close-link">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </div>
-                                        <div class="ibox-content">
-                                            <table class="table table-striped">
-                                                <thead>
-                                                <tr>
-                                                    <th>Record ID</th>
-                                                    <th>Finish Time</th>
-                                                    <th>Energy</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>巴扎嘿</td>
-                                                        <td>234234</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>五黄</td>
-                                                        <td>34242</td>
-                                                        <td class="text-warning"> <i class="fa fa-level-down"></i> -20% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>水电费</td>
-                                                        <td>846</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>玩儿</td>
-                                                        <td>34</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>温润如玉</td>
-                                                        <td>1</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>体育</td>
-                                                        <td>0</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>老师</td>
-                                                        <td>0</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- chart 2 -->
-                        <div class="row">
-                             <div class="col-md-6">
-                                <div class="ibox float-e-margins">
-                                    <div class="ibox-title">
-                                        <h5>电桩总览</h5>
-                                        <div class="ibox-tools">
-                                            <a class="collapse-link">
-                                                <i class="fa fa-chevron-up"></i>
-                                            </a>
-                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-wrench"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-user">
-                                                <li><a href="#">Config option 1</a>
-                                                </li>
-                                                <li><a href="#">Config option 2</a>
-                                                </li>
-                                            </ul>
-                                            <a class="close-link">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </div>
-                                        <div class="ibox-content">
-                                            <table class="table table-striped">
-                                                <thead>
-                                                <tr>
-                                                    <th>Charger ID</th>
-                                                    <th>State</th>
-                                                    <th>Command</th>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>巴扎嘿</td>
-                                                        <td>234234</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>五黄</td>
-                                                        <td>34242</td>
-                                                        <td class="text-warning"> <i class="fa fa-level-down"></i> -20% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>水电费</td>
-                                                        <td>846</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>玩儿</td>
-                                                        <td>34</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>温润如玉</td>
-                                                        <td>1</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>体育</td>
-                                                        <td>0</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>老师</td>
-                                                        <td>0</td>
-                                                        <td class="text-navy"> <i class="fa fa-level-up"></i> 26% </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <!-- 充电电量变化 -->
-                                <div class="ibox float-e-margins">
-                                    <div class="ibox-title">
-                                        <h5>联网状态总览</h5>
-                                        <div class="ibox-content">
-                                            <div id="chart2" style="width: 500px;height:300px;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                        </div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row" id="overviewStats">
+       <div class="col-lg-3">
+            <div class="widget style1 navy-bg">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <i class="icon iconfont icon-chongdianzhuang fa-4x"></i>
                     </div>
+                    <div class="col-xs-8 text-right">
+                        <span> 电桩总数 </span>
+                        <h2 class="font-bold value">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="widget style1 navy-bg">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <i class="icon iconfont icon-chargingpile fa-4x"></i>
+                    </div>
+                    <div class="col-xs-8 text-right">
+                        <span> 总充电电量 </span>
+                        <h2 class="font-bold value">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="widget style1 lazur-bg">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <i class="icon iconfont icon-attacktime fa-4x"></i>
+                    </div>
+                    <div class="col-xs-8 text-right">
+                        <span> 总充电次数 </span>
+                        <h2 class="font-bold value">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="widget style1 yellow-bg">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <i class="icon iconfont icon-zhengzaishiyong fa-4x"></i>
+                    </div>
+                    <div class="col-xs-8 text-right">
+                        <span> 正在使用 </span>
+                        <h2 class="font-bold value">0</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- chart 1 -->
+    <div class="row">
+        <div class="col-md-6">
+            <!-- 充电电量变化 -->
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>充电电量变化</h5>
+                    <div class="ibox-tools">
+                        <select id="select_chart1">
+                            <option value="chart1">按点位排列</option>
+                            <option value="chart11">按电桩排列</option>
+                        </select>
+                    </div>
+                    <div class="ibox-content">
+                        <div id="chart1" class="chart" style="width: 500px;height:300px;"></div>
+                        <div id="chart11" class="chart hidden" style="width: 500px;height:300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <!-- 异常电桩总览 -->
+        <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>充电记录总览</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#">Config option 1</a>
+                            </li>
+                            <li><a href="#">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Record ID</th>
+                                <th>Finish Time</th>
+                                <th>Energy</th>
+                            </tr>
+                            </thead>
+                            <tbody id="recoardAll">
+                                <!-- <tr>
+                                    <td>巴扎嘿</td>
+                                    <td>234234</td>
+                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- chart 2 -->
+    <div class="row">
+         <div class="col-md-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>电桩总览</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="#">Config option 1</a>
+                            </li>
+                            <li><a href="#">Config option 2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Charger ID</th>
+                                <th>State</th>
+                                <th>Command</th>
+                            </tr>
+                            </thead>
+                            <tbody id="stateList">
+                                <!-- <tr>
+                                    <td>巴扎嘿</td>
+                                    <td>234234</td>
+                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <!-- 充电电量变化 -->
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>联网状态总览</h5>
+                    <div class="ibox-content">
+                        <div id="chart2" style="width: 500px;height:300px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 {% endblock content %}
 
@@ -323,65 +263,151 @@
             // 使用刚指定的配置项和数据显示图表。
             chart1.setOption(option);
 
-            /**
-            * 饼图
-            */
-            var chart2 = echarts.init(document.getElementById('chart2'));
-            chart2.title = '联网状态总览';
 
-            option = {
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b}: {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'left',
-                    data:['紧急制动','就绪','充电中','充电完成','断线','准备充电']
-                },
-                series: [
-                    {
-                        name:'访问来源',
-                        type:'pie',
-                        radius: ['50%', '70%'],
-                        avoidLabelOverlap: false,
-                        label: {
-                            normal: {
-                                show: false,
-                                position: 'center'
-                            },
-                            emphasis: {
-                                show: true,
-                                textStyle: {
-                                    fontSize: '30',
-                                    fontWeight: 'bold'
-                                }
-                            }
-                        },
-                        labelLine: {
-                            normal: {
-                                show: false
-                            }
-                        },
-                        data:[
-                            {value:335, name:'紧急制动'},
-                            {value:310, name:'就绪'},
-                            {value:234, name:'充电中'},
-                            {value:135, name:'充电完成'},
-                            {value:548, name:'断线'},
-                            {value:1000, name:'准备充电'}
-                        ]
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            chart2.setOption(option);
 
             /* chart 1 select */
             $('#select_chart1').change(function(){
                 var id = $(this).val();
                 $('#'+id).removeClass('hidden').siblings().addClass('hidden');
+            });
+
+
+            //顶部电桩总数...Charger Info数量统计接口
+            $.ajax({
+                url: '/api/charger/info/statistic/',
+                method: 'get',
+                timeout: 5000,
+                success: function(data){
+                    var i = 0;
+                    for(var d in data){
+                        $('#overviewStats .value').eq(i).text(data[d]);
+                        i++;
+                    }
+                },
+                error: function(){
+                    console.log('connect api/charger/info/statistic/ failed');
+                }
+            });
+
+            // 充电记录总览接口
+            $.ajax({
+                url: '/api/recent/charging/record/list/',
+                method: 'get',
+                timeout: 5000,
+                success: function(data){
+                    var result = data.result;
+                    var html = '';
+
+                    $.each(result, function(index, item){
+                        html += '<tr>\
+                                    <td>'+item.intrecordid+'</td>\
+                                    <td>'+item.dttfinishtime+'</td>\
+                                    <td class="text-navy"> '+item.dblenergy+' </td>\
+                                </tr>';
+                    });
+                    $('#recoardAll').html(html);
+                },
+                error: function(){
+                    console.log('connect api/recent/charging/record/list/ failed');
+                }
+            });
+
+            //电桩总览接口
+            $.ajax({
+                url: '/api/recent/charger/state/list/',
+                method: 'get',
+                timeout: 5000,
+                success: function(data){
+                    var result = data.result;
+                    var html = '';
+
+                    $.each(result, function(index, item){
+                        html += '<tr>\
+                                    <td>'+item.vchchargerid+'</td>\
+                                    <td>'+item.vchstate+'</td>\
+                                    <td class="text-navy"> '+item.vchcommand+' </td>\
+                                </tr>';
+                    });
+                    $('#stateList').html(html);
+                },
+                error: function(){
+                    console.log('connect api/recent/charging/record/list/ failed');
+                }
+            });
+
+            //联网状态总览
+            $.ajax({
+                url: '/api/charger/state/statistic/',
+                method: 'get',
+                timeout: 5000,
+                success: function(data){
+                    var result = data.result;
+                    var data = [];
+                    var dataIndex = [];
+                    $.each(result, function(index, item){
+                        for(var ite in item){
+                            data.push({ value: item[ite], name: ite});
+                            dataIndex.push(ite);
+                        }
+                    })
+                    /**
+                    * 饼图
+                    */
+                    var chart2 = echarts.init(document.getElementById('chart2'));
+                    chart2.title = '联网状态总览';
+
+                    option = {
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b}: {c} ({d}%)"
+                        },
+                        legend: {
+                            type: 'scroll',
+                            orient: 'vertical',
+                            right: 10,
+                            top: 20,
+                            bottom: 20,
+                            data: dataIndex,
+                            selected: data.selected
+                        },
+                        series: [
+                            {
+                                name:'',
+                                type:'pie',
+                                radius: ['50%', '70%'],
+                                center: ['40%', '50%'],
+                                avoidLabelOverlap: false,
+                                label: {
+                                    normal: {
+                                        show: false,
+                                        position: 'center'
+                                    },
+                                    emphasis: {
+                                        show: true,
+                                        textStyle: {
+                                            fontSize: '30',
+                                            fontWeight: 'bold'
+                                        }
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data:data
+                            }
+                        ]
+                    };
+
+                    // 使用刚指定的配置项和数据显示图表。
+                    chart2.setOption(option);
+
+
+                },
+                error: function(){
+                    console.log('connect api/charger/state/statistic/ failed');
+                }
             });
         });
     </script>
