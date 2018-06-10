@@ -74,8 +74,43 @@
                 });
 
                 function itemHtml(name, value){
+                    var labelname = name;
+                    if(name=='vchcardreadercom')
+                        labelname = name + '（读卡器串口号）';
+                    else if(name=='yeainstallyear')
+                        labelname = name + '（安装年份）';
+                    else if(name=='intinstallmonth')
+                        labelname = name + '（安装月份）';
+                    else if(name=='yeainstallyear')
+                        labelname = name + '（安装年份）';
+                    else if(name=='blncurrentdistribution')
+                        labelname = name + '（是否使用负载均衡）';
+                    else if(name=='vchpowermetercom')
+                        labelname = name + '（电表串口号）';
+                    else if(name=='vchpowersequence')
+                        labelname = name + '（相位顺序）';
+                    else if(name=='dblchargingdeductionpower')
+                        labelname = name + '（阶梯减少电量）';
+                    else if(name=='intchargingdeductionminute')
+                        labelname = name + '（阶梯减少时间）';
+                    else if(name=='intdeductionprioritypower')
+                        labelname = name + '（阶梯电量分级）';
+                    else if(name=='intdeductionpriorityminute')
+                        labelname = name + '（阶梯时间分级）';
+                    else if(name=='dblpowercoefficient')
+                        labelname = name + '（能源效率）';
+                    else if(name=='blninternaltesting')
+                        labelname = name + '（是否内部测试）';
+                    else if(name=='intmaxcurrenta')
+                        labelname = name + '（A相位最大电流）';
+                    else if(name=='intmaxcurrentb')
+                        labelname = name + '（B相位最大电流）';
+                    else if(name=='intmaxcurrentc')
+                        labelname = name + '（C相位最大电流）';
+                    else if(name=='intcurrency')
+                        labelname = name + '（电流）';
                     var html = '<div class="form-group">\
-                                <label class="col-sm-3 control-label">'+name+'</label>\
+                                <label class="col-sm-3 control-label">'+labelname+'</label>\
                                     <div class="col-sm-3">\
                                         <input type="text" class="form-control" value="'+value+'" name="'+name+'" required>\
                                     </div>\

@@ -10,7 +10,7 @@
 <meta name="keywords" content="Fashion&Beauty Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template,
 Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
 <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
-<link rel="stylesheet" href="{% static 'login/css/flexslider.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="{% static 'login/css/flexslider.css' %}" type="text/css" media="screen" />
 <script src="{% static 'login/js/jquery.min.js' %}"></script>
 <script src="{% static 'login/js/responsiveslides.min.js' %}"></script>
 <script>
@@ -53,20 +53,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <!-- banner -->
 <div class="header">
 <div class="container">
-	<div class="col-md-3 header-left">
-		<div class="logo">
-			<h1><a href="index.html" id="logo_name">B M W</a></h1>
+	<div class="col-md-4 header-left">
+		<div>
+			<h1><a href="index.html" id="logo_name"><img src="{% static 'img/CRB_Logo_Small.png' %}"></a></h1>
 		</div>
 		
 		<div class="head-nav">
-			<span class="menu"><img src="images/menu.png" alt=""></span>
 				<div class="clearfix"> </div>
 					<ul class="cl-effect-16">
-						<li><a href="index.html" data-hover="HOME">主页</a></li>
-						<li><a href="about.html" data-hover="ABOUT">产品</a></li>
-						<li><a href="services.html" data-hover="SERVICES">服务</a></li>
-						<li><a href="fashion.html" data-hover="FASHION">联系方式</a></li>
-						<li><a href="blog.html" data-hover="BLOG">关于我们</a></li>
+						<li><a href="http://www.evpowergroup.com/" data-hover="主页">主页</a></li>
+						<li><a href="http://www.evpowergroup.com/page5.php" data-hover="产品">产品</a></li>
+						<li><a href="#" data-hover="系统使用方法">系统使用方法</a></li>
+						<li><a href="#" data-hover="联系方式">联系方式</a></li>
 					</ul>
 						<!-- script-for-nav -->
 							<script>
@@ -79,16 +77,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<!-- script-for-nav --> 
 
 		</div>
-		
-		<div class="b-search">
-				<form>
-					<input type="text" value="搜索" onfocus="this.value = '';" onblur="if (this.value == '') {this.value = 'Search';}">
-					<input type="submit" value="">
-				</form>
-			</div>
 			
 	</div>
-	<div class="col-md-9 header-right">
+	<div class="col-md-8 header-right">
 			<div class="log-sig">
 				<li><a href="/overview/">登录</a></li>
 				<li><a href="/overview/">注册</a></li>
@@ -106,22 +97,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <div class="login-page">
 		<div class="container">
 			<div class="account_grid">
-				<div class="col-md-6 login-left wow fadeInLeft" data-wow-delay="0.4s">
-					<h3>新闻动态</h3>
-					<ul>
-                        <li><a href="#">BMW X5的动态性确保您旅程中的驾驶乐趣（案例） 2017-09-18</a></li>
-                        <li><a href="#">BMW高效动力策略（案例） 2017-09-18</a></li>
-                        <li><a href="#">ECO PRO节能模式（案例） 2017-09-18</a></li>
-                        <li><a href="#">ECO PRO节能模式（案例） 2017-09-18</a></li>
-                        <li><a href="#">BMW EfficientDynamics（案例） 2017-09-18</a></li>
-                        <li><a href="#">BMW X5的动态性确保您旅程中的驾驶乐趣（案例） 2017-09-18</a></li>
-                        <li><a href="#">BMW高效动力策略（案例） 2017-09-18</a></li>
-                        <li><a href="#">ECO PRO节能模式（案例） 2017-09-18</a></li>
-                        <li><a href="#">ECO PRO节能模式（案例） 2017-09-18</a></li>
-                    </ul>
-
-			   </div>
-			   <div class="col-md-6 login-right wow fadeInRight" data-wow-delay="0.4s">
+			   <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
 					<h3>登录</h3>
 					<p>欢迎使用BMW后台管理系统，请您先登录.</p>
 					<form>

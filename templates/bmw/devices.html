@@ -68,15 +68,6 @@
                                             <a class="collapse-link">
                                                 <i class="fa fa-chevron-up"></i>
                                             </a>
-                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-wrench"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-user">
-                                                <li><a href="#">Config option 1</a>
-                                                </li>
-                                                <li><a href="#">Config option 2</a>
-                                                </li>
-                                            </ul>
                                             <a class="close-link">
                                                 <i class="fa fa-times"></i>
                                             </a>
@@ -96,15 +87,6 @@
                                             <a class="collapse-link">
                                                 <i class="fa fa-chevron-up"></i>
                                             </a>
-                                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                                <i class="fa fa-wrench"></i>
-                                            </a>
-                                            <ul class="dropdown-menu dropdown-user">
-                                                <li><a href="#">Config option 1</a>
-                                                </li>
-                                                <li><a href="#">Config option 2</a>
-                                                </li>
-                                            </ul>
                                             <a class="close-link">
                                                 <i class="fa fa-times"></i>
                                             </a>
@@ -126,19 +108,21 @@
                                             <tr>
                                                 <th>CID</th>
                                                 <th>IP</th>
-                                                <th>位置</th>
+                                                <th>Version</th>
                                                 <th>上次连接时间</th>
                                                 <th>状态</th>
+                                                <th>ModelID</th>
                                                 <th>操作命令</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>CID</td>
-                                                    <td>IP</td>
-                                                    <td>Axure模板库(5)-侧边栏</td>
-                                                    <td>2016年12月29日</td>
+                                                    <td><a href="/details/" target="_blank" role="button">05010101</a></td>
+                                                    <td>192.168.6.10-20</td>
+                                                    <td>CNMB19166</td>
+                                                    <td>当前时间</td>
                                                     <td class="text-navy">就绪</td>
+                                                    <td>EV-CHARGER-21KW</td>
                                                     <td>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>
@@ -148,11 +132,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>CID</td>
-                                                    <td>IP</td>
-                                                    <td>Axure模板库(5)-侧边栏</td>
-                                                    <td>2016年12月29日</td>
+                                                    <td><a href="/details/" target="_blank" role="button">05010102</a></td>
+                                                    <td>192.168.6.10-20</td>
+                                                    <td>CNMB19166</td>
+                                                    <td>当前时间</td>
                                                     <td class="text-navy">就绪</td>
+                                                    <td>EV-CHARGER-21KW</td>
                                                     <td>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>
@@ -162,11 +147,12 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td>CID</td>
-                                                    <td>IP</td>
-                                                    <td>Axure模板库(5)-侧边栏</td>
-                                                    <td>2016年12月29日</td>
+                                                    <td><a href="/details/" target="_blank" role="button">05010103</a></td>
+                                                    <td>192.168.6.10-20</td>
+                                                    <td>CNMB19166</td>
+                                                    <td>当前时间</td>
                                                     <td class="text-navy">就绪</td>
+                                                    <td>EV-CHARGER-21KW</td>
                                                     <td>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>
@@ -196,19 +182,19 @@
             /*实时电桩信息*/
             Morris.Area({
                 element: 'morris-area-chart',
-                data: [{ period: '2010 Q1', iphone: 2666, ipad: null, itouch: 2647 },
-                    { period: '2010 Q2', iphone: 2778, ipad: 2294, itouch: 2441 },
-                    { period: '2010 Q3', iphone: 4912, ipad: 1969, itouch: 2501 },
-                    { period: '2010 Q4', iphone: 3767, ipad: 3597, itouch: 5689 },
-                    { period: '2011 Q1', iphone: 6810, ipad: 1914, itouch: 2293 },
-                    { period: '2011 Q2', iphone: 5670, ipad: 4293, itouch: 1881 },
-                    { period: '2011 Q3', iphone: 4820, ipad: 3795, itouch: 1588 },
-                    { period: '2011 Q4', iphone: 15073, ipad: 5967, itouch: 5175 },
-                    { period: '2012 Q1', iphone: 10687, ipad: 4460, itouch: 2028 },
-                    { period: '2012 Q2', iphone: 8432, ipad: 5713, itouch: 1791 } ],
+                data: [{ period: '0 min', 点位1: 2, 点位2: 1, 点位3: 3 },
+                    { period: '10 min', 点位1:4, 点位2: 3, 点位3: 4 },
+                    { period: '20 min', 点位1: 5, 点位2: 8, 点位3: 5 },
+                    { period: '30 min', 点位1: 6, 点位2: 10, 点位3: 9 },
+                    { period: '40 min', 点位1: 12, 点位2: 17, 点位3: 12 },
+                    { period: '50 min', 点位1: 18, 点位2: 26, 点位3: 23 },
+                    { period: '60 min', 点位1: 30, 点位2: 23, 点位3: 32 },
+                    { period: '70 min', 点位1: 25, 点位2: 30, 点位3: 24 },
+                    { period: '80 min', 点位1: 12, 点位2: 25, 点位3: 17 },
+                    { period: '90 min', 点位1: 17, 点位2: 24, 点位3: 15 } ],
                 xkey: 'period',
-                ykeys: ['iphone', 'ipad', 'itouch'],
-                labels: ['iPhone', 'iPad', 'iPod Touch'],
+                ykeys: ['点位1', '点位2', '点位3'],
+                labels: ['点位1', '点位2', '点位3'],
                 pointSize: 2,
                 hideHover: 'auto',
                 resize: true,
@@ -237,7 +223,7 @@
                         center: ['50.5%', '50%'],
                         z: 3,
                         min: 0,
-                        max: 5,
+                        max: 200,
                         splitNumber: 5,
                         radius: '75%',
                         axisLine: {            // 坐标轴线
@@ -270,9 +256,9 @@
                         center: ['19%', '50%'],    // 默认全局居中
                         radius: '75%',
                         min:0,
-                        max:7,
+                        max:200,
                         //endAngle:45,
-                        splitNumber:7,
+                        splitNumber:5,
                         axisLine: {            // 坐标轴线
                             lineStyle: {       // 属性lineStyle控制线条样式
                                 width: 8
@@ -309,7 +295,7 @@
                         center: ['82%', '50%'],    // 默认全局居中
                         radius: '75%',
                         min: 0,
-                        max: 8,
+                        max: 200,
                         //startAngle: 135,
                         //  endAngle: 45,
                         splitNumber: 8,
@@ -348,9 +334,9 @@
             };
 
             setInterval(function (){
-                option.series[0].data[0].value = (Math.random()*5).toFixed(2) - 0;
-                option.series[1].data[0].value = (Math.random()*7).toFixed(2) - 0;
-                option.series[2].data[0].value = (Math.random()*2).toFixed(2) - 0;
+                option.series[0].data[0].value = 64;
+                option.series[1].data[0].value = 32;
+                option.series[2].data[0].value = 96;
                 guage1.setOption(option,true);
             },2000);
         });

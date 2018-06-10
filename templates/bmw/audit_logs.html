@@ -18,22 +18,22 @@
                             <div class="file-manager">
                                 <h5>点位1</h5>
                                 <ul class="folder-list" style="padding: 0">
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001100</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001101</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001102</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001103</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001104</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 75001105</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010101</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010102</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010103</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010104</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010105</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010106</a></li>
                                 </ul>
                                 <div class="hr-line-dashed"></div>
                                 <h5>点位2</h5>
                                 <ul class="folder-list" style="padding: 0">
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088100</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088102</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088103</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088104</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088105</a></li>
-                                    <li><a href=""><i class="fa fa-location-arrow"></i> 20088106</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010111</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010112</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010113</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010114</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010115</a></li>
+                                    <li><a href=""><i class="fa fa-location-arrow"></i> 05010116</a></li>
                                 </ul>
                                 <div class="clearfix"></div>
                             </div>
@@ -49,42 +49,23 @@
                             <div class="ibox float-e-margins">
                                 <div class="ibox-content">
                                     <form action="">
-                                        <div class="row p-r-10">
-                                            <div class="col-sm-4 m-b-xs r-p-r">
-                                                <label for="model" class="sr-only">模型</label>
-                                                <input type="text" id="model" placeholder=" 模型:ABC1234ABC" class="form-control">
-                                            </div>
-                                            <div class="col-sm-4 m-b-xs r-p-r">
-                                                <label for="serialNo" class="sr-only">SerialNo</label>
-                                                <input type="text" id="serialNo" placeholder="SerialNo" class="form-control">
-                                            </div>
-                                            <div class="col-sm-4 m-b-xs r-p-r">
-                                                <label for="FWVer" class="sr-only">拥有者</label>
-                                                <input type="text" id="FWVer" placeholder="拥有者" class="form-control">
-                                            </div>
-                                            
-                                        </div>
                                         <div class="row">
-                                            <div class="col-sm-2 m-b-xs r-p-r">
-                                                <select class="form-control inline">
-                                                    <option value="0">状态</option>
-                                                    <option value="1">充电器</option>
-                                                    <option value="2">逆變器</option>
-                                                    <option value="3">DC/DC</option>
-                                                </select>
+                                            <div class="col-sm-3 m-b-xs r-p-r">
+                                                <label for="model" class="sr-only">记录ID</label>
+                                                <input type="text" id="model" placeholder="记录ID" class="form-control">
                                             </div>
-                                            <div class="col-sm-4 m-b-xs r-p-r">
-                                                <label for="OwnerUserName" class="sr-only">供应商</label>
-                                                <input type="text" id="Owner Username" placeholder="供应商" class="form-control">
+                                            <div class="col-sm-3 m-b-xs r-p-r">
+                                                <label for="serialNo" class="sr-only">电桩ID</label>
+                                                <input type="text" id="serialNo" placeholder="电桩ID" class="form-control">
                                             </div>
                                             <div class="col-sm-2 m-b-xs r-p-r">
                                                 <div class="input-group date">
-                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="激活时间">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="开始充电时间">
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 m-b-xs r-p-r">
                                                 <div class="input-group date">
-                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="过期时间">
+                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control" placeholder="完成充电时间">
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 m-b-xs r-p-r">
@@ -98,73 +79,80 @@
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>模型</th>
-                                                    <th>SerialNo</th>
-                                                    <th>拥有者</th>
-                                                    <th>供应商</th>
+                                                    <th>记录ID</th>
+                                                    <th>电桩ID</th>
+                                                    <th>开始充电时间</th>
+                                                    <th>完成充电时间</th>
 
-                                                    <th>状态</th>
-                                                    <th>激活时间</th>
-                                                    <th>过期时间</th>
-
+                                                    <th>充电完成后解锁时间</th>
+                                                    <th>总电量</th>
                                                     <th>操作</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td><input type="checkbox" name="input[]"></td>
-                                                    <td>Model 1</td>
+                                                    <td>05010101</td>
                                                     <td>ABC1234ABC</td>
-                                                    <td>Owner Username</td>
-                                                    <td>Parent Owner</td>
-                                                    <td><span class="label label-primary">Activated</span></td>
                                                     <td>2017-01-01 00:00:00</td>
                                                     <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>30</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
-                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">查看</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">下载</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td><input type="checkbox"  name="input[]"></td>
-                                                    <td>Model 2</td>
+                                                    <td>05010102</td>
                                                     <td>ABC1234ABC</td>
-                                                    <td>Owner Username</td>
-                                                    <td>Parent Owner</td>
-                                                    <td><span class="label label-warning">Expired</span></td>
                                                     <td>2017-01-01 00:00:00</td>
                                                     <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>30</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
-                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">查看</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">下载</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td><input type="checkbox" name="input[]"></td>
-                                                    <td>Model 3</td>
+                                                    <td>05010103</td>
                                                     <td>ABC1234ABC</td>
-                                                    <td>Owner Username</td>
-                                                    <td>Parent Owner</td>
-                                                    <td><span class="label label-info">Suspended</span></td>
                                                     <td>2017-01-01 00:00:00</td>
                                                     <td>2017-01-01 00:00:00</td>
+                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>32</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
-                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">查看</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">下载</button>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td><input type="checkbox" name="input[]"></td>
-                                                    <td>Model 4</td>
+                                                    <td>05010104</td>
                                                     <td>ABC1234ABC</td>
-                                                    <td>Owner Username</td>
-                                                    <td>Parent Owner</td>
-                                                    <td><span class="label label-danger">Not activated</span></td>
-                                                    <td>2017-01-01 00:00:00</td>
-                                                    <td>2017-01-01 00:00:00</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>25</td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-white" type="submit">编辑</button>
-                                                        <button class="btn btn-sm btn-white" type="submit">删除</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">查看</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">下载</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><input type="checkbox" name="input[]"></td>
+                                                    <td>05010105</td>
+                                                    <td>ABC1234ABC</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>2018-01-01 00:00:00</td>
+                                                    <td>28</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-white" type="submit">查看</button>
+                                                        <button class="btn btn-sm btn-white" type="submit">下载</button>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -198,9 +186,6 @@
                                                 </span>
                                                 <p>1 ~ 10 items，3399 in total</p> -->
                                             </nav>
-                                        </div>
-                                        <div class="form-actions pull-right">
-                                            <button class="btn btn-danger" type="submit"><i class="fa fa-trash"></i>&nbsp;&nbsp;删除选中</button>
                                         </div>
                                     </div>
                                 </div>
