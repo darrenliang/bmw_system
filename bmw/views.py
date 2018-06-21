@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta
+from django.core.exceptions import ObjectDoesNotExist
+
 from django.conf import settings
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -15,6 +17,53 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting
+
+
+@api_view(['GET'])
+def get_charger_list(request):
+    """
+    相位仪表图，表示该点位电源供给方三个相位的电流使用情况。监控防止超出用量跳闸。
+    右上角图标可进入设置界面设置该点位三个相位电流上限。
+    上限电流作为负载均衡系统的分配参数供计算每台电桩充电时的最大电流。
+    """
+
+    if request.method == 'GET':
+        data = []
+        charger_info_list = ChargerInfo.objects.all()
+        charger_state_list = ChargerState.objects.all()
+        for charger_id in charger_info_list.values_list("vchchargerid", flat=True).union(
+                charger_state_list.values_list("vchchargerid", flat=True)):
+            charger_info = charger_info_list.get(vchchargerid=charger_id)
+            try:
+                charger_state = charger_state_list.get(vchchargerid=charger_id)
+                vch_state = charger_state.vchstate
+            except ObjectDoesNotExist:
+                vch_state = None
+            data.append({"vch_charger_id": charger_id,
+                         "vch_firmware_ver": charger_info.vchfirmwarever,
+                         "vch_model_id": charger_info.vchmodelid,
+                         "vch_state": vch_state})
+        return Response({"data": data}, status=status.HTTP_200_OK)
+    return Response({"message": "Error request method or None object!"},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_max_current_list(request):
+    """
+    点位电桩列表，包含该点位所有电桩的实时情况和操作界面
+    """
+    if request.method == 'GET':
+        basic_setting = BasicSetting.objects.first()
+        if basic_setting:
+            int_max_current_a = basic_setting.intmaxcurrenta
+            int_max_current_b = basic_setting.intmaxcurrentb
+            int_max_current_c = basic_setting.intmaxcurrentc
+            return Response({"int_max_current_a": int_max_current_a,
+                             "int_max_current_b": int_max_current_b,
+                             "int_max_current_c": int_max_current_c},
+                            status=status.HTTP_200_OK)
+    return Response({"message": "Error request method or None object!"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ChargerStateStatisticView(APIView):
