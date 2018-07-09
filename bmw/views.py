@@ -49,6 +49,42 @@ def get_charger_list(request):
 
 
 @api_view(['GET'])
+def get_monthly_energy(request):
+    """
+    SELECT sum(dblenergy) FROM evproject.charging_record where dttFinishTime
+    between '2009-01-01' and '2009-02-01' and vchChargerID = ‘xxxxxxxx’;
+    用如上示例SQL查询计算出前6个月每台电桩的充电量
+    """
+
+    if request.method == 'GET':
+        charger_id = request.GET.get("charger_id")
+        data = {}
+        # now = datetime.now()
+        # current_year = now.year
+        # current_month = now.month
+        current_year = 2015
+        current_month = 12
+
+        queryset = ChargingRecord.objects.all()
+        queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
+
+        if queryset.count() < 1:
+            return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        for i in range(1, current_month + 1):
+            start_date = datetime(year=current_year, month=i, day=1)
+            end_date = datetime(year=current_year if i < 12 else current_year+1,
+                                month=i+1 if i < 12 else 1, day=1)
+            month_queryset = queryset.filter(dttfinishtime__gte=start_date, dttfinishtime__lt=end_date)
+            sum_energy = sum([charger.dblenergy for charger in month_queryset])
+            data[str(i)] = sum_energy
+        return Response({"data": data}, status=status.HTTP_200_OK)
+    return Response({"message": "Error request method or None object!"},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 def get_max_current_list(request):
     """
     点位电桩列表，包含该点位所有电桩的实时情况和操作界面

@@ -567,7 +567,226 @@ Vary: Accept
 }
 ```
 
+### 2.10 充电电量变化
+
+这个api需要在http://localhost:8000/overview/ 页面解析，没有参数的为（默认）：http://localhost:8000/api/monthly/energy/， 输入参数（会有一个charger_id list 的api）：http://localhost:8000/api/monthly/energy/?charger_id=21509005，横坐标范围是1~12月份
+
+Request:
+
+```
+GET http://localhost:8000/api/monthly/energy/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "data": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0,
+        "10": 0,
+        "11": 91.87100000000004,
+        "12": 60.93099999999999
+    }
+}
+```
+
+### 2.11 相位仪表图
+
+这个api需要在http://localhost:8000/overview/ 页面解析，右边的3个相位数值
+
+Request:
+
+```
+GET http://localhost:8000/api/max/current/list/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "int_max_current_a": 32,
+    "int_max_current_b": 32,
+    "int_max_current_c": 32
+}
+```
+
+### 2.12 点位电装列表
+
+这个api需要在http://localhost:8000/devices/ 页面解析，最下面的列表，保留最右边操作命令，左边的列表表示为如下参数列表的4个参数Charger ID（电桩ID）、Firmware Ver（固件版本）、Model ID（固件ID）、State（状态），列表名字用中英文表示
+
+Request:
+
+```
+GET http://localhost:8000/api/charger/list/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "data": [
+        {
+            "vch_charger_id": "00504001",
+            "vch_firmware_ver": "271015 ",
+            "vch_model_id": "",
+            "vch_state": "BootUp"
+        },
+        {
+            "vch_charger_id": "60303001",
+            "vch_firmware_ver": "HKMB19167 ",
+            "vch_model_id": "",
+            "vch_state": "BootUp"
+        },
+        {
+            "vch_charger_id": "10245001",
+            "vch_firmware_ver": "",
+            "vch_model_id": "EVC32N",
+            "vch_state": "hahaha"
+        },
+        {
+            "vch_charger_id": "10245002",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "10245003",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "10245005",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "15"
+        },
+        {
+            "vch_charger_id": "10245006",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "10245007",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "10245008",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "10245004",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "2"
+        },
+        {
+            "vch_charger_id": "21509001",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "bootup"
+        },
+        {
+            "vch_charger_id": "21509002",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "bootup"
+        },
+        {
+            "vch_charger_id": "21509003",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": "bootup"
+        },
+        {
+            "vch_charger_id": "21509004",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": null
+        },
+        {
+            "vch_charger_id": "21509005",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": null
+        },
+        {
+            "vch_charger_id": "21509006",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": null
+        },
+        {
+            "vch_charger_id": "21509007",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": null
+        },
+        {
+            "vch_charger_id": "21509008",
+            "vch_firmware_ver": "2",
+            "vch_model_id": "Amos_EVG-32N",
+            "vch_state": null
+        }
+    ]
+}
+```
+
 ### 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
