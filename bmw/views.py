@@ -62,8 +62,8 @@ def get_monthly_energy(request):
         # now = datetime.now()
         # current_year = now.year
         # current_month = now.month
-        current_year = 2015
-        current_month = 12
+        year = 2015
+        month = 12
 
         queryset = ChargingRecord.objects.all()
         queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
@@ -72,13 +72,18 @@ def get_monthly_energy(request):
             return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        for i in range(1, current_month + 1):
-            start_date = datetime(year=current_year, month=i, day=1)
-            end_date = datetime(year=current_year if i < 12 else current_year+1,
-                                month=i+1 if i < 12 else 1, day=1)
+        for i in range(1, 7):  # provide recent 6 month
+            start_date = datetime(year=year, month=month, day=1)
+            end_date = datetime(year=year if month < 12 else year + 1, month=month + 1 if month < 12 else 1, day=1)
             month_queryset = queryset.filter(dttfinishtime__gte=start_date, dttfinishtime__lt=end_date)
             sum_energy = sum([charger.dblenergy for charger in month_queryset])
-            data[str(i)] = sum_energy
+
+            dt = datetime.strptime("{}-{}".format(year, month), "%Y-%m")
+            print("date=", dt.strftime("%Y-%m"))
+            data[dt.strftime("%Y-%m")] = sum_energy
+
+            month = month - 1 if month > 1 else 12
+            year = year - 1 if month == 12 else year
         return Response({"data": data}, status=status.HTTP_200_OK)
     return Response({"message": "Error request method or None object!"},
                     status=status.HTTP_400_BAD_REQUEST)

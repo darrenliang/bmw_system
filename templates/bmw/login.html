@@ -13,42 +13,45 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <link rel="stylesheet" href="{% static 'login/css/flexslider.css' %}" type="text/css" media="screen" />
 <script src="{% static 'login/js/jquery.min.js' %}"></script>
 <script src="{% static 'login/js/responsiveslides.min.js' %}"></script>
+<link href="/static/font-awesome/css/font-awesome.css" rel="stylesheet">
 <!-- slider -->
 <script src="{% static 'login/js/swiper-4.3.3.min.js' %}"></script>
 <link href="{% static 'login/css/swiper-4.3.3.min.css' %}" rel="stylesheet" type="text/css" media="all">
 
   <script type="text/javascript" src="js/move-top.js"></script>
        <script type="text/javascript" src="js/easing.js"></script>
-		<script type="text/javascript">
-			jQuery(document).ready(function($) {
-				$(".scroll").click(function(event){		
-					event.preventDefault();
-					$('html,body').animate({scrollTop:$(this.hash).offset().top},1200);
-				});
-			});
-		</script>
-		<script type="text/javascript">
-		$(document).ready(function() {
-				/*
-				var defaults = {
-				containerID: 'toTop', // fading element id
-				containerHoverID: 'toTopHover', // fading element hover id
-				scrollSpeed: 1200,
-				easingType: 'linear' 
-				};
-				*/
-			//$().UItoTop({ easingType: 'easeOutQuart' });
-		});
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $(".scroll").click(function(event){
+                    event.preventDefault();
+                    $('html,body').animate({scrollTop:$(this.hash).offset().top},1200);
+                });
+            });
+        </script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+                /*
+                var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+                };
+                */
+            //$().UItoTop({ easingType: 'easeOutQuart' });
+        });
 </script>
 
 <style>
-	.header{ width: 100%; height: 50px; line-height: 50px; padding: 0; padding-left: 10px; background-color: #1ab394; color: #fff; font-size: 16px; }
-	.header h2{ line-height: 50px; font-size: 20px; }
+    .header{ width: 100%; height: 50px; line-height: 50px; padding: 0; padding-left: 10px; background-color: #1ab394; color: #fff; font-size: 16px; }
+    .header h2{ line-height: 50px; font-size: 20px; margin-bottom: 0; }
+    .header .nav > li > a{ padding: 0 10px; font-size: 14px; color: #fff;}
+    .header .dropdown-menu li{ overflow: hidden; }
 
-	.slider{ width: 100%; height: 100%; }
-	.slider .swiper-slide{ width: 100%; height: 100%; }
-	.swiper-button-prev{ background-image: url("{% static 'login/images/left.png' %}") }
-	.swiper-button-next{ background-image: url("{% static 'login/images/right.png' %}") }
+    .slider{ width: 100%; height: 100%; }
+    .slider .swiper-slide{ width: 100%; height: 100%; }
+    .swiper-button-prev{ background-image: url("{% static 'login/images/left.png' %}") }
+    .swiper-button-next{ background-image: url("{% static 'login/images/right.png' %}") }
 </style>
 </head>
 <body>
@@ -56,110 +59,149 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
 
 <div class="container">
-	<div class="row">
-		<div class="header">
-			<h2>负载均衡管理系统</h2>
-		</div>
-	</div>
-	
-	<div class="row">
-		<div class="col-md-4 header-left">
-			<div>
-				<h1><a href="index.html" id="logo_name"><img src="{% static 'img/CRB_Logo_Small.png' %}"></a></h1>
-			</div>
-			
-			<div class="head-nav">
-				<div class="clearfix"> </div>
-				<ul class="cl-effect-16">
-					<li><a href="http://www.evpowergroup.com/" data-hover="主页">主页</a></li>
-					<li><a href="http://www.evpowergroup.com/page5.php" data-hover="产品">产品</a></li>
-					<li><a href="#" data-hover="系统使用方法">系统使用方法</a></li>
-					<li><a href="#" data-hover="联系方式">联系方式</a></li>
-				</ul>
-				<!-- script-for-nav -->
-				<script>
-					$( "span.menu" ).click(function() {
-						$( ".head-nav ul" ).slideToggle(300, function() {
-										// Animation complete.
-									});
-					});
-				</script>
-				<!-- script-for-nav --> 
-			</div>
-		</div>
-		<div class="col-md-8 header-right">
-			<div class="slider">
-				<div class="swiper-container">
-				    <div class="swiper-wrapper">
-				        <div class="swiper-slide">
-							<img src="{% static 'login/images/banner3.jpg' %}" alt="">
-				        </div>
-				        <div class="swiper-slide">
-							<img src="{% static 'login/images/banner4.jpg' %}" alt="">
-				        </div>
-				        <div class="swiper-slide">
-							<img src="{% static 'login/images/banner1.jpg' %}" alt="">
-				        </div>
-				    </div>
-				  
-				    <!-- 如果需要导航按钮 -->
-				    <div class="swiper-button-prev"></div>
-				    <div class="swiper-button-next"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <!-- <div class="row">
+        <div class="header">
+            <h2>负载均衡管理系统</h2>
+        </div>
+    </div> -->
+
+    <div class="row">
+        <div class="header">
+            <div class="navbar-header">
+                <h2>负载均衡管理系统</h2>
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-envelope"></i> 联系方式
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="#">
+                                <div><i class="fa fa-twitter fa-fw"></i> [EVPower] Yu Jielin</div>
+                                <div class="text-muted small">jay.yu@evpowergroup.com</div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#">
+                                <div><i class="fa fa-twitter fa-fw"></i> [MUZITECH] Liang Chaoyun</div>
+                                <div class="text-muted small">chaoyun@163.com</div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 header-left">
+            <div>
+                <h1><a href="index.html" id="logo_name"><img src="{% static 'img/CRB_Logo_Small.png' %}"></a></h1>
+            </div>
+
+            <div class="head-nav">
+                <div class="clearfix"> </div>
+                <ul class="cl-effect-16">
+                    <li><a href="http://www.evpowergroup.com/" data-hover="主页">主页</a></li>
+                    <li><a href="http://www.evpowergroup.com/page5.php" data-hover="产品">产品</a></li>
+                    <li><a href="#" data-hover="系统使用方法">系统使用方法</a></li>
+                </ul>
+                <!-- script-for-nav -->
+                <script>
+                    $( "span.menu" ).click(function() {
+                        $( ".head-nav ul" ).slideToggle(300, function() {
+                                        // Animation complete.
+                                    });
+                    });
+                </script>
+                <!-- script-for-nav -->
+            </div>
+        </div>
+        <div class="col-md-8 header-right">
+            <div class="slider">
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img src="{% static 'login/images/banner3.jpg' %}" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="{% static 'login/images/banner4.jpg' %}" alt="">
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="{% static 'login/images/banner1.jpg' %}" alt="">
+                        </div>
+                    </div>
+
+                    <!-- 如果需要导航按钮 -->
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- banner -->
 <div class="login-page">
-		<div class="container">
-			<div class="account_grid">
-			   <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
-					<h3>登录</h3>
-					<p>欢迎使用BMW后台管理系统，请您先登录.</p>
-					<form>
-						<div>
-							<span>用户名<label>*</label></span>
-							<input type="text"> 
-						</div>
-						<div>
-							<span>密码<label>*</label></span>
-							<input type="password"> 
-						</div>
-						<a class="forgot" href="#">忘记密码？&nbsp;</a>
-						<input type="submit" value="登录">
-					</form>
-			   </div>	
-				<div class="clearfix"> </div>
-			</div>
-		</div>
-	</div>
+        <div class="container">
+            <div class="account_grid">
+               <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
+                    <h3>登录</h3>
+                    <p>欢迎使用BMW后台管理系统，请您先登录.</p>
+                    <form>
+                        <div>
+                            <span>用户名<label>*</label></span>
+                            <input type="text">
+                        </div>
+                        <div>
+                            <span>密码<label>*</label></span>
+                            <input type="password">
+                        </div>
+                        <a class="forgot" href="#">忘记密码？&nbsp;</a>
+                        <input type="submit" value="登录">
+                    </form>
+               </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- footer -->
 <div class="footer">
-	<div class="container">
-		<p>Copyright &copy; 2017.Bayerische Motoren Werke All rights reserved.</p>
-	</div>
+    <div class="container">
+        <p>Copyright &copy; 2018.依威能源 All rights reserved.</p>
+    </div>
 </div>
-<a href="#" id="toTop" style="display: block;"><span id="toTopHover" style="opacity: 0;"></span></a>
+
+
+<!-- Mainly scripts -->
+    <script src="/static/js/jquery-2.1.1.js"></script>
+    <script src="/static/js/jquery-ui-1.10.4.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
 
 <script>
-	$(function(){
-		var mySwiper = new Swiper ('.slider .swiper-container', {
-			direction: 'horizontal',
-			loop: true,
-		    autoplay: true,
-		    // 如果需要前进后退按钮
-		    navigation: {
-		    	nextEl: '.swiper-button-next',
-		    	prevEl: '.swiper-button-prev',
-		    }
-		})        
-	});
+    $(function(){
+        var mySwiper = new Swiper ('.slider .swiper-container', {
+            direction: 'horizontal',
+            loop: true,
+            autoplay: true,
+            // 如果需要前进后退按钮
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            }
+        })
+    });
 </script>
 
 <!-- footer -->
 </body>
 </html>
+

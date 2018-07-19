@@ -73,8 +73,10 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <div class="ibox-content" style="position: relative;">
-                                        <div id="morris-area-chart" style="height: 200px"></div>
+                                    <div class="ibox-content">
+                                        <div class="flot-chart">
+                                            <div class="flot-chart-content" id="flot-line-chart-moving"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -106,17 +108,15 @@
                                         <table class="table table-striped">
                                             <thead>
                                             <tr>
-                                                <th>CID</th>
-                                                <th>IP</th>
-                                                <th>Version</th>
-                                                <th>上次连接时间</th>
-                                                <th>状态</th>
-                                                <th>ModelID</th>
+                                                <th>Charger ID（电桩ID）</th>
+                                                <th>Firmware Ver（固件版本）</th>
+                                                <th>Model ID（固件ID）</th>
+                                                <th>State（状态）</th>
                                                 <th>操作命令</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr>
+                                            <tbody id="table_content">
+                                                <!-- <tr>
                                                     <td><a href="/details/" target="_blank" role="button">05010101</a></td>
                                                     <td>192.168.6.10-20</td>
                                                     <td>CNMB19166</td>
@@ -130,37 +130,7 @@
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>
                                                         <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>
                                                     </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="/details/" target="_blank" role="button">05010102</a></td>
-                                                    <td>192.168.6.10-20</td>
-                                                    <td>CNMB19166</td>
-                                                    <td>当前时间</td>
-                                                    <td class="text-navy">就绪</td>
-                                                    <td>EV-CHARGER-21KW</td>
-                                                    <td>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">更新</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><a href="/details/" target="_blank" role="button">05010103</a></td>
-                                                    <td>192.168.6.10-20</td>
-                                                    <td>CNMB19166</td>
-                                                    <td>当前时间</td>
-                                                    <td class="text-navy">就绪</td>
-                                                    <td>EV-CHARGER-21KW</td>
-                                                    <td>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">更新</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>
-                                                        <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>
-                                                    </td>
-                                                </tr>
+                                                </tr> -->
                                             </tbody>
                                         </table>
                                     </div>
@@ -173,174 +143,333 @@
 
 {% block script %}
 
-    <!-- Morris -->
-    <script src="{% static 'js/plugins/morris/raphael-2.1.0.min.js' %}"></script>
-    <script src="{% static 'js/plugins/morris/morris.js' %}"></script>
+    <!-- Flot -->
+    <script src="/static/js/plugins/flot/jquery.flot.js"></script>
+    <script src="/static/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
+    <script src="/static/js/plugins/flot/jquery.flot.resize.js"></script>
+    <script src="/static/js/plugins/flot/jquery.flot.time.js"></script>
+
 
     <script>
-        $(document).ready(function(){
-            /*实时电桩信息*/
-            Morris.Area({
-                element: 'morris-area-chart',
-                data: [{ period: '0 min', 点位1: 2, 点位2: 1, 点位3: 3 },
-                    { period: '10 min', 点位1:4, 点位2: 3, 点位3: 4 },
-                    { period: '20 min', 点位1: 5, 点位2: 8, 点位3: 5 },
-                    { period: '30 min', 点位1: 6, 点位2: 10, 点位3: 9 },
-                    { period: '40 min', 点位1: 12, 点位2: 17, 点位3: 12 },
-                    { period: '50 min', 点位1: 18, 点位2: 26, 点位3: 23 },
-                    { period: '60 min', 点位1: 30, 点位2: 23, 点位3: 32 },
-                    { period: '70 min', 点位1: 25, 点位2: 30, 点位3: 24 },
-                    { period: '80 min', 点位1: 12, 点位2: 25, 点位3: 17 },
-                    { period: '90 min', 点位1: 17, 点位2: 24, 点位3: 15 } ],
-                xkey: 'period',
-                ykeys: ['点位1', '点位2', '点位3'],
-                labels: ['点位1', '点位2', '点位3'],
-                pointSize: 2,
-                hideHover: 'auto',
-                resize: true,
-                lineColors: ['#87d6c6', '#54cdb4','#1ab394'],
-                lineWidth:2,
-                pointSize:1,
-            });
-            /*3個儀錶盤*/
-            var guage1 = echarts.init(document.getElementById('guage1'));
+        var ui = {
+            lineChart: function(){
+                /*实时电桩信息*/
+                // Morris.Area({
+                //     element: 'morris-area-chart',
+                //     data: [{ period: '0 min', 点位1: 2, 点位2: 1, 点位3: 3 },
+                //         { period: '10 min', 点位1:4, 点位2: 3, 点位3: 4 },
+                //         { period: '20 min', 点位1: 5, 点位2: 8, 点位3: 5 },
+                //         { period: '30 min', 点位1: 6, 点位2: 10, 点位3: 9 },
+                //         { period: '40 min', 点位1: 12, 点位2: 17, 点位3: 12 },
+                //         { period: '50 min', 点位1: 18, 点位2: 26, 点位3: 23 },
+                //         { period: '60 min', 点位1: 30, 点位2: 23, 点位3: 32 },
+                //         { period: '70 min', 点位1: 25, 点位2: 30, 点位3: 24 },
+                //         { period: '80 min', 点位1: 12, 点位2: 25, 点位3: 17 },
+                //         { period: '90 min', 点位1: 17, 点位2: 24, 点位3: 15 } ],
+                //     xkey: 'period',
+                //     ykeys: ['点位1', '点位2', '点位3'],
+                //     labels: ['点位1', '点位2', '点位3'],
+                //     pointSize: 2,
+                //     hideHover: 'auto',
+                //     resize: true,
+                //     lineColors: ['#87d6c6', '#54cdb4','#1ab394'],
+                //     lineWidth:2,
+                //     pointSize:1,
+                // });
 
-            var option = {
-                tooltip : {
-                    formatter: "{a} <br/>{c} {b}"
-                },
-                toolbox: {
-                    show: true,
-                    feature: {
-                        restore: {show: true},
-                        saveAsImage: {show: true}
+                var container = $("#flot-line-chart-moving");
+
+                // Determine how many data points to keep based on the placeholder's initial size;
+                // this gives us a nice high-res plot while avoiding more than one point per pixel.
+
+                var maximum = container.outerWidth() / 2 || 300;
+
+                var data = [];
+
+                function getRandomData() {
+
+                    if (data.length) {
+                        data = data.slice(1);
                     }
-                },
-                series : [
-                    {
-                        name: '速度',
-                        type: 'gauge',
-                        center: ['50.5%', '50%'],
-                        z: 3,
-                        min: 0,
-                        max: 200,
-                        splitNumber: 5,
-                        radius: '75%',
-                        axisLine: {            // 坐标轴线
-                            lineStyle: {       // 属性lineStyle控制线条样式
-                                width: 10
+
+                    while (data.length < maximum) {
+                        var previous = data.length ? data[data.length - 1] : 50;
+                        var y = previous + Math.random() * 10 - 5;
+                        data.push(y < 0 ? 0 : y > 30 ? 30 : y);
+                    }
+
+                    // zip the generated y values with the x values
+                    var res = [];
+                    for (var i = 0; i < data.length; ++i) {
+                        res.push([i, data[i]])
+                    }
+
+                    return res;
+                }
+
+                series = [{
+                    data: getRandomData(),
+                    lines: {
+                        fill: true
+                    }
+                }];
+
+
+                var plot = $.plot(container, series, {
+                    grid: {
+
+                        color: "#999999",
+                        tickColor: "#D4D4D4",
+                        borderWidth:0,
+                        minBorderMargin: 20,
+                        labelMargin: 10,
+                        backgroundColor: {
+                            colors: ["#ffffff", "#ffffff"]
+                        },
+                        margin: {
+                            top: 8,
+                            bottom: 20,
+                            left: 20
+                        },
+                        markings: function(axes) {
+                            var markings = [];
+                            var xaxis = axes.xaxis;
+                            for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
+                                markings.push({
+                                    xaxis: {
+                                        from: x,
+                                        to: x + xaxis.tickSize
+                                    },
+                                    color: "#fff"
+                                });
                             }
-                        },
-                        axisTick: {            // 坐标轴小标记
-                            length: 15,        // 属性length控制线长
-                            lineStyle: {       // 属性lineStyle控制线条样式
-                                color: 'auto'
-                            }
-                        },
-                        splitLine: {           // 分隔线
-                            length: 20,         // 属性length控制线长
-                            lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                                color: 'auto'
-                            }
-                        },
-                        detail : {
-                            fontWeight: 'bolder',
-                            offsetCenter: [0, '70%'],
-                            fontSize: 18
-                        },
-                        data:[{value: 1, name: ''}]
+                            return markings;
+                        }
                     },
-                    {
-                        name: '转速',
-                        type: 'gauge',
-                        center: ['19%', '50%'],    // 默认全局居中
-                        radius: '75%',
-                        min:0,
-                        max:200,
-                        //endAngle:45,
-                        splitNumber:5,
-                        axisLine: {            // 坐标轴线
-                            lineStyle: {       // 属性lineStyle控制线条样式
-                                width: 8
-                            }
-                        },
-                        axisTick: {            // 坐标轴小标记
-                            length:12,        // 属性length控制线长
-                            lineStyle: {       // 属性lineStyle控制线条样式
-                                color: 'auto'
-                            }
-                        },
-                        splitLine: {           // 分隔线
-                            length:20,         // 属性length控制线长
-                            lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                                color: 'auto'
-                            }
-                        },
-                        pointer: {
-                            width:5
-                        },
-                        title: {
-                            offsetCenter: [0, '-30%'],       // x, y，单位px
-                        },
-                        detail : {
-                            fontWeight: 'bolder',
-                            offsetCenter: [0, '70%'],
-                            fontSize: 18
-                        },
-                        data:[{value: 1.5, name: ''}]
+                    colors: ["#1ab394"],
+                    xaxis: {
+                        tickSize: 60,
+                        tickFormatter: function(v){
+                            return v/60;
+                        }
                     },
-                    {
-                        name: '油表',
-                        type: 'gauge',
-                        center: ['82%', '50%'],    // 默认全局居中
-                        radius: '75%',
+                    yaxis: {
                         min: 0,
-                        max: 200,
-                        //startAngle: 135,
-                        //  endAngle: 45,
-                        splitNumber: 8,
-                        axisLine: {            // 坐标轴线
-                            lineStyle: {       // 属性lineStyle控制线条样式
-                                width: 8
-                            }
-                        },
-                        axisTick: {            // 坐标轴小标记
+                        max: 35
+                    },
+                    legend: {
+                        show: true
+                    }
+                });
+
+                // Update the random dataset at 25FPS for a smoothly-animating chart
+
+                setInterval(function updateRandom() {
+                    series[0].data = getRandomData();
+                    plot.setData(series);
+                    plot.draw();
+                }, 1000);
+
+            },
+
+            pieChart: function(){
+
+                /*3個儀錶盤*/
+                var guage1 = echarts.init(document.getElementById('guage1'));
+
+                var option = {
+                    tooltip : {
+                        formatter: "{a} <br/>{c} {b}"
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    series : [
+                        {
+                            name: '速度',
+                            type: 'gauge',
+                            center: ['50.5%', '50%'],
+                            z: 3,
+                            min: 0,
+                            max: 200,
                             splitNumber: 5,
-                            length: 10,        // 属性length控制线长
-                            lineStyle: {        // 属性lineStyle控制线条样式
-                                color: 'auto'
-                            }
+                            radius: '75%',
+                            axisLine: {            // 坐标轴线
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    width: 10
+                                }
+                            },
+                            axisTick: {            // 坐标轴小标记
+                                length: 15,        // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            splitLine: {           // 分隔线
+                                length: 20,         // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            detail : {
+                                fontWeight: 'bolder',
+                                offsetCenter: [0, '70%'],
+                                fontSize: 18
+                            },
+                            data:[{value: 1, name: ''}]
                         },
-                        splitLine: {           // 分隔线
-                            length: 15,         // 属性length控制线长
-                            lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                                color: 'auto'
-                            }
+                        {
+                            name: '转速',
+                            type: 'gauge',
+                            center: ['19%', '50%'],    // 默认全局居中
+                            radius: '75%',
+                            min:0,
+                            max:200,
+                            //endAngle:45,
+                            splitNumber:5,
+                            axisLine: {            // 坐标轴线
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    width: 8
+                                }
+                            },
+                            axisTick: {            // 坐标轴小标记
+                                length:12,        // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            splitLine: {           // 分隔线
+                                length:20,         // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            pointer: {
+                                width:5
+                            },
+                            title: {
+                                offsetCenter: [0, '-30%'],       // x, y，单位px
+                            },
+                            detail : {
+                                fontWeight: 'bolder',
+                                offsetCenter: [0, '70%'],
+                                fontSize: 18
+                            },
+                            data:[{value: 1.5, name: ''}]
                         },
-                        pointer: {
-                            width:2
-                        },
-                        title : {
-                            show: false
-                        },
-                        detail : {
-                            fontWeight: 'bolder',
-                            offsetCenter: [0, '70%'],
-                            fontSize: 18
-                        },
-                        data:[{value: 0.5, name: 'gas'}]
-                    }
-                ]
-            };
+                        {
+                            name: '油表',
+                            type: 'gauge',
+                            center: ['82%', '50%'],    // 默认全局居中
+                            radius: '75%',
+                            min: 0,
+                            max: 200,
+                            //startAngle: 135,
+                            //  endAngle: 45,
+                            splitNumber: 8,
+                            axisLine: {            // 坐标轴线
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    width: 8
+                                }
+                            },
+                            axisTick: {            // 坐标轴小标记
+                                splitNumber: 5,
+                                length: 10,        // 属性length控制线长
+                                lineStyle: {        // 属性lineStyle控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            splitLine: {           // 分隔线
+                                length: 15,         // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            pointer: {
+                                width:2
+                            },
+                            title : {
+                                show: false
+                            },
+                            detail : {
+                                fontWeight: 'bolder',
+                                offsetCenter: [0, '70%'],
+                                fontSize: 18
+                            },
+                            data:[{value: 0.5, name: 'gas'}]
+                        }
+                    ]
+                };
 
-            setInterval(function (){
-                option.series[0].data[0].value = 64;
-                option.series[1].data[0].value = 32;
-                option.series[2].data[0].value = 96;
-                guage1.setOption(option,true);
-            },2000);
+                setInterval(
+                    function (){
+                        $.ajax({
+                            url: '/api/max/current/list/',
+                            method: 'get',
+                            success: function(data){
+                                option.series[0].data[0].value = data.int_max_current_a;
+                                option.series[1].data[0].value = data.int_max_current_b;
+                                option.series[2].data[0].value = data.int_max_current_c;
+                                guage1.setOption(option,true);
+                            },
+                            error: function(e){
+                                console.log('connect '+this.url+' error',e);
+                            }
+                        });
+
+                    },40
+                );
+            },
+
+            tableContent: function(){
+                $.ajax({
+                    url: '/api/charger/list/',
+                    method: 'get',
+                    success: function(data){
+                        var res = data.data;
+                        var html = '';
+                        $.each(res, function(index, item){
+                            html += '<tr>\
+                                        <td><a href="/details/" target="_blank" role="button">'+item.vch_charger_id+'</a></td>\
+                                        <td>'+item.vch_firmware_ver+'</td>\
+                                        <td>'+item.vch_model_id+'</td>\
+                                        <td class="text-navy">'+item.vch_state+'</td>\
+                                        <td>\
+                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>\
+                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>\
+                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">更新</a>\
+                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>\
+                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>\
+                                        </td>\
+                                    </tr>';
+                        });
+
+                        $('#table_content').html(html);
+                    },
+                    error: function(e){
+                        console.log('connect '+this.url+' error',e);
+                    }
+                });
+            },
+
+            init: function(){
+                this.lineChart();
+                this.pieChart();
+                this.tableContent();
+            }
+        }
+
+        $(document).ready(function(){
+
+            ui.init();
         });
     </script>
 
 
 {% endblock script %}
+
+

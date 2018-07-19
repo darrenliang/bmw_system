@@ -186,229 +186,242 @@
 
 {% block script %}
     <script>
-        $(document).ready(function(){
-            /*
-            *  折线图
-            */
-            var chart1 = echarts.init(document.getElementById('chart1'));
+        var ui = {
+            chart: function(){
+                 /*
+                *  折线图
+                */
+                var chart1 = echarts.init(document.getElementById('chart1'));
 
-            // 指定图表的配置项和数据
-            chart1.title = '充电电量变化';
-            var colors = ['#5793f3', '#d14a61', '#1ab394'];
-            var option = {
-                color: colors,
-                tooltip: {
-                    trigger: 'none',
-                    axisPointer: {
-                        type: 'cross'
-                    }
-                },
-                legend: {
-                    data:['点位1 电量', '点位2 电量', '点位3 电量']
-                },
-                grid: {
-                    top: 70,
-                    bottom: 50
-                },
-                xAxis: [
-                    {
-                        type: 'category',
-                        axisTick: {
-                            alignWithLabel: true
-                        },
-                        axisLine: {
-                            onZero: false,
-                            lineStyle: {
-                                color: '#333'
-                            }
-                        },
+                // 指定图表的配置项和数据
+                chart1.title = '充电电量变化';
+                var colors = ['#5793f3', '#d14a61', '#1ab394'];
+                var option = {
+                    color: colors,
+                    tooltip: {
+                        trigger: 'none',
                         axisPointer: {
-                            label: {
-                                formatter: function (params) {
-                                    return '电量  ' + params.value
-                                        + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
-                                }
-                            }
-                        },
-                        data: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
-                    }
-                ],
-                yAxis: [
-                    {
-                        type: 'value'
-                    }
-                ],
-                series: [
-                    {
-                        name:'点位1 电量',
-                        type:'line',
-                        smooth: true,
-                        data: [2.6, 5.9, 9.0, 26.4, 28.7, 40.7, 45.6, 46.2, 48.7, 18.8, 6.0, 2.3]
-                    },
-                    {
-                        name:'点位2 电量',
-                        type:'line',
-                        smooth: true,
-                        data: [3.9, 5.9, 11.1, 18.7, 48.3, 48.2, 48.6, 46.6, 25.4, 18.4, 10.3, 0.7]
-                    },
-                    {
-                        name:'点位3 电量',
-                        type:'line',
-                        smooth: true,
-                        data: [50, 40, 30.1, 20.7, 18.3, 49.2, 41.6, 36.6, 35.4, 18.4, 1.3, 0.1]
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            chart1.setOption(option);
-
-
-
-            /* chart 1 select */
-            $('#select_chart1').change(function(){
-                var id = $(this).val();
-                $('#'+id).removeClass('hidden').siblings().addClass('hidden');
-            });
-
-
-            //顶部电桩总数...Charger Info数量统计接口
-            $.ajax({
-                url: '/api/charger/info/statistic/',
-                method: 'get',
-                timeout: 5000,
-                success: function(data){
-                    var i = 0;
-                    for(var d in data){
-                        $('#overviewStats .value').eq(i).text(data[d]);
-                        i++;
-                    }
-                },
-                error: function(){
-                    console.log('connect api/charger/info/statistic/ failed');
-                }
-            });
-
-            // 充电记录总览接口
-            $.ajax({
-                url: '/api/recent/charging/record/list/',
-                method: 'get',
-                timeout: 5000,
-                success: function(data){
-                    var result = data.result;
-                    var html = '';
-
-                    $.each(result, function(index, item){
-                        html += '<tr>\
-                                    <td>'+item.intrecordid+'</td>\
-                                    <td>'+item.dttfinishtime+'</td>\
-                                    <td class="text-navy"> '+item.dblenergy+' </td>\
-                                </tr>';
-                    });
-                    $('#recoardAll').html(html);
-                },
-                error: function(){
-                    console.log('connect api/recent/charging/record/list/ failed');
-                }
-            });
-
-            //电桩总览接口
-            $.ajax({
-                url: '/api/recent/charger/state/list/',
-                method: 'get',
-                timeout: 5000,
-                success: function(data){
-                    var result = data.result;
-                    var html = '';
-
-                    $.each(result, function(index, item){
-                        html += '<tr>\
-                                    <td>'+item.vchchargerid+'</td>\
-                                    <td>'+item.vchstate+'</td>\
-                                    <td class="text-navy"> '+item.vchcommand+' </td>\
-                                </tr>';
-                    });
-                    $('#stateList').html(html);
-                },
-                error: function(){
-                    console.log('connect api/recent/charging/record/list/ failed');
-                }
-            });
-
-            //联网状态总览
-            $.ajax({
-                url: '/api/charger/state/statistic/',
-                method: 'get',
-                timeout: 5000,
-                success: function(data){
-                    var result = data.result;
-                    var data = [];
-                    var dataIndex = [];
-                    $.each(result, function(index, item){
-                        for(var ite in item){
-                            data.push({ value: item[ite], name: ite});
-                            dataIndex.push(ite);
+                            type: 'cross'
                         }
-                    })
-                    /**
-                    * 饼图
-                    */
-                    var chart2 = echarts.init(document.getElementById('chart2'));
-                    chart2.title = '联网状态总览';
-
-                    option = {
-                        tooltip: {
-                            trigger: 'item',
-                            formatter: "{a} <br/>{b}: {c} ({d}%)"
-                        },
-                        legend: {
-                            type: 'scroll',
-                            orient: 'vertical',
-                            right: 10,
-                            top: 20,
-                            bottom: 20,
-                            data: dataIndex,
-                            selected: data.selected
-                        },
-                        series: [
-                            {
-                                name:'',
-                                type:'pie',
-                                radius: ['50%', '70%'],
-                                center: ['40%', '50%'],
-                                avoidLabelOverlap: false,
+                    },
+                    legend: {
+                        data:['点位1 电量', '点位2 电量', '点位3 电量']
+                    },
+                    grid: {
+                        top: 70,
+                        bottom: 50
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            axisTick: {
+                                alignWithLabel: true
+                            },
+                            axisLine: {
+                                onZero: false,
+                                lineStyle: {
+                                    color: '#333'
+                                }
+                            },
+                            axisPointer: {
                                 label: {
-                                    normal: {
-                                        show: false,
-                                        position: 'center'
-                                    },
-                                    emphasis: {
-                                        show: true,
-                                        textStyle: {
-                                            fontSize: '30',
-                                            fontWeight: 'bold'
-                                        }
+                                    formatter: function (params) {
+                                        return '电量  ' + params.value
+                                            + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
                                     }
-                                },
-                                labelLine: {
-                                    normal: {
-                                        show: false
-                                    }
-                                },
-                                data:data
+                                }
+                            },
+                            data: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name:'点位1 电量',
+                            type:'line',
+                            smooth: true,
+                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 40.7, 45.6, 46.2, 48.7, 18.8, 6.0, 2.3]
+                        },
+                        {
+                            name:'点位2 电量',
+                            type:'line',
+                            smooth: true,
+                            data: [3.9, 5.9, 11.1, 18.7, 48.3, 48.2, 48.6, 46.6, 25.4, 18.4, 10.3, 0.7]
+                        },
+                        {
+                            name:'点位3 电量',
+                            type:'line',
+                            smooth: true,
+                            data: [50, 40, 30.1, 20.7, 18.3, 49.2, 41.6, 36.6, 35.4, 18.4, 1.3, 0.1]
+                        }
+                    ]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                chart1.setOption(option);
+
+                /* chart 1 select */
+                $('#select_chart1').change(function(){
+                    var id = $(this).val();
+                    $('#'+id).removeClass('hidden').siblings().addClass('hidden');
+                });
+            },
+
+            chart2: function(){
+                //联网状态总览
+                $.ajax({
+                    url: '/api/charger/state/statistic/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var result = data.result;
+                        var data = [];
+                        var dataIndex = [];
+                        $.each(result, function(index, item){
+                            for(var ite in item){
+                                data.push({ value: item[ite], name: ite});
+                                dataIndex.push(ite);
                             }
-                        ]
-                    };
+                        })
+                        /**
+                        * 饼图
+                        */
+                        var chart2 = echarts.init(document.getElementById('chart2'));
+                        chart2.title = '联网状态总览';
 
-                    // 使用刚指定的配置项和数据显示图表。
-                    chart2.setOption(option);
+                        option = {
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b}: {c} ({d}%)"
+                            },
+                            legend: {
+                                type: 'scroll',
+                                orient: 'vertical',
+                                right: 10,
+                                top: 20,
+                                bottom: 20,
+                                data: dataIndex,
+                                selected: data.selected
+                            },
+                            series: [
+                                {
+                                    name:'',
+                                    type:'pie',
+                                    radius: ['50%', '70%'],
+                                    center: ['40%', '50%'],
+                                    avoidLabelOverlap: false,
+                                    label: {
+                                        normal: {
+                                            show: false,
+                                            position: 'center'
+                                        },
+                                        emphasis: {
+                                            show: true,
+                                            textStyle: {
+                                                fontSize: '30',
+                                                fontWeight: 'bold'
+                                            }
+                                        }
+                                    },
+                                    labelLine: {
+                                        normal: {
+                                            show: false
+                                        }
+                                    },
+                                    data:data
+                                }
+                            ]
+                        };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        chart2.setOption(option);
 
 
-                },
-                error: function(){
-                    console.log('connect api/charger/state/statistic/ failed');
-                }
-            });
+                    },
+                    error: function(){
+                        console.log('connect api/charger/state/statistic/ failed');
+                    }
+                });
+            },
+
+            loadAjax: function(){
+                //顶部电桩总数...Charger Info数量统计接口
+                $.ajax({
+                    url: '/api/charger/info/statistic/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var i = 0;
+                        for(var d in data){
+                            $('#overviewStats .value').eq(i).text(data[d]);
+                            i++;
+                        }
+                    },
+                    error: function(){
+                        console.log('connect api/charger/info/statistic/ failed');
+                    }
+                });
+
+                // 充电记录总览接口
+                $.ajax({
+                    url: '/api/recent/charging/record/list/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var result = data.result;
+                        var html = '';
+
+                        $.each(result, function(index, item){
+                            html += '<tr>\
+                                        <td>'+item.intrecordid+'</td>\
+                                        <td>'+item.dttfinishtime+'</td>\
+                                        <td class="text-navy"> '+item.dblenergy+' </td>\
+                                    </tr>';
+                        });
+                        $('#recoardAll').html(html);
+                    },
+                    error: function(){
+                        console.log('connect api/recent/charging/record/list/ failed');
+                    }
+                });
+
+                //电桩总览接口
+                $.ajax({
+                    url: '/api/recent/charger/state/list/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var result = data.result;
+                        var html = '';
+
+                        $.each(result, function(index, item){
+                            html += '<tr>\
+                                        <td>'+item.vchchargerid+'</td>\
+                                        <td>'+item.vchstate+'</td>\
+                                        <td class="text-navy"> '+item.vchcommand+' </td>\
+                                    </tr>';
+                        });
+                        $('#stateList').html(html);
+                    },
+                    error: function(){
+                        console.log('connect api/recent/charging/record/list/ failed');
+                    }
+                });
+            },
+
+            init: function(){
+                this.chart();
+                this.loadAjax();
+                this.chart2();
+            }
+        }
+        $(document).ready(function(){
+           ui.init();
+
         });
     </script>
 
