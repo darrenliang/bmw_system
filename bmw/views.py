@@ -49,6 +49,23 @@ def get_charger_list(request):
 
 
 @api_view(['GET'])
+def get_charger_id_list(request):
+    """
+    Charger id list的信息，用在充电电流图表变化根据charger_id查询
+    """
+
+    if request.method == 'GET':
+        chargers = []
+        charger_info_list = ChargerInfo.objects.all()
+        for charger in charger_info_list:
+            chargers.append(charger.vchchargerid)
+
+        return Response({"chargers": chargers}, status=status.HTTP_200_OK)
+    return Response({"message": "Error request method or None object!"},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
 def get_monthly_energy(request):
     """
     SELECT sum(dblenergy) FROM evproject.charging_record where dttFinishTime
@@ -58,7 +75,8 @@ def get_monthly_energy(request):
 
     if request.method == 'GET':
         charger_id = request.GET.get("charger_id")
-        data = {}
+        x = []
+        y = []
         # now = datetime.now()
         # current_year = now.year
         # current_month = now.month
@@ -80,11 +98,13 @@ def get_monthly_energy(request):
 
             dt = datetime.strptime("{}-{}".format(year, month), "%Y-%m")
             print("date=", dt.strftime("%Y-%m"))
-            data[dt.strftime("%Y-%m")] = sum_energy
+            x.append(dt.strftime("%Y-%m"))
+            y.append(sum_energy)
 
             month = month - 1 if month > 1 else 12
             year = year - 1 if month == 12 else year
-        return Response({"data": data}, status=status.HTTP_200_OK)
+
+        return Response({"x": x, "y": y}, status=status.HTTP_200_OK)
     return Response({"message": "Error request method or None object!"},
                     status=status.HTTP_400_BAD_REQUEST)
 
@@ -375,6 +395,7 @@ class ChargerDetails(APIView):
                   "dblmincurrent": dblmincurrent, "intMaxPhase": intmaxphase}
 
         return Response({'result': result}, status=status.HTTP_200_OK)
+
 
 def login(request):
     form = AuthenticationForm()

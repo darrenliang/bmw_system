@@ -569,7 +569,7 @@ Vary: Accept
 
 ### 2.10 充电电量变化
 
-这个api需要在http://localhost:8000/overview/ 页面解析，没有参数的为（默认）：http://localhost:8000/api/monthly/energy/， 输入参数（会有一个charger_id list 的api）：http://localhost:8000/api/monthly/energy/?charger_id=21509005，横坐标范围是1~12月份
+这个api需要在http://localhost:8000/overview/ 页面解析，没有参数的为（默认）：http://localhost:8000/api/monthly/energy/， 输入参数（会有一个charger_id list 的api）：http://localhost:8000/api/monthly/energy/?charger_id=21509005，横坐标格式为yyyy-mm，charger_id的api参考下一个接口
 
 Request:
 
@@ -586,24 +586,68 @@ Content-Type: application/json
 Vary: Accept
 
 {
-    "data": {
-        "1": 0,
-        "2": 0,
-        "3": 0,
-        "4": 0,
-        "5": 0,
-        "6": 0,
-        "7": 0,
-        "8": 0,
-        "9": 0,
-        "10": 0,
-        "11": 91.87100000000004,
-        "12": 60.93099999999999
-    }
+    "x": [
+        "2015-12",
+        "2015-11",
+        "2015-10",
+        "2015-09",
+        "2015-08",
+        "2015-07"
+    ],
+    "y": [
+        60.93099999999999,
+        91.87100000000004,
+        0,
+        0,
+        0,
+        0
+    ]
 }
 ```
 
-### 2.11 相位仪表图
+### 2.11 充电ID列表
+
+暂时用id=21509005去测试
+
+Request:
+
+```
+GET http://localhost:8000/api/charger/id/list/
+```
+
+Response:
+
+```
+HTTP 200 OK
+Allow: GET, OPTIONS
+Content-Type: application/json
+Vary: Accept
+
+{
+    "chargers": [
+        "00504001",
+        "10245001",
+        "10245002",
+        "10245003",
+        "10245004",
+        "10245005",
+        "10245006",
+        "10245007",
+        "10245008",
+        "21509001",
+        "21509002",
+        "21509003",
+        "21509004",
+        "21509005",
+        "21509006",
+        "21509007",
+        "21509008",
+        "60303001"
+    ]
+}
+```
+
+### 2.12 相位仪表图
 
 这个api需要在http://localhost:8000/overview/ 页面解析，右边的3个相位数值
 
@@ -628,7 +672,7 @@ Vary: Accept
 }
 ```
 
-### 2.12 点位电装列表
+### 2.13 点位电装列表
 
 这个api需要在http://localhost:8000/devices/ 页面解析，最下面的列表，保留最右边操作命令，左边的列表表示为如下参数列表的4个参数Charger ID（电桩ID）、Firmware Ver（固件版本）、Model ID（固件ID）、State（状态），列表名字用中英文表示
 
