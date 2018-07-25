@@ -290,39 +290,6 @@
                     },
                     series : [
                         {
-                            name: '速度',
-                            type: 'gauge',
-                            center: ['50.5%', '50%'],
-                            z: 3,
-                            min: 0,
-                            max: 200,
-                            splitNumber: 5,
-                            radius: '75%',
-                            axisLine: {            // 坐标轴线
-                                lineStyle: {       // 属性lineStyle控制线条样式
-                                    width: 10
-                                }
-                            },
-                            axisTick: {            // 坐标轴小标记
-                                length: 15,        // 属性length控制线长
-                                lineStyle: {       // 属性lineStyle控制线条样式
-                                    color: 'auto'
-                                }
-                            },
-                            splitLine: {           // 分隔线
-                                length: 20,         // 属性length控制线长
-                                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
-                                    color: 'auto'
-                                }
-                            },
-                            detail : {
-                                fontWeight: 'bolder',
-                                offsetCenter: [0, '70%'],
-                                fontSize: 18
-                            },
-                            data:[{value: 1, name: ''}]
-                        },
-                        {
                             name: '转速',
                             type: 'gauge',
                             center: ['19%', '50%'],    // 默认全局居中
@@ -360,6 +327,39 @@
                                 fontSize: 18
                             },
                             data:[{value: 1.5, name: ''}]
+                        },
+                        {
+                            name: '速度',
+                            type: 'gauge',
+                            center: ['50.5%', '50%'],
+                            z: 3,
+                            min: 0,
+                            max: 200,
+                            splitNumber: 5,
+                            radius: '75%',
+                            axisLine: {            // 坐标轴线
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    width: 10
+                                }
+                            },
+                            axisTick: {            // 坐标轴小标记
+                                length: 15,        // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            splitLine: {           // 分隔线
+                                length: 20,         // 属性length控制线长
+                                lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
+                                    color: 'auto'
+                                }
+                            },
+                            detail : {
+                                fontWeight: 'bolder',
+                                offsetCenter: [0, '70%'],
+                                fontSize: 18
+                            },
+                            data:[{value: 1, name: ''}]
                         },
                         {
                             name: '油表',
@@ -471,5 +471,6 @@
 
 
 {% endblock script %}
+
 
 
