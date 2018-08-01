@@ -87,8 +87,9 @@ def get_monthly_energy(request):
         queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
 
         if queryset.count() < 1:
-            return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
+            # return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
+            #                 status=status.HTTP_400_BAD_REQUEST)
 
         for i in range(1, 7):  # provide recent 6 month
             start_date = datetime(year=year, month=month, day=1)
@@ -97,14 +98,13 @@ def get_monthly_energy(request):
             sum_energy = sum([charger.dblenergy for charger in month_queryset])
 
             dt = datetime.strptime("{}-{}".format(year, month), "%Y-%m")
-            print("date=", dt.strftime("%Y-%m"))
             x.append(dt.strftime("%Y-%m"))
             y.append(sum_energy)
 
             month = month - 1 if month > 1 else 12
             year = year - 1 if month == 12 else year
 
-        return Response({"x": x, "y": y}, status=status.HTTP_200_OK)
+        return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
     return Response({"message": "Error request method or None object!"},
                     status=status.HTTP_400_BAD_REQUEST)
 
