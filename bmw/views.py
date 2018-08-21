@@ -66,7 +66,7 @@ def get_charger_id_list(request):
 
 
 @api_view(['GET'])
-def get_monthly_energy(request):
+def get_monthly_energy(request, charger_id=None):
     """
     SELECT sum(dblenergy) FROM evproject.charging_record where dttFinishTime
     between '2009-01-01' and '2009-02-01' and vchChargerID = ‘xxxxxxxx’;
@@ -74,7 +74,7 @@ def get_monthly_energy(request):
     """
 
     if request.method == 'GET':
-        charger_id = request.GET.get("charger_id")
+        charger_id = request.GET.get("charger_id") if charger_id is None else charger_id
         x = []
         y = []
         # now = datetime.now()
@@ -85,13 +85,14 @@ def get_monthly_energy(request):
 
         queryset = ChargingRecord.objects.all()
         queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
+        recent_months = 6 if charger_id is None else 12  # 排列1显示最近6个月，排列2显示最近12个月
 
         if queryset.count() < 1:
             return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
             # return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
             #                 status=status.HTTP_400_BAD_REQUEST)
 
-        for i in range(1, 7):  # provide recent 6 month
+        for i in range(1, recent_months + 1):  # provide recent 6 month
             start_date = datetime(year=year, month=month, day=1)
             end_date = datetime(year=year if month < 12 else year + 1, month=month + 1 if month < 12 else 1, day=1)
             month_queryset = queryset.filter(dttfinishtime__gte=start_date, dttfinishtime__lt=end_date)
@@ -105,6 +106,26 @@ def get_monthly_energy(request):
             year = year - 1 if month == 12 else year
 
         return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
+    return Response({"message": "Error request method or None object!"},
+                    status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_monthly_energy_list(request):
+    """
+    SELECT sum(dblenergy) FROM evproject.charging_record where dttFinishTime
+    between '2009-01-01' and '2009-02-01' and vchChargerID = ‘xxxxxxxx’;
+    用如上示例SQL查询计算出前6个月每台电桩的充电量
+    """
+
+    if request.method == 'GET':
+        data = []
+        for charger_id in get_charger_id_list(request).data["chargers"]:
+            x = list(get_monthly_energy(request, charger_id).data["x"])
+            y = list(get_monthly_energy(request, charger_id).data["y"])
+            if len(x) > 0 and len(y) > 0:
+                data.append(dict(charger_id=charger_id, x=x, y=y))
+        return Response({"data": data}, status=status.HTTP_200_OK)
     return Response({"message": "Error request method or None object!"},
                     status=status.HTTP_400_BAD_REQUEST)
 

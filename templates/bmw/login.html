@@ -47,6 +47,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     .header h2{ line-height: 50px; font-size: 20px; margin-bottom: 0; }
     .header .nav > li > a{ padding: 0 10px; font-size: 14px; color: #fff;}
     .header .dropdown-menu li{ overflow: hidden; }
+    .header-left{ padding: 3.25em 15px 0 15px; }
 
     .slider{ width: 100%; height: 100%; }
     .slider .swiper-slide{ width: 100%; height: 100%; }
@@ -107,7 +108,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <ul class="cl-effect-16">
                     <li><a href="http://www.evpowergroup.com/" data-hover="主页">主页</a></li>
                     <li><a href="http://www.evpowergroup.com/page5.php" data-hover="产品">产品</a></li>
-                    <li><a href="#" data-hover="系统使用方法">系统使用方法</a></li>
+                    <li><a href="{% static 'resources/guide.pdf' %}" data-hover="系统使用方法">系统使用方法</a></li>
                 </ul>
                 <!-- script-for-nav -->
                 <script>
@@ -145,9 +146,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 </div>
 
 <!-- banner -->
-<div class="login-page">
+	<div class="login-page">
         <div class="container">
-            <div class="account_grid">
+            <div class="account_grid row">
                <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
                     <h3>登录</h3>
                     <p>欢迎使用BMW后台管理系统，请您先登录.</p>

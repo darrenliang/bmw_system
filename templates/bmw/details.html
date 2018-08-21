@@ -308,7 +308,7 @@
     <script type="text/javascript">
     $(document).ready(function(){
         //Using the HiveMQ public Broker, with a random client Id
-        var client = new Messaging.Client("114.119.9.130", 8083, "test", 10);
+        var client = new Messaging.Client("mqtt.e-chong.com", 8083, "test", 10);
 
         //Gets  called if the websocket/mqtt connection gets disconnected for any reason
         client.onConnectionLost = function(responseObject) {

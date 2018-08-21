@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^api/charger/list/$', views.get_charger_list),
     url(r'^api/charger/id/list/$', views.get_charger_id_list),
     url(r'^api/monthly/energy/$', views.get_monthly_energy),
+    url(r'^api/monthly/energy/list/$', views.get_monthly_energy_list),
     url(r'^api/recent/charging/record/list/$', views.RecentChargingRecordListView.as_view()),  # json api
     url(r'^api/recent/charger/state/list/$', views.RecentChargerStateListView.as_view()),  # json api
     url(r'^api/charger/info/statistic/$', views.ChargerInfoStatisticView.as_view()),  # json api

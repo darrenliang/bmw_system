@@ -66,8 +66,12 @@
                 <div class="ibox-title">
                     <h5>充电电量变化</h5>
                     <div class="ibox-tools">
-                        <select id="select_chart1">
+                        <!-- <select id="select_chart1">
                             <option value="default">默认</option>
+                        </select> -->
+                        <select id="select_chart2">
+                            <option value="total">总电量变化</option>
+                            <option value="battery">电池电量变化</option>
                         </select>
                     </div>
                     <div class="ibox-content">
@@ -204,7 +208,93 @@
                 });
             },
 
-            chart: function(charger_id){
+            batteryChart: function() {
+            	/*
+                *  多条折线图
+                */
+                var chart1 = echarts.init(document.getElementById('chart1'));
+                // 指定图表的配置项和数据
+                var colors = ['#5793f3', '#d14a61', '#1ab394'];
+
+
+            	$.ajax({
+                    url: '/api/monthly/energy/list/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(response){
+                    	var lists = response.data;
+
+                       	var series = [];
+                       	var legendData = [];
+                       	var xData = [];
+
+                       	for(var i =0; i<lists[0].x.length; i++){
+                   			xData.push(lists[0].x[i]);
+                   		}
+
+                       	lists.forEach(item => {
+                       		legendData.push(item.charger_id);
+
+                       		var _data = [];
+
+                       		for(var i =0; i<item.x.length; i++){
+                       			_data.push(item.y[i]);
+                       		}
+
+                       		var serie =  {
+                                name: item.charger_id,
+                                type:'line',
+                                stack: '电量',
+                                data: _data
+                            }
+
+                       		series.push(serie);
+                       	});
+
+	                    var option = {
+						    title: {
+						        text: '电池电量变化'
+						    },
+						    tooltip: {
+						        trigger: 'axis'
+						    },
+						    legend: {
+						    	left: 'right',
+						    	width: '80%',
+						        data: legendData
+						    },
+						    grid: {
+						        left: '3%',
+						        right: '4%',
+						        bottom: '3%',
+						        containLabel: true
+						    },
+						    toolbox: {
+						        feature: {
+						            saveAsImage: {}
+						        }
+						    },
+						    xAxis: {
+						        type: 'category',
+						        boundaryGap: false,
+						        data: xData
+						    },
+						    yAxis: {
+						        type: 'value'
+						    },
+						    series: series
+						};
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        chart1.setOption(option);
+                    },
+                    error: function(){
+                        console.log('load '+this.url+' failed');
+                    }
+                });
+            },
+
+            chart: function(charger_id='21509005'){
                 var send_data = charger_id?{ charger_id: charger_id }:{}
 
                 /*
@@ -212,7 +302,6 @@
                 */
                 var chart1 = echarts.init(document.getElementById('chart1'));
                 // 指定图表的配置项和数据
-                chart1.title = '充电电量变化';
                 var colors = ['#5793f3', '#d14a61', '#1ab394'];
 
                 $.ajax({
@@ -231,6 +320,9 @@
                             ];
 
                         var option = {
+                        	title: {
+						        text: '充电电量变化'
+						    },
                             color: colors,
                             tooltip: {
                                 trigger: 'none',
@@ -432,14 +524,22 @@
             eventsHandler: function(){
                 var _this = this;
                 /* chart 1 select */
-                $('#select_chart1').change(function(){
-                    var id = $(this).val();
-                    _this.chart(id);
+                // $('#select_chart1').change(function(){
+                //     var id = $(this).val();
+                //     _this.chart(id);
+                // });
+                $('#select_chart2').change(function(){
+                    var value = $(this).val();
+                    if(value == 'total') {
+                    	_this.chart(id);//总电量
+                    }else{
+                    	_this.batteryChart();//电池电量
+                    }
                 });
             },
 
             init: function(){
-                this.loadChargerList();
+                //this.loadChargerList();
                 this.chart();
                 this.loadAjax();
                 this.chart2();
