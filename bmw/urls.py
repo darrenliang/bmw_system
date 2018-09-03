@@ -16,6 +16,7 @@ admin.site.site_title = 'BMW from adminsitration'
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api-token-auth/', authviews.obtain_auth_token),
+    url(r'^api/user/info/$', views.get_user_info),
     url(r'^api/max/current/list/$', views.get_max_current_list),
     url(r'^api/charger/list/$', views.get_charger_list),
     url(r'^api/charger/id/list/$', views.get_charger_id_list),
@@ -28,9 +29,9 @@ urlpatterns = [
     url(r'^api/basic/settings/$', views.BasicSettingsView.as_view()),  # json api
     url(r'^api/charger/details/$', views.ChargerDetails.as_view()),  # json api
     url(r'^api/charging/record/details/$', views.ChargingRecordDetails.as_view()),  # json api
-    url(r'^$', views.login, name='index'),
-    url(r'^login/$', views.login, name='login'),
-    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^$', views.log_in, name='log_in'),
+    url(r'^log_in/$', views.log_in, name='log_in'),
+    url(r'^log_out/$', views.log_out, name='log_out'),
     url(r'^sign_up/$', views.sign_up, name='sign_up'),
     url(r'^overview/$', views.overview, name='overview'),
     url(r'^devices/$', views.devices, name='devices'),

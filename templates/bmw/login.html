@@ -152,17 +152,18 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
                     <h3>登录</h3>
                     <p>欢迎使用BMW后台管理系统，请您先登录.</p>
-                    <form>
+                    <form role="form" action="{% url 'log_in' %}" method="post">
+                        {% csrf_token %}
                         <div>
                             <span>用户名<label>*</label></span>
-                            <input type="text">
+                            <input type="text" name="username" required>
                         </div>
                         <div>
                             <span>密码<label>*</label></span>
-                            <input type="password">
+                            <input type="password" name="password" required>
                         </div>
                         <a class="forgot" href="#">忘记密码？&nbsp;</a>
-                        <input type="submit" value="登录" formaction="/overview/">
+                        <input type="submit" value="登录">
                     </form>
                </div>
                 <div class="clearfix"> </div>

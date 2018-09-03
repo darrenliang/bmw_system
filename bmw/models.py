@@ -14,13 +14,12 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 
 
 class BasicSetting(models.Model):
-    vchcardreadercom = models.CharField(db_column='vchCardReaderCom', primary_key=True, max_length=10)  # Field name made lowercase.
+    vchcardreadercom = models.CharField(db_column='vchCardReaderCom', max_length=10, blank=True, null=True)  # Field name made lowercase.
     yeainstallyear = models.TextField(db_column='yeaInstallYear')  # Field name made lowercase. This field type is a guess.
     intinstallmonth = models.IntegerField(db_column='intInstallMonth')  # Field name made lowercase.
     blncurrentdistribution = models.IntegerField(db_column='blnCurrentDistribution')  # Field name made lowercase.
-    vchpowermetercom = models.CharField(db_column='vchPowerMeterCom', max_length=10)  # Field name made lowercase.
+    vchpowermetercom = models.CharField(db_column='vchPowerMeterCom', max_length=10, blank=True, null=True)  # Field name made lowercase.
     vchpowersequence = models.CharField(db_column='vchPowerSequence', max_length=10)  # Field name made lowercase.
-    intcurrency = models.IntegerField(db_column='intCurrency')  # Field name made lowercase.
     dblchargingdeductionpower = models.FloatField(db_column='dblChargingDeductionPower')  # Field name made lowercase.
     intchargingdeductionminute = models.IntegerField(db_column='intChargingDeductionMinute')  # Field name made lowercase.
     intdeductionprioritypower = models.IntegerField(db_column='intDeductionPriorityPower')  # Field name made lowercase.
@@ -30,11 +29,12 @@ class BasicSetting(models.Model):
     intmaxcurrenta = models.IntegerField(db_column='intMaxCurrentA')  # Field name made lowercase.
     intmaxcurrentb = models.IntegerField(db_column='intMaxCurrentB')  # Field name made lowercase.
     intmaxcurrentc = models.IntegerField(db_column='intMaxCurrentC')  # Field name made lowercase.
+    vchgroup = models.CharField(db_column='vchGroup', primary_key=True, max_length=8)  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'basic_setting'
-        unique_together = (('vchcardreadercom', 'yeainstallyear', 'intinstallmonth', 'blncurrentdistribution', 'vchpowermetercom', 'vchpowersequence', 'intcurrency', 'dblchargingdeductionpower', 'intchargingdeductionminute', 'intdeductionprioritypower', 'intdeductionpriorityminute', 'dblpowercoefficient', 'blninternaltesting'),)
+        unique_together = (('vchgroup', 'blncurrentdistribution'),)
 
 
 class ChargerCost(models.Model):
@@ -230,7 +230,7 @@ class ChargerState(models.Model):
     intchargingrecordid = models.IntegerField(db_column='intChargingRecordID', blank=True, null=True)  # Field name made lowercase.
     intprechargerecordid = models.IntegerField(db_column='intPrechargeRecordID', blank=True, null=True)  # Field name made lowercase.
     intsystemmessage = models.IntegerField(db_column='intSystemMessage', blank=True, null=True)  # Field name made lowercase.
-    vchstate = models.CharField(db_column='vchState', max_length=40)  # Field name made lowercase.
+    vchstate = models.CharField(db_column='vchState', max_length=40, blank=True, null=True)  # Field name made lowercase.
     vchfeedbackstate = models.CharField(db_column='vchFeedbackState', max_length=40)  # Field name made lowercase.
     vchsocket = models.CharField(db_column='vchSocket', max_length=20)  # Field name made lowercase.
     intcurrent = models.IntegerField(db_column='intCurrent')  # Field name made lowercase.
@@ -252,7 +252,10 @@ class ChargerState(models.Model):
     intconsumedenergy = models.IntegerField(db_column='intConsumedEnergy')  # Field name made lowercase.
     intelapsedtime = models.IntegerField(db_column='intElapsedTime')  # Field name made lowercase.
     intchargingphase = models.IntegerField(db_column='intChargingPhase')  # Field name made lowercase.
-    vchcommand = models.CharField(db_column='vchCommand', max_length=45)  # Field name made lowercase.
+    vchcommand = models.CharField(db_column='vchCommand', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    inttargetcurrent = models.IntegerField(db_column='intTargetCurrent', blank=True, null=True)  # Field name made lowercase.
+    intmaxphase = models.IntegerField(db_column='intMaxPhase', blank=True, null=True)  # Field name made lowercase.
+    dttlastconntime = models.DateTimeField(db_column='dttLastConnTime')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -293,13 +296,13 @@ class ChargingRecord(models.Model):
     intchargingcode = models.IntegerField(db_column='intChargingCode')  # Field name made lowercase.
     vchchargerid = models.CharField(db_column='vchChargerID', max_length=11)  # Field name made lowercase.
     vchcardid = models.CharField(db_column='vchCardID', max_length=45, blank=True, null=True)  # Field name made lowercase.
-    vchsocketid = models.ForeignKey('SocketType', models.DO_NOTHING, db_column='vchSocketID')  # Field name made lowercase.
+    vchsocketid = models.CharField(db_column='vchSocketID', max_length=15)  # Field name made lowercase.
     vchrecordstate = models.CharField(db_column='vchRecordState', max_length=10)  # Field name made lowercase.
     vchopenrecord = models.CharField(db_column='vchOpenRecord', max_length=30)  # Field name made lowercase.
     vchcloserecord = models.CharField(db_column='vchCloseRecord', max_length=30)  # Field name made lowercase.
     blnmonthly = models.IntegerField(db_column='blnMonthly')  # Field name made lowercase.
-    vchpriority = models.CharField(db_column='vchPriority', max_length=15)  # Field name made lowercase.
-    intchargingminute = models.IntegerField(db_column='intChargingMinute')  # Field name made lowercase.
+    vchpriority = models.CharField(db_column='vchPriority', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    intchargingminute = models.IntegerField(db_column='intChargingMinute', blank=True, null=True)  # Field name made lowercase.
     intdelayminute = models.IntegerField(db_column='intDelayMinute')  # Field name made lowercase.
     dblenergy = models.FloatField(db_column='dblEnergy')  # Field name made lowercase.
     blncurrentmaxcomplete = models.IntegerField(db_column='blnCurrentMaxComplete')  # Field name made lowercase.
@@ -312,13 +315,14 @@ class ChargingRecord(models.Model):
     intsafecurrent = models.IntegerField(db_column='intSafeCurrent')  # Field name made lowercase.
     intsupplycurrenttocharger = models.IntegerField(db_column='intSupplyCurrentToCharger')  # Field name made lowercase.
     intpwnchangedelay = models.IntegerField(db_column='intPWNChangeDelay')  # Field name made lowercase.
-    dttstartqueue = models.DateTimeField(db_column='dttStartQueue')  # Field name made lowercase.
+    dttstartqueue = models.DateTimeField(db_column='dttStartQueue', blank=True, null=True)  # Field name made lowercase.
     dttstarttime = models.DateTimeField(db_column='dttStartTime', blank=True, null=True)  # Field name made lowercase.
     dttfinishtime = models.DateTimeField(db_column='dttFinishTime', blank=True, null=True)  # Field name made lowercase.
     dttrealfinish = models.DateTimeField(db_column='dttRealFinish', blank=True, null=True)  # Field name made lowercase.
     dttlockuntil = models.DateTimeField(db_column='dttLockUntil', blank=True, null=True)  # Field name made lowercase.
-    dblcost = models.FloatField(db_column='dblCost')  # Field name made lowercase.
+    dblcost = models.FloatField(db_column='dblCost', blank=True, null=True)  # Field name made lowercase.
     vchremark = models.CharField(db_column='vchRemark', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    intmaxphase = models.CharField(db_column='intMaxPhase', max_length=3, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -400,6 +404,16 @@ class UpdateLog(models.Model):
     class Meta:
         managed = False
         db_table = 'update_log'
+
+
+class User(models.Model):
+    intuserid = models.IntegerField(db_column='intUserID', primary_key=True)  # Field name made lowercase.
+    vchusername = models.CharField(db_column='vchUsername', max_length=45)  # Field name made lowercase.
+    vchpassword = models.CharField(db_column='vchPassword', max_length=45)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'user'
 
 
 class ValueAddCard(models.Model):

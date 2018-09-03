@@ -37,12 +37,12 @@
                             <img alt="image" class="img-circle" src="{% static 'img/profile_small.jpg' %}" />
                         </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">Jay</strong>
+                            <span class="clear"> <span class="block m-t-xs"> <strong class="font-bold" id="login_name"></strong>
                             </span> <span class="text-muted text-xs block">管理员 <b class="caret"></b></span> </span> </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="">个人简介</a></li>
                                 <li class="divider"></li>
-                                <li><a href="/login/">退出登录</a></li>
+                                <li><a href="{% url 'log_out' %}">退出登录</a></li>
                             </ul>
                         </div>
                         <div class="logo-element">
@@ -96,7 +96,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="/login/">
+                                    <a href="{% url 'log_out' %}">
                                         <i class="fa fa-sign-out"></i> 退出登录
                                     </a>
                                 </li>
@@ -135,6 +135,22 @@
 
     <!-- charts baidu -->
     <script src="{% static 'js/charts/echarts.js' %}"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/api/user/info/',
+                method: 'get',
+                timeout: 5000,
+                data: { },
+                success: function(data){
+                    $('#login_name').html(data.username);
+                },
+                error: function(){
+                    console.log('connect api/basic/settings get failed');
+                }
+            });
+        });
+    </script>
     {% block script %}{% endblock script %}
 </body>
 

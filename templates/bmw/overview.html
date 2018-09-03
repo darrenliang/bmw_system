@@ -71,7 +71,7 @@
                         </select> -->
                         <select id="select_chart2">
                             <option value="total">总电量变化</option>
-                            <option value="battery">电池电量变化</option>
+                            <option value="battery">电桩充电量变化</option>
                         </select>
                     </div>
                     <div class="ibox-content">
@@ -86,30 +86,13 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>充电记录总览</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#">Config option 1</a>
-                            </li>
-                            <li><a href="#">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
                     <div class="ibox-content">
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Record ID</th>
-                                <th>Finish Time</th>
-                                <th>Energy</th>
+                                <th>电桩ID</th>
+                                <th>结束充电时间</th>
+                                <th>充电总电量</th>
                             </tr>
                             </thead>
                             <tbody id="recoardAll">
@@ -131,30 +114,13 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>电桩总览</h5>
-                    <div class="ibox-tools">
-                        <a class="collapse-link">
-                            <i class="fa fa-chevron-up"></i>
-                        </a>
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#">Config option 1</a>
-                            </li>
-                            <li><a href="#">Config option 2</a>
-                            </li>
-                        </ul>
-                        <a class="close-link">
-                            <i class="fa fa-times"></i>
-                        </a>
-                    </div>
                     <div class="ibox-content">
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Charger ID</th>
-                                <th>State</th>
-                                <th>Command</th>
+                                <th>电桩ID</th>
+                                <th>状态</th>
+                                <th>上次连接时间</th>
                             </tr>
                             </thead>
                             <tbody id="stateList">
@@ -294,9 +260,8 @@
                 });
             },
 
-            chart: function(charger_id='21509005'){
-                var send_data = charger_id?{ charger_id: charger_id }:{}
-
+            chart: function(){
+                // var send_data = charger_id?{ charger_id: charger_id }:{}
                 /*
                 *  折线图
                 */
@@ -307,7 +272,6 @@
                 $.ajax({
                     url: '/api/monthly/energy/',
                     method: 'get',
-                    data: send_data,
                     timeout: 5000,
                     success: function(data){
                         var series = [
@@ -510,7 +474,7 @@
                             html += '<tr>\
                                         <td>'+item.vchchargerid+'</td>\
                                         <td>'+item.vchstate+'</td>\
-                                        <td class="text-navy"> '+item.vchcommand+' </td>\
+                                        <td class="text-navy"> '+item.dttlastconntime+' </td>\
                                     </tr>';
                         });
                         $('#stateList').html(html);
@@ -531,7 +495,7 @@
                 $('#select_chart2').change(function(){
                     var value = $(this).val();
                     if(value == 'total') {
-                    	_this.chart(id);//总电量
+                    	_this.chart();//总电量
                     }else{
                     	_this.batteryChart();//电池电量
                     }

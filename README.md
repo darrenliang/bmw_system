@@ -349,13 +349,17 @@ Vary: Accept
 
 ### 2.7 充电记录总览接口
 
-这个api需要在http://localhost:8000/overview/ 页面解析，可以看到充电记录总览的表格，对内容进行填充。
+这个api需要在http://localhost:8000/overview/ 页面解析，可以看到充电记录总览的表格，对内容进行填充，新增num，为要显示的记录个数，默认情况下不需要传，系统默认。
 
 Request:
 
 ```
 GET http://localhost:8000/api/recent/charging/record/list/
 ```
+
+| Parameter | Type | Description |
+| :-------: | :--: | :---------: |
+|    num    | int  |             |
 
 Response:
 
@@ -366,6 +370,7 @@ Content-Type: application/json
 Vary: Accept
 
 {
+    "num": 7,
     "result": [
         {
             "intrecordid": 1406,
@@ -401,21 +406,6 @@ Vary: Accept
             "intrecordid": 1400,
             "dttfinishtime": "2016-11-18 08:55:00",
             "dblenergy": 0.545
-        },
-        {
-            "intrecordid": 1399,
-            "dttfinishtime": "2016-11-17 18:45:45",
-            "dblenergy": 0.336
-        },
-        {
-            "intrecordid": 1398,
-            "dttfinishtime": "2016-11-17 14:07:46",
-            "dblenergy": 1.58
-        },
-        {
-            "intrecordid": 1397,
-            "dttfinishtime": "2016-11-17 09:09:58",
-            "dblenergy": 4.138
         }
     ]
 }

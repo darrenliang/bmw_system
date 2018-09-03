@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.shortcuts import HttpResponseRedirect
 from django.conf import settings
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
@@ -20,6 +20,13 @@ from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, Cha
 
 
 @api_view(['GET'])
+def get_user_info(request):
+    user = request.user
+    data = {"username": user.username if user else None}
+    return Response(data)
+
+
+@api_view(['GET'])
 def get_charger_list(request):
     """
     相位仪表图，表示该点位电源供给方三个相位的电流使用情况。监控防止超出用量跳闸。
@@ -33,7 +40,9 @@ def get_charger_list(request):
         charger_state_list = ChargerState.objects.all()
         for charger_id in charger_info_list.values_list("vchchargerid", flat=True).union(
                 charger_state_list.values_list("vchchargerid", flat=True)):
-            charger_info = charger_info_list.get(vchchargerid=charger_id)
+            charger_info = charger_info_list.filter(vchchargerid=charger_id).first()
+            if charger_info is None:
+                continue
             try:
                 charger_state = charger_state_list.get(vchchargerid=charger_id)
                 vch_state = charger_state.vchstate
@@ -77,11 +86,11 @@ def get_monthly_energy(request, charger_id=None):
         charger_id = request.GET.get("charger_id") if charger_id is None else charger_id
         x = []
         y = []
-        # now = datetime.now()
-        # current_year = now.year
-        # current_month = now.month
-        year = 2015
-        month = 12
+        now = datetime.now()
+        year = now.year
+        month = now.month
+        # year = 2015
+        # month = 12
 
         queryset = ChargingRecord.objects.all()
         queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
@@ -179,15 +188,18 @@ class RecentChargingRecordListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargingRecord.objects.all().order_by("-dttfinishtime")[:7]  # vchchargerid
+    queryset = ChargingRecord.objects.all()  # vchchargerid
 
     def get(self, request):
+        num = request.GET.get("num")
+        num = int(num) if num else 7
+        queryset = self.queryset.order_by("-dttfinishtime")[:num]
         record_list = []
-        for record in self.queryset.all():
+        for record in queryset:
             record_list.append({"intrecordid": record.intrecordid,
                                 "dttfinishtime": str(record.dttfinishtime).replace("T", " "),
                                 "dblenergy": record.dblenergy})
-        return Response({"result": record_list}, status=status.HTTP_200_OK)
+        return Response({"num": num, "result": record_list}, status=status.HTTP_200_OK)
 
 
 class RecentChargerStateListView(APIView):
@@ -196,15 +208,19 @@ class RecentChargerStateListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargerState.objects.all().order_by("-vchchargerid")[:7]  # vchchargerid
+    queryset = ChargerState.objects.all()  # vchchargerid
 
     def get(self, request):
+        num = request.GET.get("num")
+        num = int(num) if num else 7
+        queryset = self.queryset.order_by("-dttlastconntime")[:num]
         state_list = []
-        for state in self.queryset.all():
+        for state in queryset:
             state_list.append({"vchchargerid": state.vchchargerid,
-                                "vchstate": state.vchstate,
-                                "vchcommand": state.vchcommand})
-        return Response({"result": state_list}, status=status.HTTP_200_OK)
+                               "vchstate": state.vchstate,
+                               "vchcommand": state.vchcommand,
+                               "dttlastconntime": state.dttlastconntime})
+        return Response({"num": num, "result": state_list}, status=status.HTTP_200_OK)
 
 
 class ChargerInfoStatisticView(APIView):
@@ -262,7 +278,7 @@ class BasicSettingsView(APIView):
             blncurrentdistribution = basic_setting.blncurrentdistribution
             vchpowermetercom = basic_setting.vchpowermetercom
             vchpowersequence = basic_setting.vchpowersequence
-            intcurrency = basic_setting.intcurrency
+            # intcurrency = basic_setting.intcurrency
             dblchargingdeductionpower = basic_setting.dblchargingdeductionpower
             intdeductionpriorityminute = basic_setting.intdeductionpriorityminute
             intchargingdeductionminute = basic_setting.intchargingdeductionminute
@@ -275,7 +291,7 @@ class BasicSettingsView(APIView):
         return Response({"vchcardreadercom": vchcardreadercom, "yeainstallyear": yeainstallyear,
                          "intinstallmonth": intinstallmonth, "blncurrentdistribution": blncurrentdistribution,
                          "vchpowermetercom": vchpowermetercom, "vchpowersequence": vchpowersequence,
-                         "intcurrency": intcurrency, "dblchargingdeductionpower": dblchargingdeductionpower,
+                         "dblchargingdeductionpower": dblchargingdeductionpower,
                          "intchargingdeductionminute": intchargingdeductionminute,
                          "intdeductionprioritypower": intdeductionprioritypower,
                          "intdeductionpriorityminute": intdeductionpriorityminute,
@@ -385,7 +401,7 @@ class ChargerDetails(APIView):
             vchip = charger_info.vchip
             vchmac = charger_info.vchmac
 
-        vchsocket = vchstate = intcurrentfeedback = intchargingcurrent = vchcommand = ""
+        vchsocket = vchstate = intcurrentfeedback = intcurrent = intchargingcurrent = intconsumedenergy = intelapsedtime = intchargingphase = vchcommand = ""
         charger_states = self.state_queryset.filter(vchchargerid=charger_id)
         if charger_states.count() > 0:
             charger_state = charger_states.first()
@@ -418,15 +434,17 @@ class ChargerDetails(APIView):
         return Response({'result': result}, status=status.HTTP_200_OK)
 
 
-def login(request):
+def log_in(request):
     form = AuthenticationForm()
     if request.method == 'POST':
         form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            authenticate(username=user.username, password=user.password)
+            print("test come here")
             if user.is_staff or user.is_superuser:
-                return redirect(reverse('rooms'))
+                return redirect(reverse('overview'))
             return redirect(reverse('log_in'))
         # else:
         #     logger.info("[log_in] errors={}".format(form.errors))
@@ -434,30 +452,56 @@ def login(request):
     return render(request, 'bmw/login.html', {'form': form})
 
 
+@login_required(login_url='/log_in/')
 def overview(request):
-    return render(request, 'bmw/overview.html')
+    user = request.user
+    if user is not None:
+        print("user=", user.username)
+        return render(request, 'bmw/overview.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def devices(request):
-    return render(request, 'bmw/devices.html')
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/devices.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def charts(request):
-    return render(request, 'bmw/charts.html')
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charts.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def details(request):
-    return render(request, 'bmw/details.html')
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/details.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def setting(request):
-    return render(request, 'bmw/settings.html')
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/settings.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def audit_logs(request):
-    return render(request, 'bmw/audit_logs.html')
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/audit_logs.html')
+    return redirect(reverse('log_in'))
 
 
+@login_required(login_url='/log_in/')
 def remote(request):
     return render(request, 'bmw/remote.html')
 
@@ -470,10 +514,10 @@ def web_socket(request):
     return render(request, 'bmw/web_socket.html')
 
 
-@login_required(login_url='/login/')
-def logout(request):
+@login_required(login_url='/log_in/')
+def log_out(request):
     logout(request)
-    return redirect(reverse('login'))
+    return redirect(reverse('log_in'))
 
 
 def sign_up(request):
