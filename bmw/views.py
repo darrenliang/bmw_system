@@ -16,7 +16,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from rest_framework.views import APIView
-from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting
+from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
+    ChargerGroup
+from .serializers import ChargerGroupSerializer
 
 
 @api_view(['GET'])
@@ -33,28 +35,28 @@ def get_charger_list(request):
     右上角图标可进入设置界面设置该点位三个相位电流上限。
     上限电流作为负载均衡系统的分配参数供计算每台电桩充电时的最大电流。
     """
-
-    if request.method == 'GET':
-        data = []
-        charger_info_list = ChargerInfo.objects.all()
-        charger_state_list = ChargerState.objects.all()
-        for charger_id in charger_info_list.values_list("vchchargerid", flat=True).union(
-                charger_state_list.values_list("vchchargerid", flat=True)):
-            charger_info = charger_info_list.filter(vchchargerid=charger_id).first()
-            if charger_info is None:
-                continue
-            try:
-                charger_state = charger_state_list.get(vchchargerid=charger_id)
-                vch_state = charger_state.vchstate
-            except ObjectDoesNotExist:
-                vch_state = None
-            data.append({"vch_charger_id": charger_id,
-                         "vch_firmware_ver": charger_info.vchfirmwarever,
-                         "vch_model_id": charger_info.vchmodelid,
-                         "vch_state": vch_state})
-        return Response({"data": data}, status=status.HTTP_200_OK)
-    return Response({"message": "Error request method or None object!"},
-                    status=status.HTTP_400_BAD_REQUEST)
+    group_id = request.GET.get("group_id")
+    data = []
+    charger_info_list = ChargerInfo.objects.all()
+    charger_state_list = ChargerState.objects.all()
+    for charger_id in charger_info_list.values_list("vchchargerid", flat=True).union(
+            charger_state_list.values_list("vchchargerid", flat=True)):
+        charger_info = charger_info_list.filter(vchchargerid=charger_id).first()
+        if charger_info is None:
+            continue
+        if group_id and charger_info.vchgroupid != group_id:
+            continue
+        try:
+            charger_state = charger_state_list.get(vchchargerid=charger_id)
+            vch_state = charger_state.vchstate
+        except ObjectDoesNotExist:
+            vch_state = None
+        data.append({"vch_charger_id": charger_id,
+                     "vch_firmware_ver": charger_info.vchfirmwarever,
+                     "vch_model_id": charger_info.vchmodelid,
+                     "vch_state": vch_state,
+                     "vch_group_id": charger_info.vchgroupid})
+    return Response({"data": data})
 
 
 @api_view(['GET'])
@@ -63,15 +65,12 @@ def get_charger_id_list(request):
     Charger id list的信息，用在充电电流图表变化根据charger_id查询
     """
 
-    if request.method == 'GET':
-        chargers = []
-        charger_info_list = ChargerInfo.objects.all()
-        for charger in charger_info_list:
-            chargers.append(charger.vchchargerid)
+    chargers = []
+    charger_info_list = ChargerInfo.objects.all()
+    for charger in charger_info_list:
+        chargers.append(charger.vchchargerid)
 
-        return Response({"chargers": chargers}, status=status.HTTP_200_OK)
-    return Response({"message": "Error request method or None object!"},
-                    status=status.HTTP_400_BAD_REQUEST)
+    return Response({"chargers": chargers})
 
 
 @api_view(['GET'])
@@ -82,41 +81,38 @@ def get_monthly_energy(request, charger_id=None):
     用如上示例SQL查询计算出前6个月每台电桩的充电量
     """
 
-    if request.method == 'GET':
-        charger_id = request.GET.get("charger_id") if charger_id is None else charger_id
-        x = []
-        y = []
-        now = datetime.now()
-        year = now.year
-        month = now.month
-        # year = 2015
-        # month = 12
+    charger_id = request.GET.get("charger_id") if charger_id is None else charger_id
+    x = []
+    y = []
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    # year = 2015
+    # month = 12
 
-        queryset = ChargingRecord.objects.all()
-        queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
-        recent_months = 6 if charger_id is None else 12  # 排列1显示最近6个月，排列2显示最近12个月
+    queryset = ChargingRecord.objects.all()
+    queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
+    recent_months = 6 if charger_id is None else 12  # 排列1显示最近6个月，排列2显示最近12个月
 
-        if queryset.count() < 1:
-            return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
-            # return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
-            #                 status=status.HTTP_400_BAD_REQUEST)
-
-        for i in range(1, recent_months + 1):  # provide recent 6 month
-            start_date = datetime(year=year, month=month, day=1)
-            end_date = datetime(year=year if month < 12 else year + 1, month=month + 1 if month < 12 else 1, day=1)
-            month_queryset = queryset.filter(dttfinishtime__gte=start_date, dttfinishtime__lt=end_date)
-            sum_energy = sum([charger.dblenergy for charger in month_queryset])
-
-            dt = datetime.strptime("{}-{}".format(year, month), "%Y-%m")
-            x.append(dt.strftime("%Y-%m"))
-            y.append(sum_energy)
-
-            month = month - 1 if month > 1 else 12
-            year = year - 1 if month == 12 else year
-
+    if queryset.count() < 1:
         return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
-    return Response({"message": "Error request method or None object!"},
-                    status=status.HTTP_400_BAD_REQUEST)
+        # return Response({"message": "Cannot find the charger id={}!".format(charger_id)},
+        #                 status=status.HTTP_400_BAD_REQUEST)
+
+    for i in range(1, recent_months + 1):  # provide recent 6 month
+        start_date = datetime(year=year, month=month, day=1)
+        end_date = datetime(year=year if month < 12 else year + 1, month=month + 1 if month < 12 else 1, day=1)
+        month_queryset = queryset.filter(dttfinishtime__gte=start_date, dttfinishtime__lt=end_date)
+        sum_energy = sum([charger.dblenergy for charger in month_queryset])
+
+        dt = datetime.strptime("{}-{}".format(year, month), "%Y-%m")
+        x.append(dt.strftime("%Y-%m"))
+        y.append(sum_energy)
+
+        month = month - 1 if month > 1 else 12
+        year = year - 1 if month == 12 else year
+
+    return Response({"x": reversed(x), "y": reversed(y)})
 
 
 @api_view(['GET'])
@@ -127,16 +123,13 @@ def get_monthly_energy_list(request):
     用如上示例SQL查询计算出前6个月每台电桩的充电量
     """
 
-    if request.method == 'GET':
-        data = []
-        for charger_id in get_charger_id_list(request).data["chargers"]:
-            x = list(get_monthly_energy(request, charger_id).data["x"])
-            y = list(get_monthly_energy(request, charger_id).data["y"])
-            if len(x) > 0 and len(y) > 0:
-                data.append(dict(charger_id=charger_id, x=x, y=y))
-        return Response({"data": data}, status=status.HTTP_200_OK)
-    return Response({"message": "Error request method or None object!"},
-                    status=status.HTTP_400_BAD_REQUEST)
+    data = []
+    for charger_id in get_charger_id_list(request).data["chargers"]:
+        x = list(get_monthly_energy(request, charger_id).data["x"])
+        y = list(get_monthly_energy(request, charger_id).data["y"])
+        if len(x) > 0 and len(y) > 0:
+            data.append(dict(charger_id=charger_id, x=x, y=y))
+    return Response({"data": data})
 
 
 @api_view(['GET'])
@@ -144,17 +137,35 @@ def get_max_current_list(request):
     """
     点位电桩列表，包含该点位所有电桩的实时情况和操作界面
     """
-    if request.method == 'GET':
-        basic_setting = BasicSetting.objects.first()
-        if basic_setting:
-            int_max_current_a = basic_setting.intmaxcurrenta
-            int_max_current_b = basic_setting.intmaxcurrentb
-            int_max_current_c = basic_setting.intmaxcurrentc
-            return Response({"int_max_current_a": int_max_current_a,
-                             "int_max_current_b": int_max_current_b,
-                             "int_max_current_c": int_max_current_c},
-                            status=status.HTTP_200_OK)
-    return Response({"message": "Error request method or None object!"}, status=status.HTTP_400_BAD_REQUEST)
+    basic_setting = BasicSetting.objects.first()
+    if basic_setting:
+        int_max_current_a = basic_setting.intmaxcurrenta
+        int_max_current_b = basic_setting.intmaxcurrentb
+        int_max_current_c = basic_setting.intmaxcurrentc
+        return Response({"int_max_current_a": int_max_current_a,
+                         "int_max_current_b": int_max_current_b,
+                         "int_max_current_c": int_max_current_c})
+
+
+@api_view(['GET'])
+def get_charger_groups(request):
+    """
+    电桩组
+    """
+    queryset = ChargerGroup.objects.all()
+    data = ChargerGroupSerializer(queryset, many=True).data
+    return Response(data)
+
+
+@api_view(['GET'])
+def get_chargers_by_group(request):
+    """
+    电桩组
+    """
+    group_id = request.GET.get("group_id")
+    queryset = ChargerInfo.objects.filter(vchgroupid=group_id)
+    data = ChargerInfoSerializer(queryset, many=True).data
+    return Response(data)
 
 
 class ChargerStateStatisticView(APIView):

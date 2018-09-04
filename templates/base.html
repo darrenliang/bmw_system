@@ -54,10 +54,7 @@
                     </li>
                     <li class="{% ifequal request.path '/devices/'%} active {% endifequal%}">
                         <a href="/devices/"><i class="fa fa-calendar"></i> <span class="nav-label">点位总览</span><span class="fa arrow"></span></a>
-                        <ul class="nav nav-second-level">
-                            <li class="{% ifequal request.path '/devices/'%} active {% endifequal%}"><a href="/devices/">点位1</a></li>
-                            <li class="{% ifequal request.path '/devices/'%} active {% endifequal%}"><a href="/devices/">点位2</a></li>
-                            <li class="{% ifequal request.path '/devices/'%} active {% endifequal%}"><a href="/devices/">点位3</a></li>
+                        <ul class="nav nav-second-level" id="charger_group">
                         </ul>
                     </li>
                     <li class="{% ifequal request.path '/audit_logs/'%} active {% endifequal%}">
@@ -78,12 +75,12 @@
                         <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                             <div class="navbar-header">
                                 <ol class="breadcrumb">
-                                    <li>
-                                        <a href="index.html">主页</a>
-                                    </li>
-                                    <li class="active">
-                                        <strong>控制面板</strong>
-                                    </li>
+                                    <!--<li>-->
+                                        <!--<a href="index.html">主页</a>-->
+                                    <!--</li>-->
+                                    <!--<li class="active">-->
+                                        <!--<strong>控制面板</strong>-->
+                                    <!--</li>-->
                                 </ol>
                             </div>
                             <ul class="nav navbar-top-links navbar-right">
@@ -141,9 +138,24 @@
                 url: '/api/user/info/',
                 method: 'get',
                 timeout: 5000,
-                data: { },
                 success: function(data){
                     $('#login_name').html(data.username);
+                },
+                error: function(){
+                    console.log('connect api/basic/settings get failed');
+                }
+            });
+            $.ajax({
+                url: '/api/charger/groups/',
+                method: 'get',
+                timeout: 5000,
+                success: function(data){
+                    groups_html = '';
+                    data.forEach(function(element) {
+                      groups_html += '<li class="{% ifequal request.path "/devices/"%} active {% endifequal%}"> \
+                      <a href="/devices/?groupId=' + element.vchgroupid + '">' + element.vchgroupid + '</a></li>';
+                    });
+                    $('#charger_group').html(groups_html);
                 },
                 error: function(){
                     console.log('connect api/basic/settings get failed');
