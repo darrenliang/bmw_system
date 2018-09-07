@@ -81,28 +81,14 @@
                 </div>
             </div>
         </div>
-            <!-- 异常电桩总览 -->
+
         <div class="col-md-6">
+            <!-- 充电电量变化 -->
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>充电记录总览</h5>
+                    <h5>联网状态总览</h5>
                     <div class="ibox-content">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>电桩ID</th>
-                                <th>结束充电时间</th>
-                                <th>充电总电量</th>
-                            </tr>
-                            </thead>
-                            <tbody id="recoardAll">
-                                <!-- <tr>
-                                    <td>巴扎嘿</td>
-                                    <td>234234</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                                </tr> -->
-                            </tbody>
-                        </table>
+                        <div id="chart2" style="width: 500px;height:300px;"></div>
                     </div>
                 </div>
             </div>
@@ -114,6 +100,14 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>电桩总览</h5>
+                    <div class="ibox-tools">
+                        <select id="select_charger_num">
+                            <option value="5">--请选择显示数量--</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
                     <div class="ibox-content">
                         <table class="table table-striped">
                             <thead>
@@ -136,17 +130,39 @@
             </div>
         </div>
         <div class="col-md-6">
-            <!-- 充电电量变化 -->
+            <!-- 异常电桩总览 -->
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>联网状态总览</h5>
+                    <h5>充电记录总览</h5>
+                    <div class="ibox-tools">
+                        <select id="select_record_num">
+                            <option value="5">--请选择显示数量--</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
                     <div class="ibox-content">
-                        <div id="chart2" style="width: 500px;height:300px;"></div>
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>电桩ID</th>
+                                <th>结束充电时间</th>
+                                <th>充电总电量</th>
+                            </tr>
+                            </thead>
+                            <tbody id="recoardAll">
+                                <!-- <tr>
+                                    <td>巴扎嘿</td>
+                                    <td>234234</td>
+                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
+                                </tr> -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -438,33 +454,14 @@
                     }
                 });
 
-                // 充电记录总览接口
-                $.ajax({
-                    url: '/api/recent/charging/record/list/',
-                    method: 'get',
-                    timeout: 5000,
-                    success: function(data){
-                        var result = data.result;
-                        var html = '';
+            },
 
-                        $.each(result, function(index, item){
-                            html += '<tr>\
-                                        <td>'+item.intrecordid+'</td>\
-                                        <td>'+item.dttfinishtime+'</td>\
-                                        <td class="text-navy"> '+item.dblenergy+' </td>\
-                                    </tr>';
-                        });
-                        $('#recoardAll').html(html);
-                    },
-                    error: function(){
-                        console.log('connect api/recent/charging/record/list/ failed');
-                    }
-                });
-
+            chargerTable: function(num){
                 //电桩总览接口
                 $.ajax({
                     url: '/api/recent/charger/state/list/',
                     method: 'get',
+                    data: {num: num},
                     timeout: 5000,
                     success: function(data){
                         var result = data.result;
@@ -478,6 +475,32 @@
                                     </tr>';
                         });
                         $('#stateList').html(html);
+                    },
+                    error: function(){
+                        console.log('connect api/recent/charging/record/list/ failed');
+                    }
+                });
+            },
+
+            chargingRecordTable: function(num){
+                // 充电记录总览接口
+                $.ajax({
+                    url: '/api/recent/charging/record/list/',
+                    method: 'get',
+                    data: {num: num},
+                    timeout: 5000,
+                    success: function(data){
+                        var result = data.result;
+                        var html = '';
+
+                        $.each(result, function(index, item){
+                            html += '<tr>\
+                                        <td>'+item.intrecordid+'</td>\
+                                        <td>'+item.dttfinishtime+'</td>\
+                                        <td class="text-navy"> '+item.dblenergy+' </td>\
+                                    </tr>';
+                        });
+                        $('#recoardAll').html(html);
                     },
                     error: function(){
                         console.log('connect api/recent/charging/record/list/ failed');
@@ -500,6 +523,14 @@
                     	_this.batteryChart();//电池电量
                     }
                 });
+                $('#select_record_num').change(function(){
+                    var value = $(this).val();
+                    _this.chargingRecordTable(value);
+                });
+                $('#select_charger_num').change(function(){
+                    var value = $(this).val();
+                    _this.chargerTable(value);
+                });
             },
 
             init: function(){
@@ -507,6 +538,8 @@
                 this.chart();
                 this.loadAjax();
                 this.chart2();
+                this.chargingRecordTable(10);
+                this.chargerTable(10);
                 this.eventsHandler();
             }
         }

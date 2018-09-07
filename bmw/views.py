@@ -18,7 +18,7 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
-from .serializers import ChargerGroupSerializer
+from .serializers import ChargerGroupSerializer, ChargerInfoSerializer
 
 
 @api_view(['GET'])
@@ -203,7 +203,7 @@ class RecentChargingRecordListView(APIView):
 
     def get(self, request):
         num = request.GET.get("num")
-        num = int(num) if num else 7
+        num = int(num) if num else 5
         queryset = self.queryset.order_by("-dttfinishtime")[:num]
         record_list = []
         for record in queryset:
@@ -223,7 +223,7 @@ class RecentChargerStateListView(APIView):
 
     def get(self, request):
         num = request.GET.get("num")
-        num = int(num) if num else 7
+        num = int(num) if num else 5
         queryset = self.queryset.order_by("-dttlastconntime")[:num]
         state_list = []
         for state in queryset:
