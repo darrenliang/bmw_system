@@ -11,7 +11,7 @@
 
 <body>
     <button onclick="client.connect(options);">1. Connect</button>
-    <button onclick="client.subscribe('wo2rld', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
+    <button onclick="client.subscribe('Mobile/21509002/PushMessage', {qos: 2}); alert('Subscribed');">2. Subscribe</button>
     <button onclick="publish('Hello 2chaoyun !','world',2);">3. Publish</button>
     <button onclick="client.disconnect();">(4. Disconnect)</button>
     <div id="messages" style=" height:100px;overflow:hidden;"></div>
@@ -20,7 +20,7 @@
     //<![CDATA[
 
     //Using the HiveMQ public Broker, with a random client Id
-    var client = new Messaging.Client("114.119.9.130", 8083, "test", 10);
+    var client = new Messaging.Client("mqtt.e-chong.com", 8083, "test", 10);
 
     //Gets  called if the websocket/mqtt connection gets disconnected for any reason
     client.onConnectionLost = function(responseObject) {
