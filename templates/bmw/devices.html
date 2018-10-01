@@ -57,7 +57,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- chart 1 -->
                         <div class="row">
                             <div class="col-md-6">
@@ -150,126 +150,140 @@
     <script src="/static/js/plugins/flot/jquery.flot.time.js"></script>
 
     <script src="/static/js/jquery.url.js"></script>
+
+    <script src="{% static 'js/mqttws31.js' %}"></script>
     <script>
         var ui = {
-            lineChart: function(){
-                /*实时电桩信息*/
-                // Morris.Area({
-                //     element: 'morris-area-chart',
-                //     data: [{ period: '0 min', 点位1: 2, 点位2: 1, 点位3: 3 },
-                //         { period: '10 min', 点位1:4, 点位2: 3, 点位3: 4 },
-                //         { period: '20 min', 点位1: 5, 点位2: 8, 点位3: 5 },
-                //         { period: '30 min', 点位1: 6, 点位2: 10, 点位3: 9 },
-                //         { period: '40 min', 点位1: 12, 点位2: 17, 点位3: 12 },
-                //         { period: '50 min', 点位1: 18, 点位2: 26, 点位3: 23 },
-                //         { period: '60 min', 点位1: 30, 点位2: 23, 点位3: 32 },
-                //         { period: '70 min', 点位1: 25, 点位2: 30, 点位3: 24 },
-                //         { period: '80 min', 点位1: 12, 点位2: 25, 点位3: 17 },
-                //         { period: '90 min', 点位1: 17, 点位2: 24, 点位3: 15 } ],
-                //     xkey: 'period',
-                //     ykeys: ['点位1', '点位2', '点位3'],
-                //     labels: ['点位1', '点位2', '点位3'],
-                //     pointSize: 2,
-                //     hideHover: 'auto',
-                //     resize: true,
-                //     lineColors: ['#87d6c6', '#54cdb4','#1ab394'],
-                //     lineWidth:2,
-                //     pointSize:1,
-                // });
+            lineChart: async function(){
+                this.plot = this.lineChartDraw();
+                this.maxNum = 3; //同时显示4条数据
+                this.iCount = 0;
 
+                var _this = this;
+                //Connect Options
+                var vol_data = [];
+                var vol = [];
+
+                var options = {
+                    timeout: 3,
+                    //Gets Called if the connection has sucessfully been established
+                    onSuccess: function() {
+                        // alert("Connected");
+                        client.subscribe('Mobile/21509002/PushMessage', {qos: 2});
+                    },
+                    //Gets Called if the connection could not be established
+                    onFailure: function(message) {
+                        alert("Connection failed: " + message.errorMessage);
+                    }
+                };
+
+                //connect
+                //Using the HiveMQ public Broker, with a random client Id
+                var client = new Messaging.Client("mqtt.e-chong.com", 8083, "test", 10);
+
+                client.connect(options);
+
+                //Gets called whenever you receive a message for your subscriptions
+                client.onMessageArrived = function(message) {
+
+                    //Do something with the push message you received
+                    // $('#messages').append('<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>');
+                     //var obj = eval(message);
+                    var str = message.payloadString;
+                    var obj = JSON.parse(str);
+                    console.log('receive', obj);
+
+                    //$('#messages').append(obj.V);
+                    _this.updateLineChart(obj[3].meterValue.ElapsedTime, this.plot, new Date().getTime());
+                };
+
+                //Creates a new Messaging.Message Object and sends it to the HiveMQ MQTT Broker
+                var publish = function(payload, topic, qos) {
+                    //Send your message (also possible to serialize it as JSON or protobuf or just use a string, no limitations)
+                    var message = new Messaging.Message(payload);
+                    message.destinationName = topic;
+                    message.qos = qos;
+                    client.send(message);
+                }
+
+                //Gets  called if the websocket/mqtt connection gets disconnected for any reason
+                client.onConnectionLost = function(responseObject) {
+                    //Depending on your scenario you could implement a reconnect logic here
+                    alert("connection lost: " + responseObject.errorMessage);
+                };
+            },
+
+            lineChartDraw: function(){
+                var _this = this;
                 var container = $("#flot-line-chart-moving");
+                this.data = [];
 
                 // Determine how many data points to keep based on the placeholder's initial size;
                 // this gives us a nice high-res plot while avoiding more than one point per pixel.
 
-                var maximum = container.outerWidth() / 2 || 300;
-
-                var data = [];
-
-                function getRandomData() {
-
-                    if (data.length) {
-                        data = data.slice(1);
-                    }
-
-                    while (data.length < maximum) {
-                        var previous = data.length ? data[data.length - 1] : 50;
-                        var y = previous + Math.random() * 10 - 5;
-                        data.push(y < 0 ? 0 : y > 30 ? 30 : y);
-                    }
-
-                    // zip the generated y values with the x values
-                    var res = [];
-                    for (var i = 0; i < data.length; ++i) {
-                        res.push([i, data[i]])
-                    }
-
-                    return res;
-                }
-
-                series = [{
-                    data: getRandomData(),
+                this.series = [{
+                    data: this.data,
                     lines: {
-                        fill: true
+                        fill: true,
+                        steps: true
                     }
                 }];
 
-
-                var plot = $.plot(container, series, {
+                var plot = $.plot(container, this.series, {
                     grid: {
-
                         color: "#999999",
                         tickColor: "#D4D4D4",
                         borderWidth:0,
-                        minBorderMargin: 20,
-                        labelMargin: 10,
                         backgroundColor: {
                             colors: ["#ffffff", "#ffffff"]
-                        },
-                        margin: {
-                            top: 8,
-                            bottom: 20,
-                            left: 20
-                        },
-                        markings: function(axes) {
-                            var markings = [];
-                            var xaxis = axes.xaxis;
-                            for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
-                                markings.push({
-                                    xaxis: {
-                                        from: x,
-                                        to: x + xaxis.tickSize
-                                    },
-                                    color: "#fff"
-                                });
-                            }
-                            return markings;
                         }
                     },
                     colors: ["#1ab394"],
                     xaxis: {
-                        tickSize: 60,
-                        tickFormatter: function(v){
-                            return v/60;
-                        }
+                      labelWidth: 10,
+                      mode: "time",
+                      timeformat: "%H:%M:%S",
+                      timezone: "browser"
                     },
                     yaxis: {
                         min: 0,
-                        max: 35
                     },
                     legend: {
                         show: true
                     }
                 });
 
+                return plot;
+            },
+
+            updateLineChart: function(y_value, plot, time) {
                 // Update the random dataset at 25FPS for a smoothly-animating chart
+                // function randomData() {
+                //     iCount += 1;
+                //     value = value + Math.random() * 21 - 10;
+                //     return [ iCount++, Math.round(value) ]
+                // }
 
-                setInterval(function updateRandom() {
-                    series[0].data = getRandomData();
-                    plot.setData(series);
-                    plot.draw();
-                }, 1000);
+                // for (var i = 0; i < 5; i++) {
+                //     data.push(randomData());
+                // }
+                this.iCount ++;
 
+
+                if(this.data.length > this.maxNum){
+                    this.data.shift();
+                    console.log('shift')
+                }
+
+                var d = new Date().getTime();
+
+                this.data.push([d, y_value]);
+                console.log(this.data)
+
+                this.series[0].data = this.data;
+                this.plot.setData(this.series);
+                this.plot.setupGrid();
+                this.plot.draw();
             },
 
             pieChart: function(){
