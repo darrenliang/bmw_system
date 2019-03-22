@@ -60,28 +60,7 @@
 
                         <!-- chart 1 -->
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="ibox float-e-margins">
-                                    <div class="ibox-title">
-                                        <h5>实时电桩信息</h5>
-                                        <div class="ibox-tools">
-                                            <a class="collapse-link">
-                                                <i class="fa fa-chevron-up"></i>
-                                            </a>
-                                            <a class="close-link">
-                                                <i class="fa fa-times"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div class="ibox-content">
-                                        <div class="flot-chart">
-                                            <div class="flot-chart-content" id="flot-line-chart-moving"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
                                         <h5>相位仪表图</h5>
@@ -95,6 +74,28 @@
                                         </div>
                                         <div class="ibox-content" style="padding-left: 0; padding-right: 0;">
                                             <div id="guage1" style="height: 200px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+							
+							 <div class="col-md-12">
+                                <div class="ibox float-e-margins">
+                                    <div class="ibox-title">
+                                        <h5>实时电桩信息</h5>
+                                        <div class="ibox-tools">
+											<!--<select id="" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;"><option>00</option> <option>01</option></select>-->
+                                            <a class="collapse-link">
+                                                <i class="fa fa-chevron-up"></i>
+                                            </a>
+                                            <a class="close-link">
+                                                <i class="fa fa-times"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="ibox-content" style="height: 550px">
+                                        <div class="flot-chart">
+                                            <div class="flot-chart-content" id="flot-line-chart-moving" style="height: 500px"></div>
                                         </div>
                                     </div>
                                 </div>
@@ -155,21 +156,36 @@
     <script>
         var ui = {
             lineChart: async function(){
-                this.plot = this.lineChartDraw();
-                this.maxNum = 3; //同时显示4条数据
-                this.iCount = 0;
-
+				this.chargerDic = new Array();	//存储所有电桩实时充电信息
+				this.chargeTimeDic = new Array();	//存储所有电桩实时充电时间
+				this.myChart = echarts.init(document.getElementById('flot-line-chart-moving'));
+				this.cidList = [];
+				this.data_000 = [];
+                this.option = this.lineChartDraw();
+				
                 var _this = this;
-                //Connect Options
-                var vol_data = [];
-                var vol = [];
 
                 var options = {
                     timeout: 3,
                     //Gets Called if the connection has sucessfully been established
                     onSuccess: function() {
-                        // alert("Connected");
-                        client.subscribe('Mobile/21509002/PushMessage', {qos: 2});
+                        //alert("Connected");
+						//05010201-05010210;05010101-05010110
+						/*
+						var res = ui.getChargerList();
+						if(res){
+							$.each(res, function(index, item){
+								ui.cidList.push(item.vch_charger_id);
+								client.subscribe('Message/'+ item.vch_charger_id + '/#', {qos: 2});
+							});
+						}*/
+						var cid_list=['05010201','05010202','05010203','05010204','05010205','05010206','05010207','05010208','05010209','05010210'];
+						for(var i in cid_list){
+							ui.cidList.push(cid_list[i]);
+							client.subscribe('Message/'+ cid_list[i] + '/#', {qos: 2});
+						}
+
+						//setInterval(function (){for(var i in ui.cidList){_this.updateLineChart(ui.cidList[i], Math.random()*100, option);}}, 2000);	//test
                     },
                     //Gets Called if the connection could not be established
                     onFailure: function(message) {
@@ -187,14 +203,25 @@
                 client.onMessageArrived = function(message) {
 
                     //Do something with the push message you received
-                    // $('#messages').append('<span>Topic: ' + message.destinationName + '  | ' + message.payloadString + '</span><br/>');
-                     //var obj = eval(message);
                     var str = message.payloadString;
                     var obj = JSON.parse(str);
                     console.log('receive', obj);
-
-                    //$('#messages').append(obj.V);
-                    _this.updateLineChart(obj[3].meterValue.ElapsedTime, this.plot, new Date().getTime());
+                    //_this.updateLineChart(obj[3].meterValue.SupplyCurrent, this.plot, new Date().getTime());
+					if(obj[2] == "StatusNotification")
+					{
+						//更新电桩列表中的状态(state)
+						var cid=obj[3].status;
+						var states=obj[3].status;
+						if(cid && states)
+							$('#cid_' + cid).html(states);
+					}else if(obj[2] == "MeterValues"){
+						console.log(obj[3].chargerId);
+						_this.chargeTimeDic[obj[3].chargerId] = obj[3].meterValue.ElapsedTime;
+						_this.updateLineChart(obj[3].chargerId, obj[3].meterValue.ConsumedEnergy, option);
+					}else{
+					
+					}
+					
                 };
 
                 //Creates a new Messaging.Message Object and sends it to the HiveMQ MQTT Broker
@@ -212,78 +239,143 @@
                     alert("connection lost: " + responseObject.errorMessage);
                 };
             },
-
+			formatSeconds: function (value) {
+				var theTime = parseInt(value);// 秒
+				var theTime1 = 0;// 分
+				var theTime2 = 0;// 小时
+				if(theTime > 60) {
+					theTime1 = parseInt(theTime/60);
+					theTime = parseInt(theTime%60);
+						if(theTime1 > 60) {
+						theTime2 = parseInt(theTime1/60);
+						theTime1 = parseInt(theTime1%60);
+						}
+				}
+					var result = ""+parseInt(theTime)+"秒";
+					if(theTime1 > 0) {
+					result = ""+parseInt(theTime1)+"分"+result;
+					}
+					if(theTime2 > 0) {
+					result = ""+parseInt(theTime2)+"小时"+result;
+					}
+				return result;
+			},
             lineChartDraw: function(){
                 var _this = this;
-                var container = $("#flot-line-chart-moving");
-                this.data = [];
 
-                // Determine how many data points to keep based on the placeholder's initial size;
-                // this gives us a nice high-res plot while avoiding more than one point per pixel.
+                option = {
+					legend: {
+						data:[]
+					},
+					tooltip: {
+						trigger: 'axis',
+						axisPointer: {
+							type: "cross",
+						},
+						formatter: function (params) {
+							var result = "充电时间</br>";
+							params.forEach(function (item) {
+								if(_this.chargeTimeDic[item.seriesName])
+									result += item.marker + " " + item.seriesName + " : " + _this.formatSeconds(_this.chargeTimeDic[item.seriesName]) +"</br>";
+								else
+									result += item.marker + " " + item.seriesName + " : 未充电</br>";
+							});
+							return result;
+						}
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					xAxis: {						
+						type: 'category',
+						name: '时间',
+						nameTextStyle:{
+								color: '#999',
+								fontStyle: 'italic',
+								fontWeight: 'normal',
+								fontSize: 14,
+						},
+						boundaryGap: false,
+						axisLine: {
+							show: true,
+							lineStyle: {
+								color: '#999',
+							}
+						},
+						data: (function (){
+							var now = new Date();
+							var res = [];
+							var len = 10;
+							while (len--) {
+								res.unshift(now.toLocaleTimeString('chinese',{hour12:false}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								now = new Date(now - 2000);
+							}
+							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
+						})()
+					},
+					yAxis: {
+						type: 'value',
+						axisLine: {
+							show: true,
+							lineStyle: {
+								color: '#999',
+							}
+						},
+						boundaryGap: [0, '30%'],
+						splitLine: {
+							show: true
+						}
+					},
+					series: [
+						
+					]
+				};
 
-                this.series = [{
-                    data: this.data,
-                    lines: {
-                        fill: true,
-                        steps: true
-                    }
-                }];
-
-                var plot = $.plot(container, this.series, {
-                    grid: {
-                        color: "#999999",
-                        tickColor: "#D4D4D4",
-                        borderWidth:0,
-                        backgroundColor: {
-                            colors: ["#ffffff", "#ffffff"]
-                        }
-                    },
-                    colors: ["#1ab394"],
-                    xaxis: {
-                      labelWidth: 10,
-                      mode: "time",
-                      timeformat: "%H:%M:%S",
-                      timezone: "browser"
-                    },
-                    yaxis: {
-                        min: 0,
-                    },
-                    legend: {
-                        show: true
-                    }
-                });
-
-                return plot;
+                return option;
             },
+			//chargerDic={'10245004':[10,20,30,40...], '10245005':[10,20,30,40...],...}
+            updateLineChart: function(cid, y_value, option) {
+				var _this = this;
+				var flag = 0;
+				if(!_this.chargerDic[cid])
+					_this.chargerDic[cid] = [];
+				
+				if(_this.chargerDic[cid].length > 10)	//每个cid list存储10个实时充电数据
+					_this.chargerDic[cid].shift();
 
-            updateLineChart: function(y_value, plot, time) {
-                // Update the random dataset at 25FPS for a smoothly-animating chart
-                // function randomData() {
-                //     iCount += 1;
-                //     value = value + Math.random() * 21 - 10;
-                //     return [ iCount++, Math.round(value) ]
-                // }
+				_this.chargerDic[cid].push(y_value);
 
-                // for (var i = 0; i < 5; i++) {
-                //     data.push(randomData());
-                // }
-                this.iCount ++;
+				for(var i in option.series)
+				{
+					if(option.series[i].name == cid){
+						flag=1;
+						option.series[i].data = this.chargerDic[cid];
+					}
+				}
+				if(flag == 0)		//不存在该cid折线图时动态创建
+				{
+					var item = {
+						name: cid,
+						type: 'line',
+						smooth: true,
+						lineStyle: {
+							normal: {
+								width: 2,
+								shadowColor: 'rgba(0,0,0,0.4)',
+								shadowBlur: 10,
+								shadowOffsetY: 10
+							}
+						},
+						data:_this.chargerDic[cid]
+					}
+					option.series.push(item);
+					option.legend.data.push(cid);
+				}
 
-
-                if(this.data.length > this.maxNum){
-                    this.data.shift();
-                    console.log('shift')
-                }
-
-                var d = new Date().getTime();
-
-                this.data.push([d, y_value]);
-                console.log(this.data)
-
-                this.series[0].data = this.data;
-                this.plot.setData(this.series);
-                this.plot.setupGrid();
-                this.plot.draw();
+                //_this.myChart.setOption(option);
             },
 
             pieChart: function(){
@@ -307,7 +399,7 @@
                             name: '转速',
                             type: 'gauge',
                             center: ['19%', '50%'],    // 默认全局居中
-                            radius: '75%',
+                            radius: '100%',
                             min:0,
                             max:200,
                             //endAngle:45,
@@ -350,7 +442,7 @@
                             min: 0,
                             max: 200,
                             splitNumber: 5,
-                            radius: '75%',
+                            radius: '100%',
                             axisLine: {            // 坐标轴线
                                 lineStyle: {       // 属性lineStyle控制线条样式
                                     width: 10
@@ -379,7 +471,7 @@
                             name: '油表',
                             type: 'gauge',
                             center: ['82%', '50%'],    // 默认全局居中
-                            radius: '75%',
+                            radius: '100%',
                             min: 0,
                             max: 200,
                             //startAngle: 135,
@@ -421,6 +513,11 @@
 
                 setInterval(
                     function (){
+						var axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');        //当前时间
+						ui.option.xAxis.data.shift();                     //当前时间轴
+						ui.option.xAxis.data.push(axisData);
+						ui.myChart.setOption(ui.option);
+						
                         $.ajax({
                             url: '/api/max/current/list/',
                             method: 'get',
@@ -435,58 +532,102 @@
                             }
                         });
 
-                    },40
+                    //},40
+					},2000
                 );
+				
             },
-
-            tableContent: function(){
-                var groupId = jQuery.url.param('groupId');
+			
+			getChargerList: function(){
+				var groupId = jQuery.url.param('groupId');
+				var chargerList = null;
                 $.ajax({
                     url: '/api/charger/list/',
                     method: 'get',
+					async : false,
                     data: {group_id: groupId},
                     success: function(data){
-                        var res = data.data;
-                        var html = '';
-                        $.each(res, function(index, item){
-                            html += '<tr>\
-                                        <td><a href="/details/" target="_blank" role="button">'+item.vch_charger_id+'</a></td>\
-                                        <td>'+item.vch_firmware_ver+'</td>\
-                                        <td>'+item.vch_model_id+'</td>\
-                                        <td class="text-navy">'+item.vch_state+'</td>\
-                                        <td>\
-                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>\
-                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>\
-                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">更新</a>\
-                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>\
-                                            <a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>\
-                                        </td>\
-                                    </tr>';
-                        });
-
-                        $('#table_content').html(html);
+						chargerList = data.data;
                     },
                     error: function(e){
                         console.log('connect '+this.url+' error',e);
                     }
                 });
+				return chargerList;
+			},
+			init_dic: function(res){	//初始化两个dic
+				var _this = this;
+				$.each(res, function(index, item){
+					_this.chargerDic[item.vch_charger_id] = [];
+					_this.chargeTimeDic[item.vch_charger_id] = null;
+				});
+			},
+            tableContent: function(){
+                var res = this.getChargerList();
+				this.init_dic(res);
+				var html = '';
+				if(res){
+					$.each(res, function(index, item){
+						html += '<tr>\
+									<td><a href="/details/" target="_blank" role="button">'+item.vch_charger_id+'</a></td>\
+									<td>'+item.vch_firmware_ver+'</td>\
+									<td>'+item.vch_model_id+'</td>\
+									<td class="text-navy" id="cid_' +item.vch_charger_id+ '">'+item.vch_state+'</td>\
+									<td>\
+										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>\
+										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">复位</a>\
+										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">更新</a>\
+										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">停止充电</a>\
+										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">拓展</a>\
+									</td>\
+								</tr>';
+					});
+
+					$('#table_content').html(html);
+				}
             },
 
             init: function(){
                 this.lineChart();
                 this.pieChart();
-                this.tableContent();
+				this.tableContent();
             }
         }
 
         $(document).ready(function(){
 
             ui.init();
+			/*
+			var triggerAction = function(action, selected) {
+			  legend = [];
+
+			  for (name in selected) {
+				if (selected.hasOwnProperty(name)) {
+				  legend.push({
+					name: name
+				  });
+				}
+			  }
+
+			  ui.myChart.dispatchAction({
+				type: action,
+				batch: legend
+			  });
+			};
+
+			ui.myChart.on('legendselectchanged', function(obj) {
+			  var selected = obj.selected;
+				console.log(selected);
+			  if (selected != undefined) {
+				triggerAction('legendToggleSelect', selected);
+			  }
+			});
+			*/
         });
+		
+
+		
     </script>
 
 
 {% endblock script %}
-
-
-
