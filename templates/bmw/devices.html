@@ -3,7 +3,7 @@
 {% block content %}
 
                     <div class="wrapper wrapper-content animated fadeInRight">
-                        <div class="row">
+                        <div class="row" id="overviewStats">
                            <div class="col-lg-3">
                                 <div class="widget style1 navy-bg">
                                     <div class="row">
@@ -12,7 +12,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 电桩总数 </span>
-                                            <h2 class="font-bold">54</h2>
+                                            <h2 class="font-bold value">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -25,7 +25,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 总充电电量 </span>
-                                            <h2 class="font-bold">156604</h2>
+                                            <h2 class="font-bold value">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -38,7 +38,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 总充电次数 </span>
-                                            <h2 class="font-bold">54</h2>
+                                            <h2 class="font-bold value">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -51,12 +51,13 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 正在使用 </span>
-                                            <h2 class="font-bold">12</h2>
+                                            <h2 class="font-bold value">0</h2>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
 
                         <!-- chart 1 -->
                         <div class="row">
@@ -538,7 +539,26 @@
                 );
 				
             },
-			
+
+            loadAjax: function(){
+                //顶部电桩总数...Charger Info数量统计接口
+                $.ajax({
+                    url: '/api/charger/info/statistic/',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var i = 0;
+                        for(var d in data){
+                            $('#overviewStats .value').eq(i).text(data[d]);
+                            i++;
+                        }
+                    },
+                    error: function(){
+                        console.log('connect api/charger/info/statistic/ failed');
+                    }
+                });
+
+            },
 			getChargerList: function(){
 				var groupId = jQuery.url.param('groupId');
 				var chargerList = null;
@@ -589,6 +609,7 @@
             },
 
             init: function(){
+				this.loadAjax();
                 this.lineChart();
                 this.pieChart();
 				this.tableContent();
