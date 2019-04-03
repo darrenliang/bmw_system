@@ -171,19 +171,20 @@
                     onSuccess: function() {
                         //alert("Connected");
 						//05010201-05010210;05010101-05010110
-						/*
+						
 						var res = ui.getChargerList();
 						if(res){
 							$.each(res, function(index, item){
 								ui.cidList.push(item.vch_charger_id);
 								client.subscribe('Message/'+ item.vch_charger_id + '/#', {qos: 2});
 							});
-						}*/
-						var cid_list=['05010201','05010202','05010203','05010204','05010205','05010206','05010207','05010208','05010209','05010210'];
+						}
+						/*
+						var cid_list=['05010101','05010102','05010103','05010104','05010205','05010106','05010207','05010208','05010209','05010210'];
 						for(var i in cid_list){
 							ui.cidList.push(cid_list[i]);
 							client.subscribe('Message/'+ cid_list[i] + '/#', {qos: 2});
-						}
+						}*/
 
 						//setInterval(function (){for(var i in ui.cidList){_this.updateLineChart(ui.cidList[i], Math.random()*100, option);}}, 2000);	//test
                     },
@@ -195,7 +196,7 @@
 
                 //connect
                 //Using the HiveMQ public Broker, with a random client Id
-                var client = new Messaging.Client("mqtt.e-chong.com", 8083, "test", 10);
+				var client = new Messaging.Client("mqtt.e-chong.com", 8083, Math.random().toString(36).substr(2), 10);
 
                 client.connect(options);
 
@@ -217,7 +218,7 @@
 					}else if(obj[2] == "MeterValues"){
 						console.log(obj[3].chargerId);
 						_this.chargeTimeDic[obj[3].chargerId] = obj[3].meterValue.ElapsedTime;
-						_this.updateLineChart(obj[3].chargerId, obj[3].meterValue.ConsumedEnergy, option);
+						_this.updateLineChart(obj[3].chargerId, obj[3].meterValue.SupplyCurrent, option);
 					}else{
 					
 					}
