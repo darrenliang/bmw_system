@@ -61,8 +61,7 @@
 
                         <!-- chart 1 -->
                         <div class="row">
-                            <!--
-                            <div class="col-md-12">
+                            <div class="col-md-12" hidden>
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
                                         <h5>相位仪表图</h5>
@@ -80,7 +79,6 @@
                                     </div>
                                 </div>
                             </div>
-                            -->
 							 <div class="col-md-12">
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
@@ -765,7 +763,7 @@
             init: function(){
 				this.loadAjax();
                 this.lineChart();
-                // this.pieChart();
+                this.pieChart();
 				this.tableContent();
             }
         }
