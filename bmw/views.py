@@ -49,13 +49,16 @@ def get_charger_list(request):
         try:
             charger_state = charger_state_list.get(vchchargerid=charger_id)
             vch_state = charger_state.vchstate
+            vch_command = charger_state.vchcommand
         except ObjectDoesNotExist:
-            vch_state = None
+            vch_state = "N/A"
+            vch_command = "N/A"
         data.append({"vch_charger_id": charger_id,
                      "vch_firmware_ver": charger_info.vchfirmwarever,
                      "vch_model_id": charger_info.vchmodelid,
                      "vch_state": vch_state,
-                     "vch_group_id": charger_info.vchgroupid})
+                     "vch_group_id": charger_info.vchgroupid,
+                     "vch_command": vch_command})
     return Response({"data": data})
 
 

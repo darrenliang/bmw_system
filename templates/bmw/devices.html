@@ -61,6 +61,7 @@
 
                         <!-- chart 1 -->
                         <div class="row">
+                            <!--
                             <div class="col-md-12">
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
@@ -79,7 +80,7 @@
                                     </div>
                                 </div>
                             </div>
-							
+                            -->
 							 <div class="col-md-12">
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
@@ -135,6 +136,7 @@
                                                 <th>Charger ID（电桩ID）</th>
                                                 <th>Firmware Ver（固件版本）</th>
                                                 <th>Model ID（固件ID）</th>
+                                                <th>Vch Commend（流程）</th>
                                                 <th>State（状态）</th>
                                                 <th>操作命令</th>
                                             </tr>
@@ -744,6 +746,7 @@
 									<td><a href="/details/" target="_blank" role="button">'+item.vch_charger_id+'</a></td>\
 									<td>'+item.vch_firmware_ver+'</td>\
 									<td>'+item.vch_model_id+'</td>\
+									<td>'+item.vch_command+'</td>\
 									<td class="text-navy" id="cid_' +item.vch_charger_id+ '">'+item.vch_state+'</td>\
 									<td>\
 										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>\
@@ -762,7 +765,7 @@
             init: function(){
 				this.loadAjax();
                 this.lineChart();
-                this.pieChart();
+                // this.pieChart();
 				this.tableContent();
             }
         }
