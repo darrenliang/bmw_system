@@ -84,7 +84,7 @@
                                     <div class="ibox-title">
                                         <h5>实时电流信息</h5>
                                         <div class="ibox-tools">
-											<!--<select id="" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;"><option>00</option> <option>01</option></select>-->
+											<select id="select-sc" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;" onchange="ui.select_change(1)"></select>
                                             <a class="collapse-link">
                                                 <i class="fa fa-chevron-up"></i>
                                             </a>
@@ -106,7 +106,7 @@
 									<div class="ibox-title">
                                         <h5>实时电量信息</h5>
                                         <div class="ibox-tools">
-											<!--<select id="" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;"><option>00</option> <option>01</option></select>-->
+											<select id="select-ce" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;" onchange="ui.select_change(2)"></select>
                                             <a class="collapse-link">
                                                 <i class="fa fa-chevron-up"></i>
                                             </a>
@@ -179,12 +179,13 @@
     <script>
         var ui = {
             lineChart: async function(){
+				this.activeCidList = [];						//active电桩列表
 				this.SupplyCurrentDic = new Array();	//存储所有电桩实时电流信息	SupplyCurrent
 				this.ConsumedEnergyDic = new Array();	//存储所有电桩实时电量信息	ConsumedEnergy
 				this.chargeTimeDic = new Array();	//存储所有电桩实时充电时间
+				this.chargeTimerDic = new Array();	//存储所有电桩定时器
 				this.myChart = echarts.init(document.getElementById('flot-line-chart-moving'));
 				this.myChart1 = echarts.init(document.getElementById('flot-line-chart-moving-1'));
-				this.cidList = [];
                 this.optionSC = this.lineChartDrawSupplyCurrent();	//电流
 				this.optionCE = this.lineChartDrawConsumedEnergy();	//电量
 				
@@ -198,7 +199,6 @@
 						var res = ui.getChargerList();
 						if(res){
 							$.each(res, function(index, item){
-								ui.cidList.push(item.vch_charger_id);
 								client.subscribe('Message/'+ item.vch_charger_id + '/#', {qos: 2});
 							});
 						}
@@ -221,6 +221,8 @@
 				var client = new Messaging.Client("mqtt.e-chong.com", 8083, Math.random().toString(36).substr(2), 10);
 
                 client.connect(options);
+				ui.addSelectOption($('#select-sc'), 'all');
+				ui.addSelectOption($('#select-ce'), 'all');
 
                 //Gets called whenever you receive a message for your subscriptions
                 client.onMessageArrived = function(message) {
@@ -232,23 +234,30 @@
 					if(obj[2] == "StatusNotification")
 					{
 						//更新电桩列表中的状态(state)
-						var cid=obj[3].status;
+						var cid=obj[3].chargerId;
 						var states=obj[3].status;
 						if(cid && states)
 							$('#cid_' + cid).html(states);
 					}else if(obj[2] == "MeterValues"){
-						console.log(obj[3].chargerId);
-						/*
-						var varname="timer_"+obj[3].chargerId;
-						clearTimeout('timer_'+obj[3].chargerId);
-						window['timer_'+obj[3].chargerId] = setTimeout(function(){ 
-															_this.SupplyCurrentDic[obj[3].chargerId].length = 0;
-														  	_this.ConsumedEnergyDic[obj[3].chargerId].length = 0;
-														  }, 10000);
-						*/
-						_this.chargeTimeDic[obj[3].chargerId] = obj[3].meterValue.ElapsedTime;
-						_this.updateLineChartSC(obj[3].chargerId, obj[3].meterValue.SupplyCurrent/1000, ui.optionSC);
-						_this.updateLineChartCE(obj[3].chargerId, obj[3].meterValue.ConsumedEnergy, ui.optionCE);
+						var cid=obj[3].chargerId;
+						if(ui.indexOf(ui.activeCidList, cid) < 0)
+						{
+							ui.activeCidList.push(cid);
+							ui.addSelectOption($('#select-sc'), cid);
+							ui.addSelectOption($('#select-ce'), cid);
+						}
+							
+						
+						if(_this.chargeTimerDic[cid])
+							clearTimeout(_this.chargeTimerDic[cid]);
+						_this.chargeTimerDic[cid] = setTimeout(function(){ 			//20秒未收到信息就清空电量电流list
+															_this.SupplyCurrentDic[cid].length = 0;
+														  	_this.ConsumedEnergyDic[cid].length = 0;
+														  }, 20000);
+						
+						_this.chargeTimeDic[cid] = obj[3].meterValue.ElapsedTime;
+						_this.updateLineChartSC(cid, obj[3].meterValue.SupplyCurrent/1000, ui.optionSC);
+						_this.updateLineChartCE(cid, obj[3].meterValue.ConsumedEnergy, ui.optionCE);
 					}else{
 					
 					}
@@ -270,6 +279,15 @@
                     alert("connection lost: " + responseObject.errorMessage);
                 };
             },
+			//获取索引
+			indexOf: function(arr,item){
+				var ret=-1;
+				for( var i=0;i<arr.length;i++){
+					if(arr[i]==item)
+						ret = i;
+				}
+				return ret;
+			},
 			formatSeconds: function (value) {
 				var theTime = parseInt(value);// 秒
 				var theTime1 = 0;// 分
@@ -726,12 +744,60 @@
                 });
 				return chargerList;
 			},
+			addSelectOption: function(obj, val){
+				var option = document.createElement("option");
+				$(option).val(val);
+				$(option).text(val);
+				obj.append(option);
+			},
+			select_change: function(val){
+				var _this = this;
+				var chartName;
+				var obj;
+				if(val == 1){
+					chartName = _this.myChart;
+					obj = $("#select-sc");
+				}else{
+					chartName = _this.myChart1;
+					obj = $("#select-ce");
+				}
+					
+				if(obj.val() == "all"){
+					var selectList = [];
+					for(var i=0; i<_this.activeCidList.length; i++){
+						var tmp = {name: _this.activeCidList[i]};
+						selectList.push(tmp);
+					}
+					chartName.dispatchAction({
+						type: 'legendSelect',
+						batch: selectList
+					});
+				}else{
+					var unSelectList = [];
+					for(var i=0; i<_this.activeCidList.length; i++){
+						if(obj.val() != _this.activeCidList[i]){
+							var tmp = {name: _this.activeCidList[i]};
+							unSelectList.push(tmp);
+						}
+					}
+					//console.log(unSelectList);
+					chartName.dispatchAction({
+						type: 'legendUnSelect',
+						batch: unSelectList
+					});
+					chartName.dispatchAction({
+						type: 'legendSelect',
+						name: obj.val()
+					});
+				}
+			},
 			init_dic: function(res){	//初始化三个dic
 				var _this = this;
 				$.each(res, function(index, item){
 					_this.SupplyCurrentDic[item.vch_charger_id] = [];
 					_this.ConsumedEnergyDic[item.vch_charger_id] = [];
 					_this.chargeTimeDic[item.vch_charger_id] = null;
+					_this.chargeTimerDic[item.vch_charger_id] = null;
 				});
 			},
             tableContent: function(){
@@ -769,37 +835,9 @@
         }
 
         $(document).ready(function(){
-
             ui.init();
-			/*
-			var triggerAction = function(action, selected) {
-			  legend = [];
-
-			  for (name in selected) {
-				if (selected.hasOwnProperty(name)) {
-				  legend.push({
-					name: name
-				  });
-				}
-			  }
-
-			  ui.myChart.dispatchAction({
-				type: action,
-				batch: legend
-			  });
-			};
-
-			ui.myChart.on('legendselectchanged', function(obj) {
-			  var selected = obj.selected;
-				console.log(selected);
-			  if (selected != undefined) {
-				triggerAction('legendToggleSelect', selected);
-			  }
-			});
-			*/
         });
 		
-
 		
     </script>
 
