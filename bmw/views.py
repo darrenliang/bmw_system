@@ -19,6 +19,7 @@ from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
 from .serializers import ChargerGroupSerializer, ChargerInfoSerializer
+import threading
 
 
 @api_view(['GET'])
@@ -170,6 +171,28 @@ def get_chargers_by_group(request):
     data = ChargerInfoSerializer(queryset, many=True).data
     return Response(data)
 
+#logger = logging.getLogger('django')
+class ChargerStateUpdateThread (threading.Thread):
+    def __init__(self, charger_id, vch_state):
+        threading.Thread.__init__(self)
+        self.charger_id = charger_id
+        self.vch_state = vch_state
+
+    def run(self):
+        ChargerState.objects.filter(vchchargerid=self.charger_id).update(vchstate=self.vch_state)
+
+class ChargerStateUpdate(APIView):
+    def post(self, request):
+        try:
+            charger_id = request.POST.get("charger_id")
+            vch_state = request.POST.get("vch_state")
+
+            thread = ChargerStateUpdateThread(charger_id, vch_state)
+            thread.start()
+
+        except Exception:
+            raise ValueError("The parameters type error!")
+        return Response(status=status.HTTP_200_OK)
 
 class ChargerStateStatisticView(APIView):
     """
