@@ -14,6 +14,8 @@ admin.site.site_title = 'BMW from adminsitration'
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [
+    url('chart/', include('bmw.chart.urls')),
+
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api-token-auth/', authviews.obtain_auth_token),
     url(r'^api/user/info/$', views.get_user_info),
@@ -44,4 +46,4 @@ urlpatterns = [
     url(r'^web_socket/$', views.web_socket, name='web_socket'),
     url(r'^remote/$', views.remote, name='remote'),
     url(r'^test/$', views.test, name='test'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
