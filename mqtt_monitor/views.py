@@ -46,8 +46,8 @@ class ChargerPoint(object):
         #有该cid判断数据是否有改变再更新
         try:
             charger_info = ChargerInfo.objects.get(vchchargerid=self.chargerId)
-            if charger_info.vchvenderid != content["chargePointVendor"]:
-                charger_info.vchvenderid = content["chargePointVendor"]
+            if charger_info.vchvendorid != content["chargePointVendor"]:
+                charger_info.vchvendorid = content["chargePointVendor"]
             if charger_info.vchmodelid != content["chargePointModel"]:
                 charger_info.vchmodelid = content["chargePointModel"]
             #if charger_info.vchserialno != content["chargeBoxSerialNumber"]:
@@ -61,7 +61,7 @@ class ChargerPoint(object):
             if charger_info.vchmac != content["mac"]:
                 charger_info.vchmac = content["mac"]
             charger_info.save()
-            
+
         except KeyError:
             print("BootnotificationMsg key err!")
             

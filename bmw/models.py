@@ -147,7 +147,7 @@ class ChargerGroup(models.Model):
 
 class ChargerInfo(models.Model):
     vchchargerid = models.CharField(db_column='vchChargerID', primary_key=True, max_length=11)  # Field name made lowercase.
-    vchvenderid = models.CharField(db_column='vchVenderID', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    vchvendorid = models.CharField(db_column='vchVendorID', max_length=10, blank=True, null=True)  # Field name made lowercase.
     vchgrouptransformer = models.CharField(db_column='vchGroupTransformer', max_length=10)  # Field name made lowercase.
     vchmodelid = models.CharField(db_column='vchModelID', max_length=30)  # Field name made lowercase.
     vchgroupid = models.CharField(db_column='vchGroupID', max_length=8)  # Field name made lowercase.
