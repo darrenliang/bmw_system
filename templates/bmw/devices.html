@@ -135,6 +135,7 @@
                                                 <th>Firmware Ver（固件版本）</th>
                                                 <th>Model ID（固件ID）</th>
                                                 <th>Vch Commend（流程）</th>
+                                                <th>LastConnTime（上次连接时间）</th>
                                                 <th>State（状态）</th>
                                                 <th>操作命令</th>
                                             </tr>
@@ -231,28 +232,7 @@
                     var str = message.payloadString;
                     var obj = JSON.parse(str);
                     console.log('receive', obj);
-					if(obj[2] == "StatusNotification")
-					{
-						//更新电桩列表中的状态(state)
-						var cid=obj[3].chargerId;
-						var states=obj[3].status;
-						if(cid && states){
-							$('#cid_' + cid).html(states);
-							var data = {
-								charger_id: cid,
-								vch_state: states,
-							};
-							$.ajax({
-								url: '/api/charger/state/update/',
-								method: 'post',
-								timeout: 5000,
-								data: data,
-								success: function(data){
-
-								},
-							});
-						}
-					}else if(obj[2] == "MeterValues"){
+					if(obj[2] == "MeterValues"){
 						var cid=obj[3].chargerId;
 						if(ui.indexOf(ui.activeCidList, cid) < 0)
 						{
@@ -374,7 +354,7 @@
 							var len = 10;
 							while (len--) {
 								res.unshift(now.toLocaleTimeString('chinese',{hour12:false}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
-								now = new Date(now - 2000);
+								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
 						})()
@@ -451,7 +431,7 @@
 							var len = 10;
 							while (len--) {
 								res.unshift(now.toLocaleTimeString('chinese',{hour12:false}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
-								now = new Date(now - 2000);
+								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
 						})()
@@ -484,8 +464,8 @@
 				if(!_this.SupplyCurrentDic[cid])
 					_this.SupplyCurrentDic[cid] = [];
 				
-				if(_this.SupplyCurrentDic[cid].length > 10)	//每个cid list存储10个实时充电数据
-					_this.SupplyCurrentDic[cid].shift();
+				//if(_this.SupplyCurrentDic[cid].length > 10)	//每个cid list存储10个实时充电数据
+				//	_this.SupplyCurrentDic[cid].shift();
 
 				_this.SupplyCurrentDic[cid].push(y_value);
 
@@ -524,8 +504,8 @@
 				if(!_this.ConsumedEnergyDic[cid])
 					_this.ConsumedEnergyDic[cid] = [];
 				
-				if(_this.ConsumedEnergyDic[cid].length > 10)	//每个cid list存储10个实时充电数据
-					_this.ConsumedEnergyDic[cid].shift();
+				//if(_this.ConsumedEnergyDic[cid].length > 10)	//每个cid list存储10个实时充电数据
+				//	_this.ConsumedEnergyDic[cid].shift();
 
 				_this.ConsumedEnergyDic[cid].push(y_value);
 
@@ -694,11 +674,11 @@
                 setInterval(
                     function (){
 						var axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');        //当前时间
-						ui.optionSC.xAxis.data.shift();                     //当前时间轴
+						//ui.optionSC.xAxis.data.shift();                     //当前时间轴
 						ui.optionSC.xAxis.data.push(axisData);
 						ui.myChart.setOption(ui.optionSC);
 						
-						ui.optionCE.xAxis.data.shift();                     //当前时间轴
+						//ui.optionCE.xAxis.data.shift();                     //当前时间轴
 						ui.optionCE.xAxis.data.push(axisData);
 						ui.myChart1.setOption(ui.optionCE);
 						
@@ -716,8 +696,9 @@
                             }
                         });
 
+						ui.tableContent();
                     //},40
-					},2000
+					},1000
                 );
 				
             },
@@ -816,7 +797,6 @@
 			},
             tableContent: function(){
                 var res = this.getChargerList();
-				this.init_dic(res);
 				var html = '';
 				if(res){
 					$.each(res, function(index, item){
@@ -825,6 +805,7 @@
 									<td>'+item.vch_firmware_ver+'</td>\
 									<td>'+item.vch_model_id+'</td>\
 									<td>'+item.vch_command+'</td>\
+									<td>'+item.dtt_lastConnTime+'</td>\
 									<td class="text-navy" id="cid_' +item.vch_charger_id+ '">'+item.vch_state+'</td>\
 									<td>\
 										<a href="#" target="_blank" class="btn btn-primary btn-xs" role="button">开始充电</a>\
@@ -844,6 +825,7 @@
 				this.loadAjax();
                 this.lineChart();
                 this.pieChart();
+				this.init_dic(this.getChargerList());
 				this.tableContent();
             }
         }

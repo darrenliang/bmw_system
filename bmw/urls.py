@@ -28,7 +28,6 @@ urlpatterns = [
     url(r'^api/charger/info/statistic/$', views.ChargerInfoStatisticView.as_view()),  # json api
     url(r'^api/charger/state/statistic/$', views.ChargerStateStatisticView.as_view()),  # json api
     url(r'^api/basic/settings/$', views.BasicSettingsView.as_view()),  # json api
-    url(r'^api/charger/state/update/$', views.ChargerStateUpdate.as_view()),  # json api
     url(r'^api/charger/details/$', views.ChargerDetails.as_view()),  # json api
     url(r'^api/charging/record/details/$', views.ChargingRecordDetails.as_view()),  # json api
     url(r'^$', views.log_in, name='log_in'),
