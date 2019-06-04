@@ -231,27 +231,27 @@ class ChargerState(models.Model):
     #intprechargerecordid = models.IntegerField(db_column='intPrechargeRecordID', blank=True, null=True)  # Field name made lowercase.
     intsystemmessage = models.IntegerField(db_column='intSystemMessage', blank=True, null=True)  # Field name made lowercase.
     vchstate = models.CharField(db_column='vchState', max_length=40, blank=True, null=True)  # Field name made lowercase.
-    vchfeedbackstate = models.CharField(db_column='vchFeedbackState', max_length=40)  # Field name made lowercase.
-    vchsocket = models.CharField(db_column='vchSocket', max_length=20)  # Field name made lowercase.
-    intcurrent = models.IntegerField(db_column='intCurrent')  # Field name made lowercase.
-    intcurrentfeedback = models.IntegerField(db_column='intCurrentFeedback')  # Field name made lowercase.
-    blnmanual = models.IntegerField(db_column='blnManual')  # Field name made lowercase.
-    blnsae_plugged = models.IntegerField(db_column='blnSAE_Plugged')  # Field name made lowercase.
-    blnsae_ready = models.IntegerField(db_column='blnSAE_Ready')  # Field name made lowercase.
-    blnsae_complete = models.IntegerField(db_column='blnSAE_Complete')  # Field name made lowercase.
-    blniecgb_plugged = models.IntegerField(db_column='blnIECGB_Plugged')  # Field name made lowercase.
-    blniecgb_complete = models.IntegerField(db_column='blnIECGB_Complete')  # Field name made lowercase.
-    blniecgb_ready = models.IntegerField(db_column='blnIECGB_Ready')  # Field name made lowercase.
-    blniecgb_13a = models.IntegerField(db_column='blnIECGB_13A')  # Field name made lowercase.
-    blniecgb_16a = models.IntegerField(db_column='blnIECGB_16A')  # Field name made lowercase.
-    blniecgb_20a = models.IntegerField(db_column='blnIECGB_20A')  # Field name made lowercase.
-    blniecgb_32a = models.IntegerField(db_column='blnIECGB_32A')  # Field name made lowercase.
-    blniecgb_63a = models.IntegerField(db_column='blnIECGB_63A')  # Field name made lowercase.
-    vchupdatecommand = models.CharField(db_column='vchUpdateCommand', max_length=50)  # Field name made lowercase.
-    intchargingcurrent = models.IntegerField(db_column='intChargingCurrent')  # Field name made lowercase.
-    intconsumedenergy = models.IntegerField(db_column='intConsumedEnergy')  # Field name made lowercase.
-    intelapsedtime = models.IntegerField(db_column='intElapsedTime')  # Field name made lowercase.
-    intchargingphase = models.IntegerField(db_column='intChargingPhase')  # Field name made lowercase.
+    vchfeedbackstate = models.CharField(db_column='vchFeedbackState', max_length=40,default=0)  # Field name made lowercase.
+    vchsocket = models.CharField(db_column='vchSocket', max_length=20,default='0')  # Field name made lowercase.
+    intcurrent = models.IntegerField(db_column='intCurrent',default=32)  # Field name made lowercase.
+    intcurrentfeedback = models.IntegerField(db_column='intCurrentFeedback',default=0)  # Field name made lowercase.
+    blnmanual = models.IntegerField(db_column='blnManual',default=0)  # Field name made lowercase.
+    blnsae_plugged = models.IntegerField(db_column='blnSAE_Plugged',default=0)  # Field name made lowercase.
+    blnsae_ready = models.IntegerField(db_column='blnSAE_Ready',default=0)  # Field name made lowercase.
+    blnsae_complete = models.IntegerField(db_column='blnSAE_Complete',default=0)  # Field name made lowercase.
+    blniecgb_plugged = models.IntegerField(db_column='blnIECGB_Plugged',default=0)  # Field name made lowercase.
+    blniecgb_complete = models.IntegerField(db_column='blnIECGB_Complete',default=0)  # Field name made lowercase.
+    blniecgb_ready = models.IntegerField(db_column='blnIECGB_Ready',default=0)  # Field name made lowercase.
+    blniecgb_13a = models.IntegerField(db_column='blnIECGB_13A',default=0)  # Field name made lowercase.
+    blniecgb_16a = models.IntegerField(db_column='blnIECGB_16A',default=0)  # Field name made lowercase.
+    blniecgb_20a = models.IntegerField(db_column='blnIECGB_20A',default=0)  # Field name made lowercase.
+    blniecgb_32a = models.IntegerField(db_column='blnIECGB_32A',default=0)  # Field name made lowercase.
+    blniecgb_63a = models.IntegerField(db_column='blnIECGB_63A',default=0)  # Field name made lowercase.
+    vchupdatecommand = models.CharField(db_column='vchUpdateCommand', max_length=50,default='null')  # Field name made lowercase.
+    intchargingcurrent = models.IntegerField(db_column='intChargingCurrent',default=0)  # Field name made lowercase.
+    intconsumedenergy = models.IntegerField(db_column='intConsumedEnergy',default=0)  # Field name made lowercase.
+    intelapsedtime = models.IntegerField(db_column='intElapsedTime',default=0)  # Field name made lowercase.
+    intchargingphase = models.IntegerField(db_column='intChargingPhase',default=1)  # Field name made lowercase.
     vchcommand = models.CharField(db_column='vchCommand', max_length=45, blank=True, null=True)  # Field name made lowercase.
     inttargetcurrent = models.IntegerField(db_column='intTargetCurrent', blank=True, null=True)  # Field name made lowercase.
     intmaxphase = models.IntegerField(db_column='intMaxPhase', blank=True, null=True)  # Field name made lowercase.

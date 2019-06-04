@@ -17,19 +17,55 @@ mqttClient = mqtt.Client()
 def isEmpty(s):
     return bool(not s or not s.strip())
 
-
 class ChargerPoint(object):
     def __init__(self, chargerId, jsonList):
         self.chargerId = chargerId
         self.jsonList = jsonList
 
+    def ChangeChargerState(self,dic):
+        try:
+            charger_state = ChargerState.objects.get(vchchargerid=self.chargerId)
+            if charger_state.vchcommand != dic["vchcommand"]:
+                charger_state.vchcommand = dic["vchcommand"]
+            if charger_state.vchstate != dic["vchstate"]:
+                charger_state.vchstate = dic["vchstate"]
+            if "intconsumedenergy" in dic and charger_state.intconsumedenergy != dic["intconsumedenergy"]:
+                charger_state.intconsumedenergy != dic["intconsumedenergy"]
+            if "intchargingcurrent" in dic and charger_state.intchargingcurrent != dic["intchargingcurrent"]:
+                charger_state.intchargingcurrent != dic["intchargingcurrent"]
+            if "intelapsedtime" in dic and charger_state.intelapsedtime != dic["intelapsedtime"]:
+                charger_state.intelapsedtime != dic["intelapsedtime"]
+            if "dttlastconntime" in dic and charger_state.dttlastconntime != dic["dttlastconntime"]:
+                charger_state.dttlastconntime != dic["dttlastconntime"]
+            else:
+                charger_state.dttlastconntime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            charger_state.save()
+
+        except ObjectDoesNotExist:
+            print('ChangeChargerState cid[%s] vchcommand[%s]-> ObjectDoesNotExist' % (self.chargerId, dic["vchcommand"]))
+            dic_s = {
+                "vchchargerid": self.chargerId,
+                "dttlastconntime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "vchcommand": dic["vchcommand"],
+                "vchstate": dic["vchstate"]
+            }
+            ChargerState.objects.create(**dic_s)
+
     def NetworkLogMsg(self):
-        dic = {
-            "vchchargerid": self.chargerId,
-            #"lastMessageTime": datetime(),
-            "lastcommandstatus": self.jsonList[2]
-        }
-        ChargerNetworkLog.objects.create(**dic)
+        try:
+            charger_network_log = ChargerNetworkLog.objects.get(vchchargerid=self.chargerId)
+            if charger_network_log.lastcommandstatus != self.jsonList[2]:
+                charger_network_log.lastcommandstatus = self.jsonList[2]
+            charger_network_log.lastmessagetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            charger_network_log.save()
+        except ObjectDoesNotExist:
+            print('NetworkLogMsg-> ObjectDoesNotExist cid[%s]' % self.chargerId)
+            dic = {
+                "vchchargerid": self.chargerId,
+                "lastmessagetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                "lastcommandstatus": self.jsonList[2]
+            }
+            ChargerNetworkLog.objects.create(**dic)
 
     def AuthorizeMsg(self):
         """
@@ -69,7 +105,7 @@ class ChargerPoint(object):
             print('BootnotificationMsg-> ObjectDoesNotExist')
             dic = {
                 "vchchargerid": self.chargerId,
-                "vchvenderid": content["chargePointVendor"],
+                "vchvendorid": content["chargePointVendor"],
                 #"vchgrouptransformer": 0,
                 "vchmodelid": content["chargePointModel"],
                 #"vchgroupid": 0,
@@ -84,36 +120,38 @@ class ChargerPoint(object):
             }
             ChargerInfo.objects.create(**dic)
 
+        dic_s = {
+            "vchcommand": "Bootnotification",
+            "vchstate": "Bootnotification"
+        }
+        self.ChangeChargerState(dic_s)
+
     def HeartBeatMsg(self):
         content = self.jsonList[3]
-        try:
-            charger_state = ChargerState.objects.get(vchchargerid=self.chargerId)
-            if charger_state.vchstate != content["status"]:
-                charger_state.vchstate = content["status"]
-            charger_state.dttlastconntime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            charger_state.save()
-
-        except ObjectDoesNotExist:
-            print('HeartBeatMsg-> charger_state cid[%s] not exist' % self.chargerId)
-            #ChargerState.objects.create(vchchargerid=self.chargerId, vchState=content["status"])
+        dic_s = {
+            "vchcommand": "HeartBeat",
+            "vchstate": "Available"
+            #"vchstate": content["status"]
+        }
+        self.ChangeChargerState(dic_s)
 
     def MetervalueMsg(self):
         content = self.jsonList[3]["meterValue"]
         try:
-            dic = {
+            dic_s = {
                 "dttlastconntime": content["timestamp"],
                 "intconsumedenergy": content["ConsumedEnergy"],      #???
                 #"intcharingvoltage": content["SupplyVoltage"],          #字段不存在
                 "intchargingcurrent": content["SupplyCurrent"],
                 #"intchargingphase": content["SupplyPhase"],         #字段不存在
-                "intelapsedtime": content["ElapsedTime"]
+                "intelapsedtime": content["ElapsedTime"],
+                "vchcommand": "MeterValues",
+                "vchstate": "charging"
             }
 
-            ChargerState.objects.filter(vchchargerid=self.chargerId).update(**dic)
+            self.ChangeChargerState(dic_s)
         except KeyError:
             print("MetervalueMsg key err!")
-        except Exception:
-            print("MetervalueMsg update error! cid[%s]" % self.chargerId)
 
     def StartTransactionMsg(self):
         content = self.jsonList[3]
@@ -154,6 +192,12 @@ class ChargerPoint(object):
                 "vchremark": content["reasonDetail"]
             }
             ChargingRecord.objects.create(**dic)
+
+            dic_s = {
+                "vchcommand": "StartTransaction",
+                "vchstate": "StartTransaction"
+            }
+            self.ChangeChargerState(dic_s)
         except KeyError:
             print("StartTransactionMsg key err!")
         except Exception:
@@ -173,7 +217,11 @@ class ChargerPoint(object):
                 }
                 ChargerStateLog.objects.create(**dic)
 
-            ChargerState.objects.filter(vchchargerid=self.chargerId).update(vchstate=content["status"])
+            dic_s = {
+                "vchcommand": "StatusNotification",
+                "vchstate": content["status"]
+            }
+            self.ChangeChargerState(dic_s)
         except KeyError:
             raise KeyError("StatusNotificationMsg key err!")
         except Exception:
@@ -192,7 +240,7 @@ def process_data(msg):
     chargerId = topic[1]
     msgType = topic[2]
     jsonList = json.loads(msg.payload.decode())
-    print(jsonList)
+    #print(jsonList)
     charger = ChargerPoint(chargerId, jsonList)
 
     charger.NetworkLogMsg()
@@ -200,7 +248,7 @@ def process_data(msg):
         charger.AuthorizeMsg()
     elif msgType=="BootNotification":
         charger.BootnotificationMsg()
-    elif msgType=="Heartbeat":
+    elif msgType=="HeartBeat":
         charger.HeartBeatMsg()
     elif msgType=="MeterValues":
         charger.MetervalueMsg()
@@ -242,4 +290,3 @@ def __main():
     on_subscribe()
  
 __main()
-

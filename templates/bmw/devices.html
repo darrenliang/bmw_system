@@ -180,6 +180,7 @@
     <script>
         var ui = {
             lineChart: async function(){
+				this.listLength = 0;
 				this.activeCidList = [];						//active电桩列表
 				this.SupplyCurrentDic = new Array();	//存储所有电桩实时电流信息	SupplyCurrent
 				this.ConsumedEnergyDic = new Array();	//存储所有电桩实时电量信息	ConsumedEnergy
@@ -247,7 +248,7 @@
 						_this.chargeTimerDic[cid] = setTimeout(function(){ 			//20秒未收到信息就清空电量电流list
 															_this.SupplyCurrentDic[cid].length = 0;
 														  	_this.ConsumedEnergyDic[cid].length = 0;
-														  }, 20000);
+														  }, 120000);
 						
 						_this.chargeTimeDic[cid] = obj[3].meterValue.ElapsedTime;
 						_this.updateLineChartSC(cid, obj[3].meterValue.SupplyCurrent/1000, ui.optionSC);
@@ -353,7 +354,7 @@
 							var res = [];
 							var len = 10;
 							while (len--) {
-								res.unshift(now.toLocaleTimeString('chinese',{hour12:false}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
 								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
@@ -430,7 +431,7 @@
 							var res = [];
 							var len = 10;
 							while (len--) {
-								res.unshift(now.toLocaleTimeString('chinese',{hour12:false}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
 								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
@@ -474,10 +475,17 @@
 					if(option.series[i].name == cid){
 						flag=1;
 						option.series[i].data = this.SupplyCurrentDic[cid];
+						if(this.SupplyCurrentDic[cid].length > this.listLength)
+							this.listLength = this.SupplyCurrentDic[cid].length
 					}
 				}
 				if(flag == 0)		//不存在该cid折线图时动态创建
 				{
+					_this.SupplyCurrentDic[cid] = [];
+					for(i=0;i<this.listLength;i++)		//和其他折线保持时间同步
+						_this.SupplyCurrentDic[cid].push('/');
+					_this.SupplyCurrentDic[cid].push(y_value);
+
 					var item = {
 						name: cid,
 						type: 'line',
@@ -518,6 +526,11 @@
 				}
 				if(flag == 0)		//不存在该cid折线图时动态创建
 				{
+					_this.ConsumedEnergyDic[cid] = [];
+					for(i=0;i<this.listLength;i++)		//和其他折线保持时间同步
+						_this.ConsumedEnergyDic[cid].push('/');
+					_this.ConsumedEnergyDic[cid].push(y_value);
+
 					var item = {
 						name: cid,
 						type: 'line',
