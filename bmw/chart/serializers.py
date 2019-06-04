@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from bmw.models import ChargingRecord
 
 
 class RecentChargingRecordSerial(serializers.Serializer):
+    mode = serializers.IntegerField()
     vchchargerid = serializers.CharField(required=False)
 

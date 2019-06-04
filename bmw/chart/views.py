@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from . import serializers
 from . import utils
+from ..meta import PeriodMode
 from share.db import sum_zero
 from bmw.models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
@@ -25,5 +26,8 @@ class RecentChargerRecordView(APIView):
         if "vchchargerid" in serializer.validated_data:
             vchchargerid = serializer.validated_data["vchchargerid"]
             queryset = self.queryset.filter(vchchargerid=vchchargerid)
+
+        mode = serializer.validated_data["mode"]
         data = utils.get_monthly_recent_charging_records(queryset)
+
         return Response(data)

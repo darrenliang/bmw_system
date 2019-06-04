@@ -234,6 +234,7 @@ class RecentChargingRecordListView(APIView):
         record_list = []
         for record in queryset:
             record_list.append({"intrecordid": record.intrecordid,
+                                "vchchargerid": record.vchchargerid,
                                 "dttfinishtime": str(record.dttfinishtime).replace("T", " "),
                                 "dblenergy": record.dblenergy})
         return Response({"num": num, "result": record_list}, status=status.HTTP_200_OK)
