@@ -9,5 +9,5 @@ from rest_framework.authtoken import views as authviews
 # The API URLs are now determined automatically by the router.
 # Additionally, we include the login URLs for the browsable API.
 urlpatterns = [
-    url(r'^getRecentChargerRecords/$', views.RecentChargerRecordView.as_view()),  # json api
+    url(r'^getRecentChargerRecords$', views.RecentChargerRecordView.as_view()),  # json api
 ]

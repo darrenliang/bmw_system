@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^api/basic/settings/$', views.BasicSettingsView.as_view()),  # json api
     url(r'^api/charger/details/$', views.ChargerDetails.as_view()),  # json api
     url(r'^api/charging/record/details/$', views.ChargingRecordDetails.as_view()),  # json api
+    url(r'getChargerStates$', views.ChargerStatesView.as_view()),
+
     url(r'^$', views.log_in, name='log_in'),
     url(r'^log_in/$', views.log_in, name='log_in'),
     url(r'^log_out/$', views.log_out, name='log_out'),

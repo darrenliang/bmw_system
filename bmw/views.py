@@ -1,14 +1,8 @@
 from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
-from django.shortcuts import HttpResponseRedirect
-from django.conf import settings
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from rest_framework import generics, permissions, status, authentication
 from rest_framework.authtoken.models import Token
@@ -18,7 +12,8 @@ from rest_framework.reverse import reverse
 from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
-from .serializers import ChargerGroupSerializer, ChargerInfoSerializer
+from .serializers import ChargerGroupSerializer, ChargerInfoSerializer, ChargerStateSerializer
+from .meta import STATES
 
 
 @api_view(['GET'])
@@ -176,6 +171,7 @@ def get_chargers_by_group(request):
     data = ChargerInfoSerializer(queryset, many=True).data
     return Response(data)
 
+
 class ChargerStateStatisticView(APIView):
     """
         This view automatically provide `list` function
@@ -186,12 +182,9 @@ class ChargerStateStatisticView(APIView):
 
     def get(self, request):
         result = []
-        state_list = ["BootUp", "Available", "PreParing", "Charging", "StatusChanged", "StopCharging",
-                      "RemoteCharging", "RemoteStopCharging", "SendMessage", "Updating", "Unavailable", "Reboot",
-                      "Faulted", "SupsendedEV", "Finishing", "Other"]
         accumulate_rate = 0
         size = self.queryset.count()
-        for state in state_list:
+        for state in STATES:
             if state != "Other":
                 rate = round(self.queryset.filter(vchstate=state).count() / size * 100, 2)
                 result.append({state: rate})
@@ -452,6 +445,19 @@ class ChargerDetails(APIView):
                   "dblmincurrent": dblmincurrent, "intMaxPhase": intmaxphase}
 
         return Response({'result': result}, status=status.HTTP_200_OK)
+
+
+class ChargerStatesView(APIView):
+    """
+    This view automatically provide `list` function
+    """
+    # authentication_classes = (authentication.TokenAuthentication,)
+    # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
+    queryset = ChargerState.objects.all()
+
+    def get(self, request):
+        serializer = ChargerStateSerializer(self.queryset.all(), many=True)
+        return Response(serializer.data)
 
 
 def log_in(request):

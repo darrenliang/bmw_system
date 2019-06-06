@@ -7,6 +7,7 @@ from ..meta import PeriodMode
 from share.db import sum_zero
 from bmw.models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
+from rest_framework.exceptions import ValidationError
 
 
 class RecentChargerRecordView(APIView):
@@ -28,6 +29,12 @@ class RecentChargerRecordView(APIView):
             queryset = self.queryset.filter(vchchargerid=vchchargerid)
 
         mode = serializer.validated_data["mode"]
-        data = utils.get_monthly_recent_charging_records(queryset)
-
+        if mode == PeriodMode.Yearly:
+            data = utils.get_yearly_recent_charging_records(queryset)
+        elif mode == PeriodMode.Monthly:
+            data = utils.get_monthly_recent_charging_records(queryset)
+        elif mode == PeriodMode.Daily:
+            data = utils.get_daily_recent_charging_records(queryset)
+        else:
+            raise ValidationError("Wrong mode.{}!".format(mode))
         return Response(data)

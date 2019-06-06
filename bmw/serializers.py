@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import ChargerGroup, ChargerInfo
+from .models import ChargerGroup, ChargerInfo, ChargerState
 
 
 class ChargerGroupSerializer(serializers.ModelSerializer):
@@ -34,6 +34,15 @@ class ChargerInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChargerInfo
         fields = ('vchgroupid', )
+
+
+class ChargerStateSerializer(serializers.ModelSerializer):
+    vchchargerid = serializers.CharField()
+    vchstate = serializers.CharField()
+
+    class Meta:
+        model = ChargerState
+        fields = ('vchchargerid', 'vchstate')
 
 
 class UserWithoutUsernameSerializer(serializers.HyperlinkedModelSerializer):
