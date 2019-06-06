@@ -17,4 +17,5 @@ from django.conf.urls import url, include
 
 urlpatterns = [
     url(r'^', include('bmw.urls')),
+    url(r'^', include('mqtt_monitor.urls')),
 ]

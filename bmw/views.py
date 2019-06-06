@@ -19,7 +19,6 @@ from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
 from .serializers import ChargerGroupSerializer, ChargerInfoSerializer
-import threading
 
 
 @api_view(['GET'])
@@ -51,12 +50,14 @@ def get_charger_list(request):
             charger_state = charger_state_list.get(vchchargerid=charger_id)
             vch_state = charger_state.vchstate
             vch_command = charger_state.vchcommand
+            dtt_lastConnTime = charger_state.dttlastconntime
         except ObjectDoesNotExist:
             vch_state = "N/A"
             vch_command = "N/A"
         data.append({"vch_charger_id": charger_id,
                      "vch_firmware_ver": charger_info.vchfirmwarever,
                      "vch_model_id": charger_info.vchmodelid,
+                     "dtt_lastConnTime": dtt_lastConnTime,
                      "vch_state": vch_state,
                      "vch_group_id": charger_info.vchgroupid,
                      "vch_command": vch_command})
@@ -78,7 +79,7 @@ def get_charger_id_list(request):
 
 
 @api_view(['GET'])
-def get_monthly_energy(request, charger_id=None):
+def get_monthly_energy(request, charger_id=None, recent_months=12):
     """
     SELECT sum(dblenergy) FROM evproject.charging_record where dttFinishTime
     between '2009-01-01' and '2009-02-01' and vchChargerID = ‘xxxxxxxx’;
@@ -86,6 +87,8 @@ def get_monthly_energy(request, charger_id=None):
     """
 
     charger_id = request.GET.get("charger_id") if charger_id is None else charger_id
+    recent_months = request.GET.get("months")
+    recent_months = int(recent_months) if recent_months else 12
     x = []
     y = []
     now = datetime.now()
@@ -96,7 +99,7 @@ def get_monthly_energy(request, charger_id=None):
 
     queryset = ChargingRecord.objects.all()
     queryset = queryset if charger_id is None else queryset.filter(vchchargerid=charger_id)
-    recent_months = 6 if charger_id is None else 12  # 排列1显示最近6个月，排列2显示最近12个月
+    #recent_months = 6 if charger_id is None else 12  # 排列1显示最近6个月，排列2显示最近12个月
 
     if queryset.count() < 1:
         return Response({"x": reversed(x), "y": reversed(y)}, status=status.HTTP_200_OK)
@@ -126,11 +129,13 @@ def get_monthly_energy_list(request):
     between '2009-01-01' and '2009-02-01' and vchChargerID = ‘xxxxxxxx’;
     用如上示例SQL查询计算出前6个月每台电桩的充电量
     """
+    recent_months = request.GET.get("months")
+    recent_months = int(recent_months) if recent_months else 12
 
     data = []
     for charger_id in get_charger_id_list(request).data["chargers"]:
-        x = list(get_monthly_energy(request, charger_id).data["x"])
-        y = list(get_monthly_energy(request, charger_id).data["y"])
+        x = list(get_monthly_energy(request, charger_id, recent_months).data["x"])
+        y = list(get_monthly_energy(request, charger_id, recent_months).data["y"])
         if len(x) > 0 and len(y) > 0:
             data.append(dict(charger_id=charger_id, x=x, y=y))
     return Response({"data": data})
@@ -170,29 +175,6 @@ def get_chargers_by_group(request):
     queryset = ChargerInfo.objects.filter(vchgroupid=group_id)
     data = ChargerInfoSerializer(queryset, many=True).data
     return Response(data)
-
-#logger = logging.getLogger('django')
-class ChargerStateUpdateThread (threading.Thread):
-    def __init__(self, charger_id, vch_state):
-        threading.Thread.__init__(self)
-        self.charger_id = charger_id
-        self.vch_state = vch_state
-
-    def run(self):
-        ChargerState.objects.filter(vchchargerid=self.charger_id).update(vchstate=self.vch_state)
-
-class ChargerStateUpdate(APIView):
-    def post(self, request):
-        try:
-            charger_id = request.POST.get("charger_id")
-            vch_state = request.POST.get("vch_state")
-
-            thread = ChargerStateUpdateThread(charger_id, vch_state)
-            thread.start()
-
-        except Exception:
-            raise ValueError("The parameters type error!")
-        return Response(status=status.HTTP_200_OK)
 
 class ChargerStateStatisticView(APIView):
     """
