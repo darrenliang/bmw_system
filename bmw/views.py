@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, ChargerInfo, ChargerState, BasicSetting, \
     ChargerGroup
 from .serializers import ChargerGroupSerializer, ChargerInfoSerializer, ChargerStateSerializer
-from .meta import STATES
+from .meta import STATES, get_parking_floor_display
 
 
 @api_view(['GET'])
@@ -211,12 +211,14 @@ class RecentChargingRecordListView(APIView):
             record_list.append({"intrecordid": record.intrecordid,
                                 "vchchargerid": record.vchchargerid,
                                 "dttfinishtime": str(record.dttfinishtime).replace("T", " "),
-                                "dblenergy": record.dblenergy})
+                                "dblenergy": record.dblenergy,
+                                "floor": get_parking_floor_display(record.vchchargerid)})
         return Response({"num": num, "result": record_list}, status=status.HTTP_200_OK)
 
 
 class RecentChargerStateListView(APIView):
     """
+        电桩总览
         This view automatically provide `list` function
         """
     # authentication_classes = (authentication.TokenAuthentication,)
@@ -232,7 +234,8 @@ class RecentChargerStateListView(APIView):
             state_list.append({"vchchargerid": state.vchchargerid,
                                "vchstate": state.vchstate,
                                "vchcommand": state.vchcommand,
-                               "dttlastconntime": state.dttlastconntime})
+                               "dttlastconntime": state.dttlastconntime,
+                               "floor": get_parking_floor_display(state.vchchargerid)})
         return Response({"num": num, "result": state_list}, status=status.HTTP_200_OK)
 
 

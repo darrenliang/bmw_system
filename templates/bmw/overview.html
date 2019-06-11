@@ -72,7 +72,7 @@
                             <option value=12>近12个月</option>
                         </select>
                         <select id="select_chart2" style="width: 120px;background-color: #fff;border-radius: 5px;">
-                            <option value="total">总电量变化</option>
+                            <option value="total">总电量趋势变化</option>
                             <option value="battery">电桩充电量变化</option>
                         </select>
                     </div>
@@ -115,6 +115,7 @@
                             <thead>
                             <tr>
                                 <th>电桩ID</th>
+                                <th>停车位列表</th>
                                 <th>状态</th>
                                 <th>上次连接时间</th>
                             </tr>
@@ -240,7 +241,7 @@
 
                         var option = {
                             title: {
-                                text: '电桩电量变化'
+                                text: '电桩充电量变化'
                             },
                             tooltip: {
                                 trigger: 'axis'
@@ -312,7 +313,7 @@
                             ];
                         var option = {
                             title: {
-                                text: '总冲电量变化'
+                                text: '总电量趋势变化'
                             },
                             color: colors,
                             tooltip: {
@@ -483,6 +484,7 @@
                         $.each(result, function(index, item){
                             html += '<tr>\
                                         <td>'+item.vchchargerid+'</td>\
+                                        <td>'+item.floor+'</td>\
                                         <td>'+item.vchstate+'</td>\
                                         <td class="text-navy"> '+item.dttlastconntime+' </td>\
                                     </tr>';
