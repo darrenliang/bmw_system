@@ -459,8 +459,12 @@ class ChargerStatesView(APIView):
     queryset = ChargerState.objects.all()
 
     def get(self, request):
-        serializer = ChargerStateSerializer(self.queryset.all(), many=True)
-        return Response(serializer.data)
+        data = []
+        serializer = ChargerStateSerializer(self.queryset.filter(vchchargerid__contains="050101"), many=True)
+        data.append(serializer.data)
+        serializer = ChargerStateSerializer(self.queryset.filter(vchchargerid__contains="050102"), many=True)
+        data.append(serializer.data)
+        return Response(data)
 
 
 def log_in(request):
