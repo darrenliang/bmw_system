@@ -67,9 +67,9 @@
                     <h5>总电量趋势变化</h5>
                     <div class="ibox-tools">
                         <select id="select_month"  style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;">
-                            <option value=3>近3个月</option>
-                            <option value=6>近6个月</option>
-                            <option value=12>近12个月</option>
+                            <option value="1">Yearly</option>
+                            <option value="2">Monthly</option>
+                            <option value="3">Daily</option>
                         </select>
                         <select id="select_chart2" style="width: 120px;background-color: #fff;border-radius: 5px;">
                             <option value="total">总电量趋势变化</option>
@@ -174,7 +174,7 @@
 
 {% block script %}
     <script>
-        var DEFAULT_MONTHS = 12;    //默认显示12个月
+        var DEFAULT_MONTHS = 1;    //默认显示12个月
         var CUR_MONTHS = 12;
         var ui = {
             loadChargerList: function(){
@@ -286,7 +286,8 @@
                     }
                 });
             },
-            chart: function(months) {
+            /*旧的图标，6个月 12个月 */
+            chartTrash: function(months) {
                 // var send_data = charger_id?{ charger_id: charger_id }:{}
                 /*
                 *  折线图
@@ -362,6 +363,105 @@
                                 }
                             ],
                             series: series
+                        };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        chart1.setOption(option);
+                    },
+                    error: function(){
+                        console.log('load '+this.url+' failed');
+                    }
+                });
+            },
+            /*新版 按照Year Month Day区分*/
+            chart: function(options) {
+                // var send_data = charger_id?{ charger_id: charger_id }:{}
+                /*
+                *  折线图
+                */
+                document.getElementById("chart11").style.display="block";
+                document.getElementById("chart1").style.display="none";
+                var chart1 = echarts.init(document.getElementById('chart11'));
+                // 指定图表的配置项和数据
+                var colors = ['#5793f3', '#d14a61', '#1ab394'];
+
+                $.ajax({
+                    url: '/bmw/chart/getAllRecentChargerRecords',
+                    method: 'get',
+                    data:{
+                        mode: options,
+                        charger_id: null
+                    },
+                    timeout: 5000,
+                    success: function(data){
+                        var zoom = options === '3' ? {
+                            dataZoom: [{
+                                startValue: data.x[data.x.length-7]
+                            }, {
+                                type: 'inside'
+                            }],
+                        } : {};
+
+                        var series = [
+                                {
+                                    name:'电量',
+                                    type:'line',
+                                    smooth: true,
+                                    data: data.y
+                                }
+                            ];
+                        var option = {
+                            title: {
+                                text: '总电量趋势变化'
+                            },
+                            color: colors,
+                            tooltip: {
+                                trigger: 'axis',
+                            },
+                            legend: {
+                                data:['电量' ]
+                            },
+                            grid: {
+                                left: '2%',
+                                right: '6%',
+                                bottom: '18%',
+                                containLabel: true
+                            },
+                            xAxis: [
+                                {
+                                    type: 'category',
+                                    axisLabel:{
+                                      interval:0,  //类目全显
+                                      rotate:-30   //顺时针旋转30度
+                                    },
+                                    axisTick: {
+                                        alignWithLabel: true
+                                    },
+                                    axisLine: {
+                                        onZero: false,
+                                        lineStyle: {
+                                            color: '#333'
+                                        }
+                                    },
+                                    axisPointer: {
+                                        label: {
+                                            formatter: function (params) {
+                                                return '电量  ' + params.value
+                                                    + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
+                                            }
+                                        }
+                                    },
+                                    data: data.x
+                                }
+                            ],
+                            yAxis: [
+                                {
+                                    type: 'value',
+                                    name: 'WH/瓦时',
+                                }
+                            ],
+                            series: series,
+                            ...zoom
                         };
 
                         // 使用刚指定的配置项和数据显示图表。
@@ -531,11 +631,11 @@
                 //     _this.chart(id);
                 // });
                 $('#select_month').change(function(){
-                    CUR_MONTHS = $(this).val();
+                    options = $(this).val();
                     if($('#select_chart2').val() == 'total') {
-                        _this.chart(CUR_MONTHS);//总电量
+                        _this.chart(options);//总电量
                     }else{
-                        _this.batteryChart(CUR_MONTHS);//电池电量
+                        _this.batteryChart(options);//电池电量
                     }
                  });
                 $('#select_chart2').change(function(){
