@@ -2,6 +2,13 @@
 {% load staticfiles %}
 {% block content %}
 
+<style>
+.p10 { float: left; width: 10%; padding: 0 15px; }
+#chargerGroup .widget{ padding: 10px 0; text-align: center; border-radius: 0; }
+#charger_note .b_item{ float: left; padding: 0 15px; }
+.b_item .block{ display: inline-block !important; width: 50px; height: 10px; }
+.b_item p { display: inline-block; }
+</style>
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="row" id="overviewStats">
        <div class="col-lg-3">
@@ -54,6 +61,33 @@
                         <h2 class="font-bold value">0</h2>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 10x10 -->
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            <div id="charger_note" class="row">
+                <div class="b_item">
+                    <div class="block navy-bg"></div>
+                    <p>Available</p>
+                </div>
+                <div class="b_item">
+                    <div class="block lazur-bg"></div>
+                    <p>Charging</p>
+                </div>
+                <div class="b_item">
+                    <div class="block yellow-bg"></div>
+                    <p>Boot notification</p>
+                </div>
+            </div>
+            <div id="chargerGroup">
+                <!-- <div class="p10">
+                    <div class="widget style1 navy-bg">
+                        <i class="icon iconfont icon-chongdianzhuang fa-4x"></i>
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -177,6 +211,32 @@
         var DEFAULT_MONTHS = 1;    //默认显示12个月
         var CUR_MONTHS = 12;
         var ui = {
+            chargerGroup: function() {
+                $.ajax({
+                    url: '/bmw/getChargerStatesByGroup',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var html = ''
+                        $.each(data, function(index, item){
+                            html += '<div class="row">'
+                            $.each(item, function(itemIndex, itemItem){
+                                var style = {available: 'navy-bg', charging: 'lazur-bg', bootnotification: 'yellow-bg'}
+                                html += `<div class="p10">
+                                        <div class="widget style1 ${style[itemItem.vchstate.toLowerCase()]}">
+                                           ${itemItem.vchchargerid}
+                                        </div>
+                                    </div>`
+                            })
+                            html += '</div>'
+                        });
+                        $('#chargerGroup').html(html);
+                    },
+                    error: function(){
+                        console.log('load '+this.url+' failed');
+                    }
+                });
+            },
             loadChargerList: function(){
                 //充电ID列表
                 $.ajax({
@@ -664,6 +724,7 @@
                 this.chargingRecordTable(10);
                 this.chargerTable(10);
                 this.eventsHandler();
+                this.chargerGroup();
             }
         }
         $(document).ready(function(){
