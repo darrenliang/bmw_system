@@ -184,6 +184,7 @@
                             <thead>
                             <tr>
                                 <th>电桩ID</th>
+                                <th>停车位列表</th>
                                 <th>结束充电时间</th>
                                 <th>充电总电量</th>
                             </tr>
@@ -771,7 +772,8 @@
                         $.each(result, function(index, item){
                             html += '<tr>\
                                         <td>'+item.vchchargerid+'</td>\
-                                        <td>'+item.dttfinishtime+'</td>\
+                                        <td>'+item.floor+'</td>\
+                                        <td>'+item.dttfinishtime.replace('T', ' ')+'</td>\
                                         <td class="text-navy"> '+item.dblenergy+' </td>\
                                     </tr>';
                         });

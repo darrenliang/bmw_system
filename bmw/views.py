@@ -210,7 +210,7 @@ class RecentChargingRecordListView(APIView):
         for record in queryset:
             record_list.append({"intrecordid": record.intrecordid,
                                 "vchchargerid": record.vchchargerid,
-                                "dttfinishtime": str(record.dttfinishtime).replace("T", " "),
+                                "dttfinishtime": record.dttfinishtime,
                                 "dblenergy": record.dblenergy,
                                 "floor": get_parking_floor_display(record.vchchargerid)})
         return Response({"num": num, "result": record_list}, status=status.HTTP_200_OK)
