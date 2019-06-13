@@ -209,7 +209,7 @@
 {% block script %}
     <script>
         var DEFAULT_MONTHS = 1;    //默认显示12个月
-        var CUR_MONTHS = 12;
+        var CUR_MONTHS = 1;
         var ui = {
             chargerGroup: function() {
                 $.ajax({
@@ -254,7 +254,7 @@
                     }
                 });
             },
-            batteryChart: function(months) {
+            batteryChartOld: function(months) {
                 /*
                 *  多条折线图
                 */
@@ -337,6 +337,106 @@
                             },
                             series: series
                             };
+
+                        // 使用刚指定的配置项和数据显示图表。
+                        chart1.setOption(option);
+                    },
+                    error: function(){
+                        console.log('load '+this.url+' failed');
+                    }
+                });
+            },
+            batteryChart: function(options) {
+                /*
+                *  多条折线图
+                */
+                document.getElementById("chart11").style.display="none";	//添加div chart11修复两折线图切换时的显示的bug
+                document.getElementById("chart1").style.display="block";
+                var chart1 = echarts.init(document.getElementById('chart1'));
+                // 指定图表的配置项和数据
+                var colors = ['#5793f3', '#d14a61', '#1ab394'];
+
+                $.ajax({
+                    url: '/bmw/chart/getRecentChargerRecords',
+                    method: 'get',
+                    data:{mode:options},
+                    timeout: 5000,
+                    success: function(response){
+                        var lists = response;
+
+                        var series = [];
+                        var legendData = [];
+                        var xData = [];
+
+                        var option = {
+                            title: {
+                                text: '电桩充电量变化'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                left: 'right',
+                                width: '80%',
+                                data: legendData
+                            },
+                            grid: {
+                                left: '2%',
+                                right: '6%',
+                                bottom: '12%',
+                                containLabel: true
+                            },
+                            toolbox: {
+                                feature: {
+                                    saveAsImage: {}
+                                }
+                            },
+                            xAxis: {
+                                type: 'category',
+                                boundaryGap: false,
+                                axisLabel: {
+                                    interval: 0,  //类目全显
+                                    rotate: -30   //顺时针旋转30度
+                                },
+                                data: xData
+                            },
+                            yAxis: {
+                                type: 'value',
+                                name: 'WH/瓦时',
+                            }
+                        };
+
+                        if(lists.length === 0) {
+                            chart1.clear();
+                            chart1.setOption(option);
+                            return;
+                        }
+
+                        for(var i =0; i<lists[0].x.length; i++){
+                            xData.push(lists[0].x[i]);
+                        }
+
+                        lists.forEach(item => {
+                            legendData.push(item.charger_id);
+
+                            var _data = [];
+
+                            for(var i =0; i<item.x.length; i++){
+                                _data.push(item.y[i]);
+                            }
+
+                            var serie =  {
+                                name: item.charger_id,
+                                type:'line',
+                                //stack: '电量',	//导致多条折线图重叠
+                                smooth: true,
+                                data: _data
+                            }
+                            series.push(serie);
+                        });
+
+                        option.series = series;
+                        option.legend.data = legendData;
 
                         // 使用刚指定的配置项和数据显示图表。
                         chart1.setOption(option);
