@@ -746,7 +746,7 @@
                                         <td>'+item.vchchargerid+'</td>\
                                         <td>'+item.floor+'</td>\
                                         <td>'+item.vchstate+'</td>\
-                                        <td class="text-navy"> '+item.dttlastconntime+' </td>\
+                                        <td> '+item.dttlastconntime.replace('T', ' ')+' </td>\
                                     </tr>';
                         });
                         $('#stateList').html(html);
