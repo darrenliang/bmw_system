@@ -11,4 +11,8 @@ from rest_framework.authtoken import views as authviews
 urlpatterns = [
     url(r'^getRecentChargerRecords$', views.RecentChargerRecordView.as_view()),  # 总电量变化
     url(r'^getAllRecentChargerRecords$', views.AllRecentChargerRecordView.as_view()),  # 总电量变化
+    url(r'^getChargingRecordBar$', views.GetChargingRecordBarView.as_view()),
+    url(r'^getChargersErrLogSun$', views.GetChargersErrLogSunView.as_view()),
+    url(r'^getChargingRecordScatter$', views.GetChargingRecordScatterView.as_view()),
+    url(r'^getChargingQuantityLine$', views.GetChargingQuantityLineView.as_view()),
 ]

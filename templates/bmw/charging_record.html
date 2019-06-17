@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>充电记录统计图表</h2>
+                </div>
+            </div>
+
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+					 <div class="col-md-12">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>充电记录</h5>
+								<div class="ibox-tools">
+									<select id="select-group" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;" onchange="ui.select_change()"></select>
+									<select id="select-date"  style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;" onchange="ui.select_change()">
+										<option value="11">近7天</option>
+										<option value="12">近7周</option>
+										<option value="13">近4季度</option>
+									</select>
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content" style="height: 900px">
+								<div class="flot-chart">
+									<div class="flot-chart-content" id="bar_charts" style="height: 850px"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+		var barChart = echarts.init(document.getElementById("bar_charts"));
+		var ui = {
+			indexOf: function(arr,item){
+				var ret=-1;
+				for( var i=0;i<arr.length;i++){
+					if(arr[i]==item)
+						ret = i;
+				}
+				return ret;
+			},
+			barChartDraw: function(){
+				var _this = this;
+				var option = {
+					tooltip : {
+						trigger: 'axis',
+						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+							type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+						}
+					},
+					legend: {
+						data: []
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					xAxis:  {
+						type: 'value'
+					},
+					yAxis: {
+						type: 'category',
+						data: []
+					},
+					series: []
+				}
+				return option;
+			},
+			updatebarChart: function() {
+				var _this = this;
+				var option = _this.barChartDraw();
+				var group_id = $("#select-group").val();
+				var mode = $("#select-date").val();
+				barChart.showLoading();
+				$.ajax({
+					url: '/bmw/chart/getChargingRecordBar',
+					method: 'get',
+					data: {group_id: group_id,mode: mode},
+					timeout: 5000,
+					success: function(res){
+						barChart.hideLoading();
+						for(var i=0;i<res.charger_list.length;i++)
+						{
+							option.legend.data.push(res.charger_list[i].charger_id);
+
+							var item = {
+								name: res.charger_list[i].charger_id,
+								type: 'bar',
+								stack: 'one',
+								label: {
+									normal: {
+										show: true,
+										position: 'insideRight'
+									}
+								},
+								data:res.charger_list[i].y
+							}
+							option.series.push(item);
+						}
+
+						option.legend.data.push('total');
+						option.legend.data.push('充电次数');
+						var item = {
+							name: 'total',
+							type: 'bar',
+							stack: 'one',
+							label: {
+								normal: {
+									show: true,
+									position: 'insideRight'
+								}
+							},
+							data:res.total_y
+						}
+						option.series.push(item);
+						
+						var item = {
+							name: '充电次数',
+							type: 'bar',
+							stack: 'two',
+							label: {
+								normal: {
+									show: true,
+									position: 'insideRight'
+								}
+							},
+							data:res.charging_num
+						}
+						option.series.push(item);
+						
+						option.yAxis.data = res.date_list;
+						barChart.setOption(option);
+					},
+					error: function(){
+						console.log('connect /bmw/chart/getChargingRecordBar failed');
+					}
+				});
+			},
+			getGroupList: function(){
+				var groupList = null;
+				$.ajax({
+					url: '/api/charger/groups/',
+					method: 'get',
+					async : false,
+					success: function(data){
+						groupList = data;
+					},
+					error: function(e){
+						console.log('connect /api/charger/groups/ error');
+					}
+				});
+				return groupList;
+			},
+			initbarSelect: function(){
+				var group_list = ui.getGroupList();
+				if(group_list){
+					group_list.forEach(function (gid) {
+						ui.addSelectOption($('#select-group'), gid["vchgroupid"]);
+					});
+				}
+			},
+			addSelectOption: function(obj, val){
+				var option = document.createElement("option");
+				$(option).val(val);
+				$(option).text(val);
+				obj.append(option);
+			},
+			select_change: function(){
+				var _this = this;
+				this.updatebarChart();
+			},
+			init: function(){
+				//$('#select-date').val(1);
+				this.initbarSelect();
+				this.updatebarChart();
+			}
+		}
+		$(document).ready(function(){
+			ui.init();
+		});
+</script>
+{% endblock script %}

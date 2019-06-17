@@ -501,12 +501,39 @@ def devices(request):
         return render(request, 'bmw/devices.html')
     return redirect(reverse('log_in'))
 
+@login_required(login_url='/log_in/')
+def charging_record(request):
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charging_record.html')
+    return redirect(reverse('log_in'))
+
+@login_required(login_url='/log_in/')
+def charging_err_log(request):
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charging_err_log.html')
+    return redirect(reverse('log_in'))
+
+@login_required(login_url='/log_in/')
+def charging_quantity(request):
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charging_quantity.html')
+    return redirect(reverse('log_in'))
+
+@login_required(login_url='/log_in/')
+def charging_record2(request):
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charging_record2.html')
+    return redirect(reverse('log_in'))
 
 @login_required(login_url='/log_in/')
 def charts(request):
     user = request.user
     if user is not None:
-        return render(request, 'bmw/charts.html')
+        return render(request, 'bmw/charging_record.html')
     return redirect(reverse('log_in'))
 
 

@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>75001234  充电记录日志图表</h2>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+            <div class="wrapper wrapper-content animated fadeInRight">
+                <div class="row">
+					 <div class="col-md-12">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>故障统计</h5>
+								<div class="ibox-tools">
+									<select id="select-group" style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;" onchange="ui.select_change()"></select>
+									<a class="collapse-link">
+										<i class="fa fa-chevron-up"></i>
+									</a>
+									<a class="close-link">
+										<i class="fa fa-times"></i>
+									</a>
+								</div>
+							</div>
+							<div class="ibox-content" style="height: 900px">
+								<div class="flot-chart">
+									<div class="flot-chart-content" id="sun_charts" style="height: 850px"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+{% endblock content %}
+
+
+{% block script %}
+<script>
+		var sunChart = echarts.init(document.getElementById("sun_charts"));
+		var ui = {
+			indexOf: function(arr,item){
+				var ret=-1;
+				for( var i=0;i<arr.length;i++){
+					if(arr[i]==item)
+						ret = i;
+				}
+				return ret;
+			},
+			sunChartDraw: function(){
+				var _this = this;
+				var option = {
+					title: {
+						//text: '旭日图',
+						textStyle: {
+							fontSize: 14,
+							align: 'center'
+						}
+					},
+					tooltip: {
+						trigger: 'item',
+						formatter: "{b}: {c}"
+					},
+					series: {
+						type: 'sunburst',
+						highlightPolicy: 'ancestor',
+						//data: res,
+						radius: [0, '95%'],
+						sort: null,
+						levels: [{}, {//内环
+							r0: '10%',
+							r: '30%',
+							itemStyle: {
+								borderWidth: 2
+							},
+							label: {
+								rotate: 'tangential'
+							}
+						}, {//中环
+							r0: '30%',
+							r: '60%',
+							label: {
+								align: 'right'
+							}
+						}, {//外环
+							r0: '60%',
+							r: '100%',
+							label: {
+								//position: 'outside',
+								padding: 3,
+								silent: false,
+								color:'black'
+							},
+							itemStyle: {
+								borderWidth: 3
+							}
+						}]
+					}
+				}
+				return option;
+			},
+			updateSunChart: function() {
+				var _this = this;
+				var option = _this.sunChartDraw();
+				var group_id = $("#select-group").val();
+				sunChart.showLoading();
+				$.ajax({
+					url: '/bmw/chart/getChargersErrLogSun',
+					method: 'get',
+					data: {group_id: group_id},
+					timeout: 5000,
+					success: function(res){
+						sunChart .hideLoading();
+						option.series.data = res;
+						sunChart.setOption(option);
+					},
+					error: function(){
+						console.log('connect /bmw/chart/getChargersErrLogSun failed');
+					}
+				});
+			},
+			getGroupList: function(){
+				var groupList = null;
+				$.ajax({
+					url: '/api/charger/groups/',
+					method: 'get',
+					async : false,
+					success: function(data){
+						groupList = data;
+					},
+					error: function(e){
+						console.log('connect /api/charger/groups/ error');
+					}
+				});
+				return groupList;
+			},
+			initSunSelect: function(){
+				var group_list = ui.getGroupList();
+				if(group_list){
+					group_list.forEach(function (gid) {
+						ui.addSelectOption($('#select-group'), gid["vchgroupid"]);
+					});
+				}
+			},
+			addSelectOption: function(obj, val){
+				var option = document.createElement("option");
+				$(option).val(val);
+				$(option).text(val);
+				obj.append(option);
+			},
+			select_change: function(){
+				var _this = this;
+				this.updateSunChart();
+			},
+			init: function(){
+				this.initSunSelect();
+				this.updateSunChart();
+			}
+		}
+		$(document).ready(function(){
+			ui.init();
+		});
+</script>
+{% endblock script %}

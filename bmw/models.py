@@ -312,6 +312,7 @@ class ChargingRecord(models.Model):
     intchargingminute = models.IntegerField(db_column='intChargingMinute', blank=True, null=True)  # Field name made lowercase.
     #intdelayminute = models.IntegerField(db_column='intDelayMinute')  # Field name made lowercase.
     dblenergy = models.FloatField(db_column='dblEnergy')  # Field name made lowercase.
+    intsupplyvol = models.FloatField(db_column='intSupplyVol')
     #blncurrentmaxcomplete = models.IntegerField(db_column='blnCurrentMaxComplete')  # Field name made lowercase.
     #blncurrentmincomplete = models.IntegerField(db_column='blnCurrentMinComplete')  # Field name made lowercase.
     #blncurrentsafecomplete = models.IntegerField(db_column='blnCurrentSafeComplete')  # Field name made lowercase.

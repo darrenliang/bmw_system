@@ -61,7 +61,13 @@
                         <a href="javascript:return false;"  onclick="return false;" style="cursor: default;"><i class="fa fa-calendar"></i> <span class="nav-label">查看日志</span></a>
                     </li>
                     <li class="{% ifequal request.path '/charts/'%} active {% endifequal%}">
-                        <a href="javascript:return false;"  onclick="return false;" style="cursor: default;"><i class="fa fa-line-chart"></i> <span class="nav-label">统计图表</span></a>
+                        <a href="/charts/"><i class="fa fa-line-chart"></i> <span class="nav-label">统计图表</span><span class="fa arrow"></span></a>
+                        <ul class="nav nav-second-level">
+                            <li class="{% ifequal request.path "/charts/"%} active {% endifequal%}"><a href="/charts/charging_record">充电记录统计图表</a></li>
+                            <li class="{% ifequal request.path "/charts/"%} active {% endifequal%}"><a href="/charts/charging_err_log">故障统计旭日图</a></li>
+                            <li class="{% ifequal request.path "/charts/"%} active {% endifequal%}"><a href="/charts/charging_quantity">充电网络用量统计</a></li>
+                            <li class="{% ifequal request.path "/charts/"%} active {% endifequal%}"><a href="/charts/charging_record2">充电记录统计</a></li>
+                        </ul>
                     </li>
                     <li class="{% ifequal request.path '/settings/'%} active {% endifequal%}">
                         <a href="javascript:return false;"  onclick="return false;" style="cursor: default;"><i class="fa fa-cog"></i> <span class="nav-label">系统设置</span></a>
