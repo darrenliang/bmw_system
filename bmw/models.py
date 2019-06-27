@@ -297,7 +297,6 @@ class ChargingCard(models.Model):
         managed = False
         db_table = 'charging_card'
 
-
 class ChargingRecord(models.Model):
     intrecordid = models.AutoField(db_column='intRecordID', primary_key=True)  # Field name made lowercase.
     intchargingcode = models.IntegerField(db_column='intChargingCode')  # Field name made lowercase.
@@ -307,30 +306,35 @@ class ChargingRecord(models.Model):
     vchrecordstate = models.CharField(db_column='vchRecordState', max_length=10)  # Field name made lowercase.
     vchopenrecord = models.CharField(db_column='vchOpenRecord', max_length=30)  # Field name made lowercase.
     vchcloserecord = models.CharField(db_column='vchCloseRecord', max_length=30)  # Field name made lowercase.
-    #blnmonthly = models.IntegerField(db_column='blnMonthly')  # Field name made lowercase.
-    #vchpriority = models.CharField(db_column='vchPriority', max_length=15, blank=True, null=True)  # Field name made lowercase.
     intchargingminute = models.IntegerField(db_column='intChargingMinute', blank=True, null=True)  # Field name made lowercase.
-    #intdelayminute = models.IntegerField(db_column='intDelayMinute')  # Field name made lowercase.
+    intduration = models.IntegerField(db_column='intDuration')
     dblenergy = models.FloatField(db_column='dblEnergy')  # Field name made lowercase.
-    intsupplyvol = models.FloatField(db_column='intSupplyVol')
-    #blncurrentmaxcomplete = models.IntegerField(db_column='blnCurrentMaxComplete')  # Field name made lowercase.
-    #blncurrentmincomplete = models.IntegerField(db_column='blnCurrentMinComplete')  # Field name made lowercase.
-    #blncurrentsafecomplete = models.IntegerField(db_column='blnCurrentSafeComplete')  # Field name made lowercase.
     vchsupplyline = models.CharField(db_column='vchSupplyLine', max_length=3, blank=True, null=True)  # Field name made lowercase.
     intmaxsupplycurrent = models.IntegerField(db_column='intMaxSupplyCurrent')  # Field name made lowercase.
     intmaxcurrent = models.IntegerField(db_column='intMaxCurrent')  # Field name made lowercase.
-    #intmincurrent = models.IntegerField(db_column='intMinCurrent')  # Field name made lowercase.
-    #intsafecurrent = models.IntegerField(db_column='intSafeCurrent')  # Field name made lowercase.
-    #intsupplycurrenttocharger = models.IntegerField(db_column='intSupplyCurrentToCharger')  # Field name made lowercase.
-    #intpwnchangedelay = models.IntegerField(db_column='intPWNChangeDelay')  # Field name made lowercase.
+    intmincurrent = models.IntegerField(db_column='intMinCurrent')  # Field name made lowercase.
+    intsafecurrent = models.IntegerField(db_column='intSafeCurrent')  # Field name made lowercase.
+    intpwnchangedelay = models.IntegerField(db_column='intPWNChangeDelay')  # Field name made lowercase.
     dttstartqueue = models.DateTimeField(db_column='dttStartQueue', blank=True, null=True)  # Field name made lowercase.
     dttstarttime = models.DateTimeField(db_column='dttStartTime', blank=True, null=True)  # Field name made lowercase.
     dttfinishtime = models.DateTimeField(db_column='dttFinishTime', blank=True, null=True)  # Field name made lowercase.
     dttrealfinish = models.DateTimeField(db_column='dttRealFinish', blank=True, null=True)  # Field name made lowercase.
-    #dttlockuntil = models.DateTimeField(db_column='dttLockUntil', blank=True, null=True)  # Field name made lowercase.
     dblcost = models.FloatField(db_column='dblCost', blank=True, null=True)  # Field name made lowercase.
     vchremark = models.CharField(db_column='vchRemark', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    intmaxphase = models.CharField(db_column='intMaxPhase', max_length=3, blank=True, null=True)  # Field name made lowercase.
+    intmaxphase = models.IntegerField(db_column='intMaxPhase', blank=True, null=True)  # Field name made lowercase.
+    intsupplyvol = models.FloatField(db_column='intSupplyVol', blank=True, null=True)
+    vchreason = models.CharField(db_column='vchReason', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    intmeterstart = models.IntegerField(db_column='intMeterStart', blank=True, null=True)  # Field name made lowercase.
+    intmeterstop = models.IntegerField(db_column='intMeterStop', blank=True, null=True)  # Field name made lowercase.
+    vchstartway = models.CharField(db_column='vchStartWay', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    vchstopway = models.CharField(db_column='vchStopWay', max_length=45, blank=True, null=True)  # Field name made lowercase.
+    #blnmonthly = models.IntegerField(db_column='blnMonthly')  # Field name made lowercase.
+    #vchpriority = models.CharField(db_column='vchPriority', max_length=15, blank=True, null=True)  # Field name made lowercase.
+    #blncurrentmaxcomplete = models.IntegerField(db_column='blnCurrentMaxComplete')  # Field name made lowercase.
+    #blncurrentmincomplete = models.IntegerField(db_column='blnCurrentMinComplete')  # Field name made lowercase.
+    #blncurrentsafecomplete = models.IntegerField(db_column='blnCurrentSafeComplete')  # Field name made lowercase.
+    #intsupplycurrenttocharger = models.IntegerField(db_column='intSupplyCurrentToCharger')  # Field name made lowercase.
+    #dttlockuntil = models.DateTimeField(db_column='dttLockUntil', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False

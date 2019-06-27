@@ -156,24 +156,8 @@ class ChargerPoint(object):
     def StartTransactionMsg(self):
         content = self.jsonList[3]
         """
-        [2, "05010210-20190301T170031-3816466758", "StartTransaction", {
-                "chargerId":    "05010210",
-                "connectorId":  3,
-                "idTag":    "AE4726C00F880400C818002000000015",
-                "meterstart":   864,
-                "timestamp":    "2019-03-01T17:00:31",
-                "chargingCycle":    14,
-                "maxPhase": 1,
-                "maxFeedback":  11169,
-                "maxCurrent":   32,
-                "ConsumedEnergy":   15,
-                "SupplyVoltage":    221958,
-                "SupplyCurrent":    11140,
-                "duration": 2880,
-                "delay":    0,
-                "reason":   "Local",
-                "reasonDetail": "RFID"
-            }]
+[{'idTag': 'DEDA27C0E3880400C818002000000015', 'maxPhase': 1, 'maxFeedback': 30390, 'chargingCycle': 105, 'delay': 0, 'duration': 2880, 'connectorId': 3,
+  'reason': 'Local', 'reasonDetail': 'RFID', 'timestamp': '2019-06-06T16:07:15', 'chargerId': '05010202', 'meterstart': 395276}]
         """
         try:
             dic = {
@@ -183,12 +167,12 @@ class ChargerPoint(object):
                 "dttstarttime": content["timestamp"],
                 "intmaxphase": content["maxPhase"],
                 "intmaxsupplycurrent": content["maxFeedback"]/1000,
-                "intmaxcurrent": content["maxCurrent"],
-                "dblenergy": content["ConsumedEnergy"]/1000,
+                #"intmaxcurrent": content["maxCurrent"],          #字段不存在
+                #"dblenergy": content["ConsumedEnergy"]/1000,     #字段不存在
                 #"intSupplyVol": content["SupplyVoltage"],  #字段不存在
                 #?: content["SupplyCurrent"],    #字段不存在
-                #"intduration": content["duration"],     #字段不存在
-                #"vchreason": content["reason"],     #字段不存在
+                "intduration": content["duration"],
+                "vchreason": content["reason"],
                 "vchremark": content["reasonDetail"]
             }
             ChargingRecord.objects.create(**dic)
@@ -199,9 +183,45 @@ class ChargerPoint(object):
             }
             self.ChangeChargerState(dic_s)
         except KeyError:
-            print("StartTransactionMsg key err!")
+            print("StartTransactionMsg key err! [%s]" % content)
         except Exception:
-            print("StartTransactionMsg update error! cid[%s]" % self.chargerId)
+            print("StartTransactionMsg update error! cid[%s][%s]" % (self.chargerId, content))
+
+    def StopTransactionMsg(self):
+#[StopTransaction][[2, '05010207-20190617T112749-2167368079', 'StopTransaction', {'reasonDetail': 'RFID', 'timestamp': '2019-06-17T11:27:49',
+#'chargingCycle': 134, 'transactionID': 684056, 'reason': 'Local', 'chargerId': '05010207', 'meterStop': 1670052, 'idTag': 'AE3922C075880400C818002000000015'}]]
+        content = self.jsonList[3]
+        try:
+            dic = {
+                "vchchargerid": self.chargerId,
+                "vchcardid": content["idTag"],
+                "intchargingcode": content["chargingCycle"],        #intchargingcode 判断是否存在，不存在就插入一条
+                "dttstarttime": content["timestamp"],
+                "vchreason": content["reason"],
+                "vchremark": content["reasonDetail"],
+                "vchsocketid": '0',
+                "vchrecordstate": '0',
+                "vchopenrecord": '0',
+                "vchcloserecord": '0',
+                "intduration": 0,
+                "dblenergy": 0,
+                "intmaxsupplycurrent": 0,
+                "intmaxcurrent": 0,
+                "intmincurrent": 0,
+                "intsafecurrent": 0,
+                "intpwnchangedelay": 0
+            }
+            ChargingRecord.objects.create(**dic)
+
+            dic_s = {
+                "vchcommand": "StopTransaction",
+                "vchstate": "StopTransaction"
+            }
+            self.ChangeChargerState(dic_s)
+        except KeyError:
+            print("StopTransactionMsg key err! [%s]" % content)
+        except Exception:
+            print("StopTransactionMsg update error! cid[%s][%s]" % (self.chargerId, content))
 
     def StatusNotificationMsg(self):
         content = self.jsonList[3]
@@ -225,7 +245,7 @@ class ChargerPoint(object):
         except KeyError:
             raise KeyError("StatusNotificationMsg key err!")
         except Exception:
-            print("StatusNotificationMsg update error! cid[%s]" % self.chargerId)
+            print("StatusNotificationMsg update error! cid[%s][%s]" % (self.chargerId, content))
 
 def process_data(msg):
     topic = msg.topic.split("/")           #Message/05010103/MeterValues
@@ -254,11 +274,12 @@ def process_data(msg):
         charger.MetervalueMsg()
     elif msgType=="StartTransaction":
         charger.StartTransactionMsg()
+    elif msgType=="StopTransaction":
+        charger.StopTransactionMsg()
     elif msgType=="StatusNotification":
         charger.StatusNotificationMsg()
     else:
-        print("Unkown command [%s]" % msgType)
-
+        print("Unkown command [%s][%s]" % (msgType,jsonList))
 
 # 连接MQTT服务器
 def on_mqtt_connect():

@@ -243,12 +243,12 @@
 						}
 							
 						
-						if(_this.chargeTimerDic[cid])
+						/*if(_this.chargeTimerDic[cid])
 							clearTimeout(_this.chargeTimerDic[cid]);
 						_this.chargeTimerDic[cid] = setTimeout(function(){ 			//20秒未收到信息就清空电量电流list
 															_this.SupplyCurrentDic[cid].length = 0;
 														  	_this.ConsumedEnergyDic[cid].length = 0;
-														  }, 120000);
+														  }, 120000);*/
 						
 						_this.chargeTimeDic[cid] = obj[3].meterValue.ElapsedTime;
 						_this.updateLineChartSC(cid, obj[3].meterValue.SupplyCurrent/1000, ui.optionSC);
