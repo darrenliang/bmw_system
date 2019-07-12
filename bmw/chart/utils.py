@@ -125,7 +125,7 @@ def get_recent_charging_records(queryset, date_list):
         q = queryset.filter(dttstarttime__gte=datetime.strptime(date_list[i-1], "%Y-%m-%d"), 
                             dttstarttime__lt=datetime.strptime(date_list[i], "%Y-%m-%d"))
         sum_energy = q.aggregate(total=sum_zero('dblenergy'))['total']
-        y.append(sum_energy)
+        y.append(round(sum_energy,2))
         n.append(q.count())
 
     return dict(y=y, n=n)

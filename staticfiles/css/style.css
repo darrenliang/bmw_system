@@ -3418,6 +3418,7 @@ ol.unstyled {
   padding: 10px 20px;
   position: absolute;
   right: 0;
+  text-align: center;
 }
 .footer.fixed_full {
   position: fixed;
@@ -8090,4 +8091,9 @@ body.md-skin {
   .welcome-message {
     display: none;
   }
+}
+.sidebar-collapse #side-menu {
+  position: fixed;
+  width: 220px;
+  z-index: 2001;
 }

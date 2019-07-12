@@ -78,14 +78,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     </a>
                     <ul class="dropdown-menu dropdown-alerts">
                         <li>
-                            <a href="#">
+                            <a href="mailto:jay.yu@evpowergroup.com">
                                 <div><i class="fa fa-twitter fa-fw"></i> [EVPower] Yu Jielin</div>
                                 <div class="text-muted small">jay.yu@evpowergroup.com</div>
                             </a>
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="#">
+                            <a href="mailto:chaoyun@163.com">
                                 <div><i class="fa fa-twitter fa-fw"></i> [MUZITECH] Liang Chaoyun</div>
                                 <div class="text-muted small">chaoyun@163.com</div>
                             </a>
@@ -100,7 +100,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <div class="row">
         <div class="col-md-4 header-left">
             <div>
-                <h1><a href="index.html" id="logo_name"><img src="{% static 'img/CRB_Logo_Small.png' %}"></a></h1>
+                <h1><a href="http://www.e-chong.com" id="logo_name"><img src="{% static 'img/CRB_Logo_Small.png' %}"></a></h1>
             </div>
 
             <div class="head-nav">
@@ -151,7 +151,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             <div class="account_grid row">
                <div class="col-md-12 login-right wow fadeInRight" data-wow-delay="0.4s">
                     <h3>登录</h3>
-                    <p>欢迎使用BMW后台管理系统，请您先登录.</p>
+                    <p>欢迎使用负载均衡管理系统，请您先登录.</p>
                     <form role="form" action="{% url 'log_in' %}" method="post">
                         {% csrf_token %}
                         <div>
@@ -162,8 +162,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <span>密码<label>*</label></span>
                             <input type="password" name="password" required>
                         </div>
-                        <a class="forgot" href="#">忘记密码？&nbsp;</a>
                         <input type="submit" value="登录">
+                        <a class="forgot" href="/forget/">忘记密码？&nbsp;</a>
                     </form>
                </div>
                 <div class="clearfix"> </div>

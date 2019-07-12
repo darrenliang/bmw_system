@@ -451,10 +451,15 @@ ul.cl-effect-16 {
   line-height: 1.8em;
 }
 .footer {
-  padding: 2em 0;
+  padding: 1em 0;
   text-align: center;
   background-color: #E8E9EA;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
 }
+
 .footer p{
   font-size: 1em;
   line-height:1.8em;
