@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block content %}
-
+<style>
+.p10 { float: left; width: 10%; padding: 0 15px; }
+#chargerGroup .widget{ padding: 10px 0; text-align: center; border-radius: 0; }
+#charger_note .b_item{ float: left; padding: 0 15px; }
+.b_item .block{ display: inline-block !important; width: 50px; height: 10px; }
+.b_item p { display: inline-block; }
+</style>
                     <div class="wrapper wrapper-content animated fadeInRight">
                         <div class="row" id="overviewStats">
                            <div class="col-lg-3">
@@ -12,7 +18,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 电桩总数 </span>
-                                            <h2 class="font-bold value">0</h2>
+                                            <h2 class="font-bold value total-charger">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -25,7 +31,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 总充电电量 </span>
-                                            <h2 class="font-bold value">0</h2>
+                                            <h2 class="font-bold value accumulate-power">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -38,7 +44,7 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 总充电次数 </span>
-                                            <h2 class="font-bold value">0</h2>
+                                            <h2 class="font-bold value accumulate-minutes">0</h2>
                                         </div>
                                     </div>
                                 </div>
@@ -51,13 +57,34 @@
                                         </div>
                                         <div class="col-xs-8 text-right">
                                             <span> 正在使用 </span>
-                                            <h2 class="font-bold value">0</h2>
+                                            <h2 class="font-bold value total-charging">0</h2>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
+						
+						<!-- 10x10
+						<div class="ibox float-e-margins">
+							<div class="ibox-content">
+								<div id="charger_note" class="row">
+									<div class="b_item">
+										<div class="block navy-bg"></div>
+										<p>Available</p>
+									</div>
+									<div class="b_item">
+										<div class="block lazur-bg"></div>
+										<p>Charging</p>
+									</div>
+									<div class="b_item">
+										<div class="block yellow-bg"></div>
+										<p>Boot notification</p>
+									</div>
+								</div>
+								<div id="chargerGroup">
+								</div>
+							</div>
+						</div> -->
 
                         <!-- chart 1 -->
                         <div class="row">
@@ -715,19 +742,17 @@
                 );
 				
             },
-
-            loadAjax: function(){
+			loadAjax: function(){
                 //顶部电桩总数...Charger Info数量统计接口
                 $.ajax({
                     url: '/api/charger/info/statistic/',
                     method: 'get',
                     timeout: 5000,
                     success: function(data){
-                        var i = 0;
-                        for(var d in data){
-                            $('#overviewStats .value').eq(i).text(data[d]);
-                            i++;
-                        }
+                        $('#overviewStats .total-charger').text(data["total_charger"]);
+                        $('#overviewStats .total-charging').text(data["total_charging"]);
+                        $('#overviewStats .accumulate-power').text(data["accumulate_power"]);
+                        $('#overviewStats .accumulate-minutes').text(data["accumulate_minutes"]);
                     },
                     error: function(){
                         console.log('connect api/charger/info/statistic/ failed');
@@ -833,6 +858,32 @@
 					$('#table_content').html(html);
 				}
             },
+			chargerGroup: function() {
+                $.ajax({
+                    url: '/bmw/getChargerStatesByGroup',
+                    method: 'get',
+                    timeout: 5000,
+                    success: function(data){
+                        var html = ''
+                        $.each(data, function(index, item){
+                            html += '<div class="row">'
+                            $.each(item, function(itemIndex, itemItem){
+                                var style = {available: 'navy-bg', charging: 'lazur-bg', bootnotification: 'yellow-bg'}
+                                html += `<div class="p10">
+                                        <div class="widget style1 ${style[itemItem.vchstate.toLowerCase()]}">
+                                           ${itemItem.vchchargerid}
+                                        </div>
+                                    </div>`
+                            })
+                            html += '</div>'
+                        });
+                        $('#chargerGroup').html(html);
+                    },
+                    error: function(){
+                        console.log('load '+this.url+' failed');
+                    }
+                });
+            },
 			eventsHandler: function(){
                 window.addEventListener("resize", () => {
                     ui.myChart.resize();
@@ -847,6 +898,7 @@
 				this.init_dic(this.getChargerList());
 				this.tableContent();
 				this.eventsHandler();
+				this.chargerGroup();
             }
         }
 
