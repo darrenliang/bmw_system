@@ -173,7 +173,9 @@ class ChargerPoint(object):
                 #?: content["SupplyCurrent"],    #字段不存在
                 "intduration": content["duration"],
                 "vchreason": content["reason"],
-                "vchremark": content["reasonDetail"]
+                "vchremark": content["reasonDetail"],
+                "dblenergy": 0,
+                "intmaxcurrent": 0
             }
             ChargingRecord.objects.create(**dic)
 
@@ -184,8 +186,8 @@ class ChargerPoint(object):
             self.ChangeChargerState(dic_s)
         except KeyError:
             print("StartTransactionMsg key err! [%s]" % content)
-        except Exception:
-            print("StartTransactionMsg update error! cid[%s][%s]" % (self.chargerId, content))
+        #except Exception:
+        #    print("StartTransactionMsg update error! cid[%s][%s]" % (self.chargerId, content))
 
     def StopTransactionMsg(self):
 #[StopTransaction][[2, '05010207-20190617T112749-2167368079', 'StopTransaction', {'reasonDetail': 'RFID', 'timestamp': '2019-06-17T11:27:49',

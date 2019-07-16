@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-xs-8 text-right">
                         <span> 电桩总数 </span>
-                        <h2 class="font-bold value">0</h2>
+                        <h2 class="font-bold value total-charger">0</h2>
                     </div>
                 </div>
             </div>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-xs-8 text-right">
                         <span> 总充电电量 </span>
-                        <h2 class="font-bold value">0</h2>
+                        <h2 class="font-bold value accumulate-power">0</h2>
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="col-xs-8 text-right">
                         <span> 总充电次数 </span>
-                        <h2 class="font-bold value">0</h2>
+                        <h2 class="font-bold value accumulate-minutes">0</h2>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                     </div>
                     <div class="col-xs-8 text-right">
                         <span> 正在使用 </span>
-                        <h2 class="font-bold value">0</h2>
+                        <h2 class="font-bold value total-charging">0</h2>
                     </div>
                 </div>
             </div>
@@ -111,8 +111,8 @@
                         </select>
                     </div>
                     <div class="ibox-content">
-                        <div id="chart1" class="chart" style="width: 100%;height:300px;"display="none"></div>
-                        <div id="chart11" class="chart" style="width: 100%;height:300px;" display="none"></div>
+                        <div id="line_chart1" class="chart" style="width: 100%;height:300px;"display="none"></div>
+                        <div id="line_chart2" class="chart" style="width: 100%;height:300px;" display="none"></div>
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="ibox-title">
                     <h5>联网状态总览</h5>
                     <div class="ibox-content">
-                        <div id="chart2" style="width: 500px;height:300px;"></div>
+                        <div id="pie_chart" style="width: 100%;height:300px;"></div>
                     </div>
                 </div>
             </div>
@@ -209,8 +209,11 @@
 
 {% block script %}
     <script>
-        var DEFAULT_MONTHS = 1;    //默认显示12个月
-        var CUR_MONTHS = 1;
+        LineChart1 = echarts.init(document.getElementById('line_chart1'));
+        LineChart2 = echarts.init(document.getElementById('line_chart2'));
+        pieChart = echarts.init(document.getElementById('pie_chart'));
+        var DEFAULT_STEP = 1;    //默认显示12个月
+        var CUR_STEP = 1;
         var ui = {
             chargerGroup: function() {
                 $.ajax({
@@ -255,105 +258,13 @@
                     }
                 });
             },
-            batteryChartOld: function(months) {
-                /*
-                *  多条折线图
-                */
-                document.getElementById("chart11").style.display="none";	//添加div chart11修复两折线图切换时的显示的bug
-                document.getElementById("chart1").style.display="block";
-                var chart1 = echarts.init(document.getElementById('chart1'));
-                // 指定图表的配置项和数据
-                var colors = ['#5793f3', '#d14a61', '#1ab394'];
-
-                $.ajax({
-                    url: '/api/monthly/energy/list/',
-                    method: 'get',
-                    data:{months:months},
-                    timeout: 5000,
-                    success: function(response){
-                        var lists = response.data;
-
-                        var series = [];
-                        var legendData = [];
-                        var xData = [];
-
-                        for(var i =0; i<lists[0].x.length; i++){
-                            xData.push(lists[0].x[i]);
-                        }
-
-                        lists.forEach(item => {
-                            legendData.push(item.charger_id);
-
-                            var _data = [];
-
-                            for(var i =0; i<item.x.length; i++){
-                                _data.push(item.y[i]);
-                            }
-
-                            var serie =  {
-                                name: item.charger_id,
-                                type:'line',
-                                //stack: '电量',	//导致多条折线图重叠
-                                smooth: true,
-                                data: _data
-                            }
-                            series.push(serie);
-                        });
-
-                        var option = {
-                            title: {
-                                text: '电桩充电量变化'
-                            },
-                            tooltip: {
-                                trigger: 'axis'
-                            },
-                            legend: {
-                                left: 'right',
-                                width: '80%',
-                                data: legendData
-                            },
-                            grid: {
-                                left: '2%',
-                                right: '6%',
-                                bottom: '12%',
-                                containLabel: true
-                            },
-                            toolbox: {
-                                feature: {
-                                    saveAsImage: {}
-                                }
-                            },
-                            xAxis: {
-                                type: 'category',
-                                boundaryGap: false,
-                                axisLabel:{
-                                    interval:0,  //类目全显
-                                    rotate:-30   //顺时针旋转30度
-                                },
-                                data: xData
-                            },
-                            yAxis: {
-                                type: 'value',
-                                name: 'WH/瓦时',
-                            },
-                            series: series
-                            };
-
-                        // 使用刚指定的配置项和数据显示图表。
-                        chart1.setOption(option);
-                    },
-                    error: function(){
-                        console.log('load '+this.url+' failed');
-                    }
-                });
-            },
+            /*电桩充电量变化*/
             batteryChart: function(options) {
                 /*
                 *  多条折线图
                 */
-                document.getElementById("chart11").style.display="none";	//添加div chart11修复两折线图切换时的显示的bug
-                document.getElementById("chart1").style.display="block";
-                var chart1 = echarts.init(document.getElementById('chart1'));
+                document.getElementById("line_chart1").style.display="none";	//添加div->line_chart2: 修复两折线图切换时的显示的bug
+                document.getElementById("line_chart2").style.display="block";
                 // 指定图表的配置项和数据
                 var colors = ['#5793f3', '#d14a61', '#1ab394'];
 
@@ -408,8 +319,8 @@
                         };
 
                         if(lists.length === 0) {
-                            chart1.clear();
-                            chart1.setOption(option);
+                            LineChart2.clear();
+                            LineChart2.setOption(option);
                             return;
                         }
 
@@ -440,109 +351,21 @@
                         option.legend.data = legendData;
 
                         // 使用刚指定的配置项和数据显示图表。
-                        chart1.setOption(option);
+                        LineChart2.setOption(option);
                     },
                     error: function(){
                         console.log('load '+this.url+' failed');
                     }
                 });
             },
-            /*旧的图标，6个月 12个月 */
-            chartTrash: function(months) {
-                // var send_data = charger_id?{ charger_id: charger_id }:{}
-                /*
-                *  折线图
-                */
-                document.getElementById("chart11").style.display="block";
-                document.getElementById("chart1").style.display="none";
-                var chart1 = echarts.init(document.getElementById('chart11'));
-                // 指定图表的配置项和数据
-                var colors = ['#5793f3', '#d14a61', '#1ab394'];
-
-                $.ajax({
-                    url: '/api/monthly/energy/',
-                    method: 'get',
-                    data:{months:months},
-                    timeout: 5000,
-                    success: function(data){
-                        var series = [
-                                {
-                                    name:'电量',
-                                    type:'line',
-                                    smooth: true,
-                                    data: data.y
-                                }
-                            ];
-                        var option = {
-                            title: {
-                                text: '总电量趋势变化'
-                            },
-                            color: colors,
-                            tooltip: {
-                                trigger: 'axis',
-                            },
-                            legend: {
-                                data:['电量' ]
-                            },
-                            grid: {
-                                left: '2%',
-                                right: '6%',
-                                bottom: '12%',
-                                containLabel: true
-                            },
-                            xAxis: [
-                                {
-                                    type: 'category',
-                                    axisLabel:{
-                                      interval:0,  //类目全显
-                                      rotate:-30   //顺时针旋转30度
-                                    },
-                                    axisTick: {
-                                        alignWithLabel: true
-                                    },
-                                    axisLine: {
-                                        onZero: false,
-                                        lineStyle: {
-                                            color: '#333'
-                                        }
-                                    },
-                                    axisPointer: {
-                                        label: {
-                                            formatter: function (params) {
-                                                return '电量  ' + params.value
-                                                    + (params.seriesData.length ? '：' + params.seriesData[0].data : '');
-                                            }
-                                        }
-                                    },
-                                    data: data.x
-                                }
-                            ],
-                            yAxis: [
-                                {
-                                    type: 'value',
-                                    name: 'WH/瓦时',
-                                }
-                            ],
-                            series: series
-                        };
-
-                        // 使用刚指定的配置项和数据显示图表。
-                        chart1.setOption(option);
-                    },
-                    error: function(){
-                        console.log('load '+this.url+' failed');
-                    }
-                });
-            },
-            /*新版 按照Year Month Day区分*/
+            /*新版 按照Year Month Day区分  总电量趋势变化*/
             chart: function(options) {
                 // var send_data = charger_id?{ charger_id: charger_id }:{}
                 /*
                 *  折线图
                 */
-                document.getElementById("chart11").style.display="block";
-                document.getElementById("chart1").style.display="none";
-                var chart1 = echarts.init(document.getElementById('chart11'));
+                document.getElementById("line_chart1").style.display="block";
+                document.getElementById("line_chart2").style.display="none";
                 // 指定图表的配置项和数据
                 var colors = ['#5793f3', '#d14a61', '#1ab394'];
 
@@ -626,7 +449,7 @@
                         };
 
                         // 使用刚指定的配置项和数据显示图表。
-                        chart1.setOption(option);
+                        LineChart1.setOption(option);
                     },
                     error: function(){
                         console.log('load '+this.url+' failed');
@@ -653,10 +476,10 @@
                         /**
                         * 饼图
                         */
-                        var chart2 = echarts.init(document.getElementById('chart2'));
-                        chart2.title = '联网状态总览';
-
                         option = {
+                            title: {
+                                text: '联网状态总览'
+                            },
                             tooltip: {
                                 trigger: 'item',
                                 formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -664,7 +487,7 @@
                             legend: {
                                 type: 'scroll',
                                 orient: 'vertical',
-                                right: 10,
+                                right: 0,
                                 top: 20,
                                 bottom: 20,
                                 data: dataIndex,
@@ -675,7 +498,7 @@
                                     name:'',
                                     type:'pie',
                                     radius: ['50%', '70%'],
-                                    center: ['40%', '50%'],
+                                    center: ['30%', '50%'],
                                     avoidLabelOverlap: false,
                                     label: {
                                         normal: {
@@ -701,8 +524,7 @@
                         };
 
                         // 使用刚指定的配置项和数据显示图表。
-                        chart2.setOption(option);
-
+                        pieChart.setOption(option);
 
                     },
                     error: function(){
@@ -718,11 +540,10 @@
                     method: 'get',
                     timeout: 5000,
                     success: function(data){
-                        var i = 0;
-                        for(var d in data){
-                            $('#overviewStats .value').eq(i).text(data[d]);
-                            i++;
-                        }
+                        $('#overviewStats .total-charger').text(data["total_charger"]);
+                        $('#overviewStats .total-charging').text(data["total_charging"]);
+                        $('#overviewStats .accumulate-power').text(data["accumulate_power"]);
+                        $('#overviewStats .accumulate-minutes').text(data["accumulate_minutes"]);
                     },
                     error: function(){
                         console.log('connect api/charger/info/statistic/ failed');
@@ -793,19 +614,19 @@
                 //     _this.chart(id);
                 // });
                 $('#select_month').change(function(){
-                    options = $(this).val();
+                    CUR_STEP = $(this).val();
                     if($('#select_chart2').val() == 'total') {
-                        _this.chart(options);//总电量
+                        _this.chart(CUR_STEP);//总电量
                     }else{
-                        _this.batteryChart(options);//电池电量
+                        _this.batteryChart(CUR_STEP);//电池电量
                     }
                  });
                 $('#select_chart2').change(function(){
                     var value = $(this).val();
                     if(value == 'total') {
-                        _this.chart(CUR_MONTHS);//总电量
+                        _this.chart(CUR_STEP);//总电量
                     }else{
-                        _this.batteryChart(CUR_MONTHS);//电池电量
+                        _this.batteryChart(CUR_STEP);//电池电量
                     }
                 });
                 $('#select_record_num').change(function(){
@@ -816,11 +637,17 @@
                     var value = $(this).val();
                     _this.chargerTable(value);
                 });
+
+                window.addEventListener("resize", () => {
+                    LineChart1.resize();
+                    LineChart2.resize();
+                    pieChart.resize(); 
+                });
             },
 
             init: function(){
                 //this.loadChargerList();
-                this.chart(DEFAULT_MONTHS);
+                this.chart(DEFAULT_STEP);
                 this.loadAjax();
                 this.chart2();
                 this.chargingRecordTable(10);
@@ -830,9 +657,8 @@
             }
         }
         $(document).ready(function(){
-           $('#select_month').val(DEFAULT_MONTHS);
+           $('#select_month').val(DEFAULT_STEP);
            ui.init();
-
         });
     </script>
 

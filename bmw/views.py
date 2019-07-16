@@ -477,6 +477,7 @@ def log_in(request):
             authenticate(username=user.username, password=user.password)
             print("test come here")
             if user.is_staff or user.is_superuser:
+                request.session.set_expiry(3600)
                 return redirect(reverse('overview'))
             return redirect(reverse('log_in'))
         # else:
@@ -577,6 +578,7 @@ def web_socket(request):
 @login_required(login_url='/log_in/')
 def log_out(request):
     logout(request)
+    request.session.flush()
     return redirect(reverse('log_in'))
 
 
