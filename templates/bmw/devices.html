@@ -206,7 +206,8 @@
     <script src="{% static 'js/mqttws31.js' %}"></script>
     <script>
         var ui = {
-            lineChart: async function(){
+            //lineChart: async function(){
+			lineChart: function(){
 				this.listLength = 0;
 				this.activeCidList = [];						//active电桩列表
 				this.SupplyCurrentDic = new Array();	//存储所有电桩实时电流信息	SupplyCurrent
@@ -381,7 +382,8 @@
 							var res = [];
 							var len = 10;
 							while (len--) {
-								res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								//res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								res.unshift(now.toLocaleTimeString());
 								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
@@ -458,7 +460,7 @@
 							var res = [];
 							var len = 10;
 							while (len--) {
-								res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
+								res.unshift(now.toLocaleTimeString());   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
 								now = new Date(now - 1000);
 							}
 							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表

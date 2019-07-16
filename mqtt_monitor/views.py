@@ -175,7 +175,8 @@ class ChargerPoint(object):
                 "vchreason": content["reason"],
                 "vchremark": content["reasonDetail"],
                 "dblenergy": 0,
-                "intmaxcurrent": 0
+                "intmaxcurrent": 0,
+                "intmincurrent": 0
             }
             ChargingRecord.objects.create(**dic)
 
