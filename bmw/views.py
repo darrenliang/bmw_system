@@ -14,6 +14,7 @@ from .models import ChargerInfo, ChargerState, ChargerModel, ChargingRecord, Cha
     ChargerGroup
 from .serializers import ChargerGroupSerializer, ChargerInfoSerializer, ChargerStateSerializer
 from .meta import STATES, get_parking_floor_display
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 
 
 @api_view(['GET'])
@@ -200,20 +201,30 @@ class RecentChargingRecordListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargingRecord.objects.all()  # vchchargerid
+    queryset = ChargingRecord.objects.all().order_by("vchchargerid")  # vchchargerid
 
     def get(self, request):
         num = request.GET.get("num")
-        num = int(num) if num else 5
-        queryset = self.queryset.order_by("-dttfinishtime")[:num]
+        num = int(num) if num else 10
+        page = request.GET.get('page')
+        page = int(page) if page else 1
+
+        paginator = Paginator(self.queryset,num,2)
+        try:
+            page_queryset = paginator.page(page)
+        except PageNotAnInteger:
+            page_queryset = paginator.page(1)
+        except EmptyPage:
+            page_queryset = paginator.page(paginator.num_pages)
+        #queryset = self.queryset.order_by("-dttfinishtime")[:num]
         record_list = []
-        for record in queryset:
+        for record in page_queryset:
             record_list.append({"intrecordid": record.intrecordid,
                                 "vchchargerid": record.vchchargerid,
                                 "dttfinishtime": record.dttfinishtime,
                                 "dblenergy": record.dblenergy,
                                 "floor": get_parking_floor_display(record.vchchargerid)})
-        return Response({"num": num, "result": record_list}, status=status.HTTP_200_OK)
+        return render(request,'bmw/templates/charging_overview.html',{"num": num, "record_list": record_list, "page_queryset":page_queryset})
 
 
 class RecentChargerStateListView(APIView):
@@ -223,20 +234,31 @@ class RecentChargerStateListView(APIView):
         """
     # authentication_classes = (authentication.TokenAuthentication,)
     # permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)
-    queryset = ChargerState.objects.all()  # vchchargerid
+    queryset = ChargerState.objects.all().order_by("vchchargerid")  # vchchargerid
 
     def get(self, request):
         num = request.GET.get("num")
-        num = int(num) if num else 5
-        queryset = self.queryset.order_by("-dttlastconntime")[:num]
+        num = int(num) if num else 10
+        page = request.GET.get('page')
+        page = int(page) if page else 1
+
+        paginator = Paginator(self.queryset,num,2)
+        try:
+            page_queryset = paginator.page(page)
+        except PageNotAnInteger:
+            page_queryset = paginator.page(1)
+        except EmptyPage:
+            page_queryset = paginator.page(paginator.num_pages)
+        #queryset = self.queryset.order_by("-dttlastconntime")[:num]
         state_list = []
-        for state in queryset:
+        for state in page_queryset:
             state_list.append({"vchchargerid": state.vchchargerid,
                                "vchstate": state.vchstate,
                                "vchcommand": state.vchcommand,
-                               "dttlastconntime": state.dttlastconntime,
+                               "dttlastconntime": state.dttlastconntime.strftime('%Y-%m-%d %H:%M:%S'),
                                "floor": get_parking_floor_display(state.vchchargerid)})
-        return Response({"num": num, "result": state_list}, status=status.HTTP_200_OK)
+        return render(request,'bmw/templates/charger_overview.html',{"num": num, "state_list": state_list, "page_queryset":page_queryset})
+        #return Response({"num": num, "result": state_list, "page_queryset":list(page_queryset)}, status=status.HTTP_200_OK)
 
 
 class ChargerInfoStatisticView(APIView):

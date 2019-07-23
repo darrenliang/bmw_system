@@ -132,37 +132,20 @@
     </div>
     <!-- chart 2 -->
     <div class="row">
-         <div class="col-md-6">
+        <div class="col-md-6">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>电桩总览</h5>
                     <div class="ibox-tools">
-                        <select id="select_charger_num">
+                        <select id="select_charger_num"  style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;">
                             <option value="5">--请选择显示数量--</option>
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>
                         </select>
                     </div>
-                    <div class="ibox-content">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>电桩ID</th>
-                                <th>停车位列表</th>
-                                <th>状态</th>
-                                <th>上次连接时间</th>
-                            </tr>
-                            </thead>
-                            <tbody id="stateList">
-                                <!-- <tr>
-                                    <td>巴扎嘿</td>
-                                    <td>234234</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                                </tr> -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <div id="charger_overview"></div>
+
                 </div>
             </div>
         </div>
@@ -172,32 +155,14 @@
                 <div class="ibox-title">
                     <h5>充电记录总览</h5>
                     <div class="ibox-tools">
-                        <select id="select_record_num">
+                        <select id="select_record_num"  style="margin-right: 15px;width: 120px;background-color: #fff;border-radius: 5px;">
                             <option value="5">--请选择显示数量--</option>
                             <option value="5">5</option>
                             <option value="10">10</option>
                             <option value="20">20</option>
                         </select>
                     </div>
-                    <div class="ibox-content">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th>电桩ID</th>
-                                <th>停车位列表</th>
-                                <th>结束充电时间</th>
-                                <th>充电总电量</th>
-                            </tr>
-                            </thead>
-                            <tbody id="recoardAll">
-                                <!-- <tr>
-                                    <td>巴扎嘿</td>
-                                    <td>234234</td>
-                                    <td class="text-navy"> <i class="fa fa-level-up"></i> 40% </td>
-                                </tr> -->
-                            </tbody>
-                        </table>
-                    </div>
+                    <div id="charging_overview"></div>
                 </div>
             </div>
         </div>
@@ -552,26 +517,15 @@
 
             },
 
-            chargerTable: function(num){
+            chargerTable: function(num, page){
                 //电桩总览接口
                 $.ajax({
                     url: '/api/recent/charger/state/list/',
                     method: 'get',
-                    data: {num: num},
+                    data: {num: num, page: page},
                     timeout: 5000,
                     success: function(data){
-                        var result = data.result;
-                        var html = '';
-
-                        $.each(result, function(index, item){
-                            html += '<tr>\
-                                        <td>'+item.vchchargerid+'</td>\
-                                        <td>'+item.floor+'</td>\
-                                        <td>'+item.vchstate+'</td>\
-                                        <td> '+item.dttlastconntime.replace('T', ' ')+' </td>\
-                                    </tr>';
-                        });
-                        $('#stateList').html(html);
+                        $('#charger_overview').html(data);
                     },
                     error: function(){
                         console.log('connect api/recent/charging/record/list/ failed');
@@ -579,26 +533,15 @@
                 });
             },
 
-            chargingRecordTable: function(num){
+            chargingRecordTable: function(num, page){
                 // 充电记录总览接口
                 $.ajax({
                     url: '/api/recent/charging/record/list/',
                     method: 'get',
-                    data: {num: num},
+                    data: {num: num, page: page},
                     timeout: 5000,
                     success: function(data){
-                        var result = data.result;
-                        var html = '';
-
-                        $.each(result, function(index, item){
-                            html += '<tr>\
-                                        <td>'+item.vchchargerid+'</td>\
-                                        <td>'+item.floor+'</td>\
-                                        <td>'+item.dttfinishtime.replace('T', ' ')+'</td>\
-                                        <td class="text-navy"> '+item.dblenergy+' </td>\
-                                    </tr>';
-                        });
-                        $('#recoardAll').html(html);
+                        $('#charging_overview').html(data);
                     },
                     error: function(){
                         console.log('connect api/recent/charging/record/list/ failed');
@@ -630,12 +573,33 @@
                     }
                 });
                 $('#select_record_num').change(function(){
-                    var value = $(this).val();
-                    _this.chargingRecordTable(value);
+                    var num = $(this).val();
+                    _this.chargingRecordTable(num, 1);
                 });
+                $('#charging_overview').on("click",".turn-page",function(){
+                    var num = $('#select_record_num').val();
+                    var page = $(this).val();
+                    _this.chargingRecordTable(num, page);
+                });
+                $('#charging_overview').on("click",".page-jump",function(){
+                    var num = $('#select_record_num').val();
+                    var page = $("#charging_jump").val();
+                    _this.chargingRecordTable(num, page);
+                });
+
                 $('#select_charger_num').change(function(){
-                    var value = $(this).val();
-                    _this.chargerTable(value);
+                    var num = $(this).val();
+                    _this.chargerTable(num, 1);
+                });
+                $('#charger_overview').on("click",".turn-page",function(){
+                    var num = $('#select_charger_num').val();
+                    var page = $(this).val();
+                    _this.chargerTable(num, page);
+                });
+                $('#charger_overview').on("click",".page-jump",function(){
+                    var num = $('#select_charger_num').val();
+                    var page = $("#charger_jump").val();
+                    _this.chargerTable(num, page);
                 });
 
                 window.addEventListener("resize", () => {
@@ -650,14 +614,16 @@
                 this.chart(DEFAULT_STEP);
                 this.loadAjax();
                 this.chart2();
-                this.chargingRecordTable(10);
-                this.chargerTable(10);
+                this.chargingRecordTable(10, 1);
+                this.chargerTable(10, 1);
                 this.eventsHandler();
                 this.chargerGroup();
             }
         }
         $(document).ready(function(){
            $('#select_month').val(DEFAULT_STEP);
+           $('#select_charger_num').val(10);
+           $('#select_record_num').val(10);
            ui.init();
         });
     </script>

@@ -1,0 +1,61 @@
+{% load pagetag %}
+<div class="ibox-content">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+			<th>电桩ID</th>
+			<th>停车位列表</th>
+			<th>结束充电时间</th>
+			<th>充电总电量</th>
+		</tr>
+        </thead>
+        <tbody id="recoardAll">
+        </tbody>
+        {% for item in record_list %}
+          <tr>
+              <td>{{ item.vchchargerid }}</td>
+              <td>{{ item.floor }}</td>
+              <td>{{ item.dttfinishtime }}</td>
+              <td>{{ item.dblenergy }}</td>
+          </tr>
+        {% endfor %}
+    </table>
+
+    <nav aria-label="Page navigation">
+    <ul class="pagination">
+        {% if page_queryset.has_previous %}
+            <li value="{{ page_queryset.previous_page_number }}" class="turn-page">
+                <a aria-label="Previous">
+                  <span aria-hidden="true">上一页</span>
+                </a>
+            </li>
+            <li value="1" class="turn-page">
+              <a aria-label="First">
+                <span aria-hidden="true">首页</span>
+              </a>
+            </li>
+        {% endif %}
+
+        {%  for pg in page_queryset.paginator.page_range %}
+            {% circle_page page_queryset.number pg %}
+        {% endfor %}
+
+        {% if page_queryset.has_next %}
+            <li value="{{ page_queryset.paginator.num_pages }}" class="turn-page">
+              <a aria-label="Last">
+                <span aria-hidden="true">尾页</span>
+              </a>
+            </li>
+            <li value="{{ page_queryset.next_page_number }}" class="turn-page">
+              <a aria-label="Next">
+                <span aria-hidden="true">下一页</span>
+              </a>
+            </li>
+        {% endif %}
+		<li>
+            <input type="text" id="charging_jump" style="margin-left:40px;width:30px;float:left;height:27px;" >
+            <span aria-hidden="true" class="page-jump">跳转</span>
+        </li>
+    </ul>
+    </nav>
+</div>
