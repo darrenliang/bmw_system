@@ -41,6 +41,7 @@ urlpatterns = [
     url(r'^overview/$', views.overview, name='overview'),
     url(r'^devices/$', views.devices, name='devices'),
     url(r'^charts/$', views.charts, name='charts'),
+    url(r'^charts/chargers/$', views.charts_chargers, name='charts'),
     url(r'^details/$', views.details, name='details'),
     url(r'^settings/$', views.setting, name='settings'),
     url(r'^audit_logs/$', views.audit_logs, name='audit_logs'),

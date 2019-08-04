@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>75001234  充电记录日志图表</h2>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+
+            <div class="wrapper wrapper-content animated fadeInRight">
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Area Chart Example <small>With custom colors.</small></h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content" style="position: relative">
+                                <div id="morris-area-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>Bar Chart Example </h5>
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-up"></i>
+                                    </a>
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                                        <i class="fa fa-wrench"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-user">
+                                        <li><a href="#">Config option 1</a>
+                                        </li>
+                                        <li><a href="#">Config option 2</a>
+                                        </li>
+                                    </ul>
+                                    <a class="close-link">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content">
+                                <div id="morris-bar-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+{% endblock content %}
+
+
+{% block script %}
+
+<!-- slick carousel-->
+<script src="{% static 'js/plugins/slick/slick.min.js' %}"></script>
+
+<!-- 本页独有插件 -->
+<!-- Flot -->
+<script src="{% static 'js/plugins/flot/jquery.flot.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.tooltip.min.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.resize.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.pie.js' %}"></script>
+<script src="{% static 'js/plugins/flot/jquery.flot.time.js' %}"></script>
+
+<!-- Morris -->
+<script src="{% static 'js/plugins/morris/raphael-2.1.0.min.js' %}"></script>
+<script src="{% static 'js/plugins/morris/morris.js' %}"></script>
+
+
+
+<script>
+    $(document).ready(function(){
+        /*区域图*/
+        Morris.Area({
+            element: 'morris-area-chart',
+            data: [{ period: '2010 Q1', iphone: 2666, ipad: null, itouch: 2647 },
+                { period: '2010 Q2', iphone: 2778, ipad: 2294, itouch: 2441 },
+                { period: '2010 Q3', iphone: 4912, ipad: 1969, itouch: 2501 },
+                { period: '2010 Q4', iphone: 3767, ipad: 3597, itouch: 5689 },
+                { period: '2011 Q1', iphone: 6810, ipad: 1914, itouch: 2293 },
+                { period: '2011 Q2', iphone: 5670, ipad: 4293, itouch: 1881 },
+                { period: '2011 Q3', iphone: 4820, ipad: 3795, itouch: 1588 },
+                { period: '2011 Q4', iphone: 15073, ipad: 5967, itouch: 5175 },
+                { period: '2012 Q1', iphone: 10687, ipad: 4460, itouch: 2028 },
+                { period: '2012 Q2', iphone: 8432, ipad: 5713, itouch: 1791 } ],
+            xkey: 'period',
+            ykeys: ['iphone', 'ipad', 'itouch'],
+            labels: ['iPhone', 'iPad', 'iPod Touch'],
+            pointSize: 2,
+            hideHover: 'auto',
+            resize: true,
+            lineColors: ['#87d6c6', '#54cdb4','#1ab394'],
+            lineWidth:2,
+            pointSize:1,
+        });
+
+        /*柱状图*/
+        Morris.Bar({
+            element: 'morris-bar-chart',
+            data: [{ y: '2006', a: -60, b: 0 },
+                { y: '2008', a: -50, b: -10 },
+                { y: '2010', a: -40, b: -20 },
+                { y: '2011', a: -30, b: -30 },
+                { y: '2011', a: -20, b: -40 },
+                { y: '2011', a: -10, b: -50 },
+                { y: '2011', a: 0, b: -60 },
+                { y: '2011', a: 10, b: -50 },
+                { y: '2011', a: 20, b: -40 },
+                { y: '2011', a: 30, b: -30 },
+                { y: '2011', a: 40, b: -20 },
+                { y: '2011', a: 50, b: -10 },
+                { y: '2011', a: 60, b: 0 },
+                { y: '2011', a: 50, b: 10 },
+                { y: '2011', a: 40, b: 20 },
+                { y: '2011', a: 30, b: 30 },
+                { y: '2011', a: 20, b: 40 },
+                { y: '2011', a: 10, b: 50 },
+                { y: '2011', a: 0, b: 60 },
+                { y: '2011', a: -10, b: 50 },
+                { y: '2011', a: -20, b: 40 },
+                { y: '2011', a: -30, b: 30 },
+                { y: '2011', a: -40, b: 20 },
+                { y: '2011', a: -50, b: 10 },
+                { y: '2011', a: -60, b: 0 },
+                { y: '2011', a: -50, b: 10 },
+                { y: '2011', a: -40, b: 20 },
+                { y: '2011', a: -30, b: 30 },
+                { y: '2011', a: -20, b: 40 },
+                { y: '2011', a: -10, b: 50 },
+                { y: '2011', a: 0, b: 60 },
+                { y: '2011', a: 10, b: 50 },
+                { y: '2011', a: 20, b: 40 },
+                { y: '2012', a: 30, b: 30 } ],
+            xkey: 'y',
+            ykeys: ['a', 'b'],
+            labels: ['Series A', 'Series B'],
+            hideHover: 'auto',
+            resize: true,
+            barColors: ['#1ab394', '#cacaca'],
+        });
+    });
+
+</script>
+
+{% endblock script %}

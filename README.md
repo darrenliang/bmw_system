@@ -1086,6 +1086,7 @@ GET http://localhost:8000/bmw/chart/getAllRecentChargerRecords/
 | :--------: | :----: | :--------------------------: |
 |    mode    |  int   | 1-Yearly，2-Monthly，3-Daily |
 | charger_id | string |             可选             |
+|   offset   |  int   |        最近几年/月/日        |
 
 Response:
 
@@ -1118,7 +1119,8 @@ Response:
         0.0,
         0.0,
         0.0
-    ]
+    ],
+    "total": 7882.0
 }
 
 ```
@@ -1138,6 +1140,7 @@ GET http://localhost:8000/bmw/chart/getRecentChargerRecords
 | Parameter | Type |         Description          |
 | :-------: | :--: | :--------------------------: |
 |   mode    | int  | 1-Yearly，2-Monthly，3-Daily |
+|  offset   | int  |        最近几年/月/日        |
 
 Response:
 
@@ -1172,7 +1175,8 @@ Response:
             0.0,
             0.0,
             0.0
-        ]
+        ],
+        "total": 7882.0
     }
 ]
 ```

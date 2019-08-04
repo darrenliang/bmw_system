@@ -511,6 +511,14 @@ def charts(request):
 
 
 @login_required(login_url='/log_in/')
+def charts_chargers(request):
+    user = request.user
+    if user is not None:
+        return render(request, 'bmw/charts/chargers.html')
+    return redirect(reverse('log_in'))
+
+
+@login_required(login_url='/log_in/')
 def details(request):
     user = request.user
     if user is not None:
