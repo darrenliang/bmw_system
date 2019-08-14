@@ -6,4 +6,5 @@ from .admin import admin
 from rest_framework.authtoken import views as authviews
 
 urlpatterns = [
+    url(r'^api/chargers/realtime/data/$', views.GetChargersRealTimeDataView.as_view()),  # json api
 ]

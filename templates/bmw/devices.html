@@ -106,6 +106,22 @@
                                     </div>
                                 </div>
                             </div>
+
+							<div id="time_selsect" style="margin-left:30%;margin-bottom:30px;">
+								<label class="btn btn-primary"><input type="radio" class="control-label" value="1" name="category" checked/>5分钟</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input type="radio" class="control-label" value="2" name="category" />15分钟</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input type="radio" class="control-label" value="3" name="category" />1小时</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input type="radio" class="control-label" value="4" name="category" />4小时</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input type="radio" class="control-label" value="5" name="category" />24小时</label>
+							</div>
+
+							<div id="send_data_test" style="margin-left:50px;margin-top:30px;">
+								<span>仅供测试</span>
+								<label class="btn btn-primary" style="margin-left:50px"><input id="0501010A" type="checkbox"/>0501010A模拟发送数据</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input id="0501010B" type="checkbox"/>0501010B模拟发送数据</label>
+								<label class="btn btn-primary" style="margin-left:50px"><input id="0501010C" type="checkbox"/>0501010C模拟发送数据</label>
+							</div>
+
 							 <div class="col-md-12">
                                 <div class="ibox float-e-margins">
                                     <div class="ibox-title">
@@ -194,7 +210,6 @@
 
 
 {% block script %}
-
     <!-- Flot -->
     <script src="/static/js/plugins/flot/jquery.flot.js"></script>
     <script src="/static/js/plugins/flot/jquery.flot.tooltip.min.js"></script>
@@ -205,102 +220,79 @@
 
     <script src="{% static 'js/mqttws31.js' %}"></script>
     <script>
+/******************************for test***********************************/
+str_mod='[2, "05010107-20190603T143214-3952218486", "MeterValues", {"meterValue": {"ElapsedTime": 413, "SupplyCurrent": {0}, "ConsumedEnergy": 1433, "timestamp": "2019-06-03T14:32:14"}, "transactionId": 356835, "connectorId": 3, "chargerId": \"{1}\"}]';
+var timer_0501010A,timer_0501010B,timer_0501010C;
+var options = {
+	timeout: 3,
+	onSuccess: function() {
+		//alert("Connected");
+	},
+	onFailure: function(message) {
+		//alert("Connection failed: " + message.errorMessage);
+	}
+};
+var client = new Messaging.Client("mqtt.e-chong.com", 8083, Math.random().toString(36).substr(2), 10);
+client.connect(options);
+client.onConnectionLost = function(responseObject) {
+	//alert("connection lost: " + responseObject.errorMessage);
+};
+String.prototype.format = function () {
+    var values = arguments;
+    return this.replace(/\{(\d+)\}/g, function (match, index) {
+        if (values.length > index) {
+            return values[index];
+        } else {
+            return "";
+        }
+    });
+};
+function send_mqtt(num,cid){
+	var str=str_mod.format(num,cid);
+	var message = new Messaging.Message(str);
+	message.destinationName = "Message/"+cid+"/MeterValues";
+	message.qos = 2;
+	client.send(message);
+}
+$("#0501010A").click(function () {
+	if ($(this).prop("checked")) {
+		timer_0501010A = setInterval(function(){
+			send_mqtt(100,"0501010A");
+		  }, 1000);
+	} else {
+		clearInterval(timer_0501010A);
+	}
+});
+$("#0501010B").click(function () {
+	if ($(this).prop("checked")) {
+		timer_0501010B = setInterval(function(){
+			send_mqtt(200,"0501010B");
+		  }, 1000);
+	} else {
+		clearInterval(timer_0501010B);
+	}
+});
+$("#0501010C").click(function () {
+	if ($(this).prop("checked")) {
+		timer_0501010C = setInterval(function(){
+			send_mqtt(500,"0501010C");
+		  }, 1000);
+	} else {
+		clearInterval(timer_0501010C);
+	}
+});
+/******************************for test***********************************/
         var ui = {
-            //lineChart: async function(){
 			lineChart: function(){
-				this.listLength = 0;
 				this.activeCidList = [];						//active电桩列表
-				this.SupplyCurrentDic = new Array();	//存储所有电桩实时电流信息	SupplyCurrent
-				this.ConsumedEnergyDic = new Array();	//存储所有电桩实时电量信息	ConsumedEnergy
 				this.chargeTimeDic = new Array();	//存储所有电桩实时充电时间
-				this.chargeTimerDic = new Array();	//存储所有电桩定时器
 				this.myChart = echarts.init(document.getElementById('flot-line-chart-moving'));
 				this.myChart1 = echarts.init(document.getElementById('flot-line-chart-moving-1'));
                 this.optionSC = this.lineChartDrawSupplyCurrent();	//电流
 				this.optionCE = this.lineChartDrawConsumedEnergy();	//电量
-				
                 var _this = this;
-
-                var options = {
-                    timeout: 3,
-                    //Gets Called if the connection has sucessfully been established
-                    onSuccess: function() {
-                        //alert("Connected");						
-						var res = ui.getChargerList();
-						if(res){
-							$.each(res, function(index, item){
-								client.subscribe('Message/'+ item.vch_charger_id + '/#', {qos: 2});
-							});
-						}
-						/*
-						var cid_list=['05010101','05010102','05010103','05010104','05010205','05010106','05010207','05010208','05010209','05010210'];
-						for(var i in cid_list){
-							ui.cidList.push(cid_list[i]);
-							client.subscribe('Message/'+ cid_list[i] + '/#', {qos: 2});
-						}*/
-
-                    },
-                    //Gets Called if the connection could not be established
-                    onFailure: function(message) {
-                        alert("Connection failed: " + message.errorMessage);
-                    }
-                };
-
-                //connect
-                //Using the HiveMQ public Broker, with a random client Id
-				var client = new Messaging.Client("mqtt.e-chong.com", 8083, Math.random().toString(36).substr(2), 10);
-
-                client.connect(options);
 				ui.addSelectOption($('#select-sc'), 'all');
 				ui.addSelectOption($('#select-ce'), 'all');
-
-                //Gets called whenever you receive a message for your subscriptions
-                client.onMessageArrived = function(message) {
-
-                    //Do something with the push message you received
-                    var str = message.payloadString;
-                    var obj = JSON.parse(str);
-                    console.log('receive', obj);
-					if(obj[2] == "MeterValues"){
-						var cid=obj[3].chargerId;
-						if(ui.indexOf(ui.activeCidList, cid) < 0)
-						{
-							ui.activeCidList.push(cid);
-							ui.addSelectOption($('#select-sc'), cid);
-							ui.addSelectOption($('#select-ce'), cid);
-						}
-							
-						
-						/*if(_this.chargeTimerDic[cid])
-							clearTimeout(_this.chargeTimerDic[cid]);
-						_this.chargeTimerDic[cid] = setTimeout(function(){ 			//20秒未收到信息就清空电量电流list
-															_this.SupplyCurrentDic[cid].length = 0;
-														  	_this.ConsumedEnergyDic[cid].length = 0;
-														  }, 120000);*/
-						
-						_this.chargeTimeDic[cid] = obj[3].meterValue.ElapsedTime;
-						_this.updateLineChartSC(cid, obj[3].meterValue.SupplyCurrent/1000, ui.optionSC);
-						_this.updateLineChartCE(cid, obj[3].meterValue.ConsumedEnergy, ui.optionCE);
-					}else{
-					
-					}
-					
-                };
-
-                //Creates a new Messaging.Message Object and sends it to the HiveMQ MQTT Broker
-                var publish = function(payload, topic, qos) {
-                    //Send your message (also possible to serialize it as JSON or protobuf or just use a string, no limitations)
-                    var message = new Messaging.Message(payload);
-                    message.destinationName = topic;
-                    message.qos = qos;
-                    client.send(message);
-                }
-
-                //Gets  called if the websocket/mqtt connection gets disconnected for any reason
-                client.onConnectionLost = function(responseObject) {
-                    //Depending on your scenario you could implement a reconnect logic here
-                    alert("connection lost: " + responseObject.errorMessage);
-                };
             },
 			//获取索引
 			indexOf: function(arr,item){
@@ -310,6 +302,12 @@
 						ret = i;
 				}
 				return ret;
+			},
+			isEmptyObject: function(obj) {
+				for (var key in obj) {
+					return false;
+				}
+				return true;
 			},
 			formatSeconds: function (value) {
 				var theTime = parseInt(value);// 秒
@@ -361,7 +359,7 @@
 						bottom: '3%',
 						containLabel: true
 					},
-					xAxis: {						
+					xAxis: {
 						type: 'category',
 						name: '时间',
 						nameTextStyle:{
@@ -377,17 +375,7 @@
 								color: '#999',
 							}
 						},
-						data: (function (){
-							var now = new Date();
-							var res = [];
-							var len = 10;
-							while (len--) {
-								//res.unshift(now.toLocaleTimeString('chinese',{hour12:true}).replace(/^\D*/,''));   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
-								res.unshift(now.toLocaleTimeString());
-								now = new Date(now - 1000);
-							}
-							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
-						})()
+						data: []
 					},
 					yAxis: {
 						type: 'value',
@@ -403,9 +391,15 @@
 							show: true
 						}
 					},
-					series: [
-						
-					]
+					series: [],
+					dataZoom: [{
+						type: 'slider',//图表下方的伸缩条
+						minSpan:8,    //5min
+						//show : true,  //是否显示
+						//realtime : true,  //
+						//start : 80,  //伸缩条开始位置（1-100），可以随时更改
+						//end : 100,  //伸缩条结束位置（1-100），可以随时更改
+					},],
 				};
 
                 return option;
@@ -455,16 +449,7 @@
 								color: '#999',
 							}
 						},
-						data: (function (){
-							var now = new Date();
-							var res = [];
-							var len = 10;
-							while (len--) {
-								res.unshift(now.toLocaleTimeString());   //unshift() 方法可向数组的开头添加一个或更多元素，并返回新的长度。
-								now = new Date(now - 1000);
-							}
-							return res;                     //返回一个以当前时间为末位的间隔为2秒的10元素的列表
-						})()
+						data: []
 					},
 					yAxis: {
 						type: 'value',
@@ -480,109 +465,55 @@
 							show: true
 						}
 					},
-					series: [
-						
-					]
+					series: [],
+					dataZoom: [{  
+						type: 'slider',//图表下方的伸缩条
+						minSpan:8,    //5min
+						//show : true,  //是否显示
+						//realtime : true,  //
+						//start : 80,  //伸缩条开始位置（1-100），可以随时更改
+						//end : 100,  //伸缩条结束位置（1-100），可以随时更改
+					},],
 				};
 
                 return option;
             },
-			//SupplyCurrentDic={'10245004':[10,20,30,40...], '10245005':[10,20,30,40...],...}
-            updateLineChartSC: function(cid, y_value, option) {
+            updateLineChart: function(cid, data, list_name, option) {
 				var _this = this;
 				var flag = 0;
-				if(!_this.SupplyCurrentDic[cid])
-					_this.SupplyCurrentDic[cid] = [];
-				
-				//if(_this.SupplyCurrentDic[cid].length > 10)	//每个cid list存储10个实时充电数据
-				//	_this.SupplyCurrentDic[cid].shift();
-
-				_this.SupplyCurrentDic[cid].push(y_value);
 
 				for(var i in option.series)
 				{
 					if(option.series[i].name == cid){
 						flag=1;
-						option.series[i].data = this.SupplyCurrentDic[cid];
-						if(this.SupplyCurrentDic[cid].length > this.listLength)
-							this.listLength = this.SupplyCurrentDic[cid].length
+						option.series[i].data = data[list_name];
 					}
 				}
 				if(flag == 0)		//不存在该cid折线图时动态创建
 				{
-					_this.SupplyCurrentDic[cid] = [];
-					for(i=0;i<this.listLength;i++)		//和其他折线保持时间同步
-						_this.SupplyCurrentDic[cid].push('/');
-					_this.SupplyCurrentDic[cid].push(y_value);
-
 					var item = {
 						name: cid,
 						type: 'line',
+						//symbol: 'none',
 						smooth: true,
 						lineStyle: {
 							normal: {
 								width: 2,
-								shadowColor: 'rgba(0,0,0,0.4)',
-								shadowBlur: 10,
-								shadowOffsetY: 10
+								//shadowColor: 'rgba(0,0,0,0.4)',
+								//shadowBlur: 10,
+								//shadowOffsetY: 10
 							}
 						},
-						data:_this.SupplyCurrentDic[cid]
+						data:data[list_name]
 					}
 					option.series.push(item);
 					option.legend.data.push(cid);
 				}
-
-                //_this.myChart.setOption(option);
-            },
-			updateLineChartCE: function(cid, y_value, option) {
-				var _this = this;
-				var flag = 0;
-				if(!_this.ConsumedEnergyDic[cid])
-					_this.ConsumedEnergyDic[cid] = [];
 				
-				//if(_this.ConsumedEnergyDic[cid].length > 10)	//每个cid list存储10个实时充电数据
-				//	_this.ConsumedEnergyDic[cid].shift();
-
-				_this.ConsumedEnergyDic[cid].push(y_value);
-
-				for(var i in option.series)
-				{
-					if(option.series[i].name == cid){
-						flag=1;
-						option.series[i].data = this.ConsumedEnergyDic[cid];
-					}
-				}
-				if(flag == 0)		//不存在该cid折线图时动态创建
-				{
-					_this.ConsumedEnergyDic[cid] = [];
-					for(i=0;i<this.listLength;i++)		//和其他折线保持时间同步
-						_this.ConsumedEnergyDic[cid].push('/');
-					_this.ConsumedEnergyDic[cid].push(y_value);
-
-					var item = {
-						name: cid,
-						type: 'line',
-						smooth: true,
-						lineStyle: {
-							normal: {
-								width: 2,
-								shadowColor: 'rgba(0,0,0,0.4)',
-								shadowBlur: 10,
-								shadowOffsetY: 10
-							}
-						},
-						data:_this.ConsumedEnergyDic[cid]
-					}
-					option.series.push(item);
-					option.legend.data.push(cid);
-				}
-
-                //_this.myChart.setOption(option);
             },
             pieChart: function(){
-
-                /*3個儀錶盤*/
+				var _this = this;
+				/*3個儀錶盤*/
                 var guage1 = echarts.init(document.getElementById('guage1'));
 
                 var option = {
@@ -715,16 +646,8 @@
 
                 setInterval(
                     function (){
-						var axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');        //当前时间
-						//ui.optionSC.xAxis.data.shift();                     //当前时间轴
-						ui.optionSC.xAxis.data.push(axisData);
-						ui.myChart.setOption(ui.optionSC);
-						
-						//ui.optionCE.xAxis.data.shift();                     //当前时间轴
-						ui.optionCE.xAxis.data.push(axisData);
-						ui.myChart1.setOption(ui.optionCE);
-						
-                        $.ajax({
+						/*
+						$.ajax({
                             url: '/api/max/current/list/',
                             method: 'get',
                             success: function(data){
@@ -736,13 +659,45 @@
                             error: function(e){
                                 console.log('connect '+this.url+' error',e);
                             }
-                        });
+                        });*/
+						var groupId = jQuery.url.param('groupId');
+						var time_step = $('#time_selsect input:radio:checked').val();
+						$.ajax({
+							url: '/api/chargers/realtime/data/',
+							method: 'get',
+							timeout: 5000,
+							data: {gid: groupId, time_step: time_step},
+							success: function(res){
+								//console.log(res);
+								if(!ui.isEmptyObject(res)){
+									for(var cid in res){
+										if(ui.indexOf(ui.activeCidList, cid) < 0)
+										{
+											ui.activeCidList.push(cid);
+											ui.addSelectOption($('#select-sc'), cid);
+											ui.addSelectOption($('#select-ce'), cid);
+										}
+										_this.chargeTimeDic[cid] = res[cid]["elapsed_time"];
+										_this.updateLineChart(cid, res[cid], "supply_current_list", ui.optionSC);
+										_this.updateLineChart(cid, res[cid], "consumed_energy_list", ui.optionCE);
+										ui.optionSC.xAxis.data = res[cid]["timestamp_list"];
+										ui.optionCE.xAxis.data = res[cid]["timestamp_list"];
+										ui.myChart.setOption(ui.optionSC);
+										ui.myChart1.setOption(ui.optionCE);
+									}
+								}else{
+									console.log("recieve null {}");
+								}
+							},
+							error: function(){
+								console.log('connect api/chargers/realtime/data/ failed');
+							}
+						});
 
 						ui.tableContent();
-                    //},40
-					},1000
+					},5000
                 );
-				
+
             },
 			loadAjax: function(){
                 //顶部电桩总数...Charger Info数量统计接口
@@ -826,13 +781,10 @@
 					});
 				}
 			},
-			init_dic: function(res){	//初始化三个dic
+			init_dic: function(res){
 				var _this = this;
 				$.each(res, function(index, item){
-					_this.SupplyCurrentDic[item.vch_charger_id] = [];
-					_this.ConsumedEnergyDic[item.vch_charger_id] = [];
 					_this.chargeTimeDic[item.vch_charger_id] = null;
-					_this.chargeTimerDic[item.vch_charger_id] = null;
 				});
 			},
             tableContent: function(){
@@ -907,43 +859,6 @@
         $(document).ready(function(){
             ui.init();
         });
-		$(document).ajaxSend(function(event, xhr, settings) {
-			function getCookie(name) {
-				var cookieValue = null;
-				if (document.cookie && document.cookie != '') {
-					var cookies = document.cookie.split(';');
-					for (var i = 0; i < cookies.length; i++) {
-						var cookie = jQuery.trim(cookies[i]);
-						// Does this cookie string begin with the name we want?
-						if (cookie.substring(0, name.length + 1) == (name + '=')) {
-							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-							break;
-						}
-					}
-				}
-				return cookieValue;
-			}
-			function sameOrigin(url) {
-				// url could be relative or scheme relative or absolute
-				var host = document.location.host; // host + port
-				var protocol = document.location.protocol;
-				var sr_origin = '//' + host;
-				var origin = protocol + sr_origin;
-				// Allow absolute or scheme relative URLs to same origin
-				return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
-					(url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
-					// or any other URL that isn't scheme relative or absolute i.e relative.
-					!(/^(\/\/|http:|https:).*/.test(url));
-			}
-			function safeMethod(method) {
-				return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-			}
-
-			if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
-				xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-			}
-		});
-		
     </script>
 
 
