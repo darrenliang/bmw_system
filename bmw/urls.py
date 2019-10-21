@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^charts/charging_err_log/$', views.charging_err_log, name='charging_err_log'),
     url(r'^charts/charging_quantity/$', views.charging_quantity, name='charging_quantity'),
     url(r'^charts/charging_record2/$', views.charging_record2, name='charging_record2'),
+    url(r'^charts/charging_record3/$', views.charging_record3, name='charging_record3'),
     url(r'^details/$', views.details, name='details'),
     url(r'^settings/$', views.setting, name='settings'),
     url(r'^audit_logs/$', views.audit_logs, name='audit_logs'),
